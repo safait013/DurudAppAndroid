@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>দরুদ শরীফ সংকলন</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min-height:100vh;overflow-x:hidden}
+
+/* Header */
+.app-header{background:linear-gradient(135deg,#1A3A2A 0%,#2D5A3D 60%,#3D7A55 100%);padding:40px 20px 22px;text-align:center;position:relative;overflow:hidden}
+.header-pattern{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.15;background-image:radial-gradient(circle at 20% 50%,#C9A84C 1px,transparent 1px),radial-gradient(circle at 80% 20%,#C9A84C 1px,transparent 1px),radial-gradient(circle at 60% 80%,#C9A84C 1px,transparent 1px);background-size:80px 80px}
+.star-decor{position:absolute;font-size:40px;opacity:0.08;color:#C9A84C}
+.star-decor.s1{top:10px;left:10px}
+.star-decor.s2{top:10px;right:10px}
+.bismillah{font-family:'Amiri',serif;font-size:24px;color:#F0D080;letter-spacing:2px;margin-bottom:10px;position:relative;z-index:1}
+.app-title{font-size:22px;font-weight:600;color:#fff;position:relative;z-index:1;margin-bottom:4px}
+.app-subtitle{font-size:13px;color:rgba(255,255,255,0.75);position:relative;z-index:1}
+.gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin:14px 0 0}
+
+/* Tabs */
+.tabs-wrapper{background:#1A3A2A;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:12px 18px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:'Noto Serif Bengali',serif;transition:all 0.25s;user-select:none}
+.tab.active{color:#F0D080;border-bottom-color:#C9A84C}
+
+/* Content */
+.content{padding:16px;max-width:600px;margin:0 auto}
+
+/* Search */
+.search-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid rgba(201,168,76,0.4);border-radius:12px;padding:10px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.search-bar input{border:none;outline:none;flex:1;font-size:14px;font-family:'Noto Serif Bengali',serif;color:#1A1A0E;background:transparent}
+.search-bar input::placeholder{color:#aaa}
+.search-icon{color:#8B6914;font-size:18px}
+
+/* Darood Card */
+.darood-card{background:#FFFDF5;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.1);border:1px solid rgba(201,168,76,0.22);transition:transform 0.15s;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.darood-card:active{transform:scale(0.99)}
+
+.card-header{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);padding:13px 16px;display:flex;align-items:center;gap:12px}
+.card-num{width:30px;height:30px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1A3A2A;flex-shrink:0;font-family:sans-serif}
+.card-title{font-size:14px;color:#fff;font-weight:600;flex:1;line-height:1.4}
+
+.card-body{padding:16px}
+.arabic{font-family:'Amiri',serif;font-size:24px;line-height:2;text-align:right;color:#1A3A2A;direction:rtl;background:linear-gradient(135deg,#F8F3E0,#FFF8E8);padding:14px 16px;border-radius:10px;border-right:3.5px solid #C9A84C;margin-bottom:14px;word-spacing:4px}
+
+.section-label{font-size:11px;color:#8B6914;font-weight:700;margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase}
+.uchchar{font-size:14px;color:#444;line-height:1.8;margin-bottom:12px;font-style:italic;background:#F5F0E8;padding:11px 14px;border-radius:9px}
+.ortho{font-size:13px;color:#333;line-height:1.85;margin-bottom:10px;padding:11px 14px;background:#EFF8F0;border-radius:9px;border-left:3px solid #3D7A55}
+
+.ref-tag{display:inline-flex;align-items:center;gap:5px;background:#C9A84C;color:#1A3A2A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.fazilat-box{background:#FFF8E8;border:1px solid rgba(201,168,76,0.35);border-radius:9px;padding:10px 14px;margin-top:10px;font-size:12.5px;color:#555;line-height:1.8}
+.fazilat-box::before{content:'✦ ';color:#C9A84C;font-size:14px}
+
+.action-row{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:9px;font-size:12px;font-family:'Noto Serif Bengali',serif;cursor:pointer;transition:all 0.2s;border:none;font-weight:600}
+.btn-copy{background:transparent;border:1.5px solid #C9A84C;color:#8B6914}
+.btn-copy:active,.btn-copy.active{background:#C9A84C;color:#1A3A2A}
+.btn-share{background:#1A3A2A;color:#F0D080}
+.btn-share:active{background:#2D5A3D}
+
+/* Tab Panels */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Fazilat Tab */
+.hadith-feature{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.hadith-feature .arabic{color:#fff;background:rgba(255,255,255,0.1);border-right-color:#F0D080;margin-bottom:12px}
+.hadith-text{font-size:13px;color:rgba(255,255,255,0.88);line-height:1.9}
+.hadith-ref{font-size:11px;color:#F0D080;margin-top:8px;font-weight:600}
+
+.info-card{background:#FFFDF5;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(201,168,76,0.18)}
+.info-card h3{color:#1A3A2A;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(201,168,76,0.25);padding-bottom:8px}
+.info-card p,.info-item{font-size:13px;line-height:1.95;color:#444}
+.info-item{padding:5px 0;border-bottom:1px dashed rgba(201,168,76,0.2);display:flex;align-items:flex-start;gap:8px}
+.info-item:last-child{border-bottom:none}
+.info-dot{color:#C9A84C;font-size:16px;flex-shrink:0;margin-top:2px}
+
+.section-title{font-size:15px;font-weight:600;color:#1A3A2A;margin:6px 0 14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,#C9A84C,transparent)}
+
+/* Counter */
+.counter-section{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
+.counter-title{color:#F0D080;font-size:14px;margin-bottom:14px}
+.counter-display{font-family:'Amiri',serif;font-size:52px;color:#fff;margin:8px 0}
+.counter-arabic{font-family:'Amiri',serif;font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:16px;direction:rtl}
+.counter-btns{display:flex;gap:10px;justify-content:center}
+.cnt-btn{padding:10px 24px;border-radius:10px;border:none;font-size:15px;cursor:pointer;font-weight:700;transition:all 0.15s}
+.cnt-btn:active{transform:scale(0.95)}
+.cnt-add{background:#C9A84C;color:#1A3A2A}
+.cnt-reset{background:rgba(255,255,255,0.15);color:#fff}
+.target-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.target-btn{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;background:transparent;font-family:'Noto Serif Bengali',serif}
+.target-btn.sel{background:#C9A84C;color:#1A3A2A;border-color:#C9A84C}
+.progress-bar{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;margin-top:14px;overflow:hidden}
+.progress-fill{height:100%;background:#C9A84C;border-radius:3px;transition:width 0.3s;width:0%}
+
+/* About Tab */
+.about-header{text-align:center;padding:20px 0 10px}
+.about-logo{font-family:'Amiri',serif;font-size:48px;color:#1A3A2A;margin-bottom:6px}
+.about-appname{font-size:18px;font-weight:600;color:#1A3A2A}
+.about-version{font-size:12px;color:#888;margin-top:2px}
+
+/* Developer Card */
+.dev-card{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.dev-avatar{width:56px;height:56px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#1A3A2A;flex-shrink:0;font-family:sans-serif;border:2px solid rgba(240,208,128,0.4)}
+.dev-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px}
+.dev-role{font-size:12px;color:#F0D080;margin-bottom:2px}
+.dev-company{font-size:12px;color:rgba(255,255,255,0.65)}
+.dev-divider{height:1px;background:rgba(255,255,255,0.12);margin:14px 0}
+.dev-link{display:flex;align-items:center;gap:10px;padding:8px 0;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08)}
+.dev-link:last-child{border-bottom:none}
+.dev-link-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.dev-link-text{font-size:13px;color:rgba(255,255,255,0.85);flex:1}
+.dev-link-label{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
+.dev-link-arrow{color:rgba(255,255,255,0.3);font-size:12px}
+
+/* Footer */
+.footer{text-align:center;padding:24px 16px;color:#888;font-size:12px;line-height:2;background:#1A3A2A;color:rgba(255,255,255,0.5);margin-top:8px}
+.footer .arabic-footer{font-family:'Amiri',serif;font-size:18px;color:#F0D080;display:block;margin-top:6px}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A3A2A;color:#F0D080;padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Empty State */
+.empty{text-align:center;padding:40px 20px;color:#aaa}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty p{font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-pattern"></div>
+  <div class="star-decor s1">☪</div>
+  <div class="star-decor s2">☪</div>
+  <div class="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+  <div class="app-title">দরুদ শরীফ সংকলন</div>
+  <div class="app-subtitle">১০টি সহীহ দরুদ — অর্থ, উচ্চারণ ও হাদিস রেফারেন্সসহ</div>
+  <div class="gold-divider"></div>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tabs" id="tabs">
+    <div class="tab active" onclick="switchTab('darood',this)">📿 দরুদ সমূহ</div>
+    <div class="tab" onclick="switchTab('counter',this)">📿 তাসবিহ</div>
+    <div class="tab" onclick="switchTab('fazilat',this)">⭐ ফজিলত</div>
+    <div class="tab" onclick="switchTab('about',this)">ℹ️ পরিচিতি</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- DAROOD TAB -->
+  <div class="tab-panel active" id="tab-darood">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search" placeholder="দরুদ খুঁজুন..." oninput="filterCards(this.value)">
+    </div>
+    <div id="cards-container"></div>
+  </div>
+
+  <!-- COUNTER TAB -->
+  <div class="tab-panel" id="tab-counter">
+    <div class="counter-section">
+      <div class="counter-title">দরুদ কাউন্টার</div>
+      <div class="counter-arabic">اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَّسَلِّمْ</div>
+      <div class="counter-display" id="count">0</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:14px" id="target-info">লক্ষ্য নির্বাচন করুন</div>
+      <div class="counter-btns">
+        <button class="cnt-btn cnt-add" onclick="addCount()">+ পড়লাম</button>
+        <button class="cnt-btn cnt-reset" onclick="resetCount()">রিসেট</button>
+      </div>
+      <div class="target-row">
+        <button class="target-btn" onclick="setTarget(10,this)">১০ বার</button>
+        <button class="target-btn" onclick="setTarget(33,this)">৩৩ বার</button>
+        <button class="target-btn" onclick="setTarget(100,this)">১০০ বার</button>
+        <button class="target-btn" onclick="setTarget(300,this)">৩০০ বার</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    </div>
+    <div class="info-card">
+      <h3>🌟 সকাল-সন্ধ্যার আমল</h3>
+      <div class="info-item"><span class="info-dot">✦</span><span>সকালে ১০ বার ও সন্ধ্যায় ১০ বার দরুদ পড়ুন — কেয়ামতে নবীজির শাফায়াত লাভ হবে।</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>জুমার দিনে বেশি বেশি দরুদ পড়ুন।</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>১০০ বার দরুদ পড়লে ১০০ গুনাহ মাফ হয় ও ১০০ নেকি লেখা হয়।</span></div>
+    </div>
+  </div>
+
+  <!-- FAZILAT TAB -->
+  <div class="tab-panel" id="tab-fazilat">
+    <div class="section-title">দরুদের ফজিলত ও গুরুত্ব</div>
+
+    <div class="hadith-feature">
+      <div class="arabic">مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللّٰهُ عَلَيْهِ عَشْرًا</div>
+      <div class="hadith-text">"যে ব্যক্তি আমার ওপর একবার দরুদ পড়ে, আল্লাহ তার ওপর দশবার রহমত নাযিল করেন, দশটি গুনাহ মাফ করেন এবং দশটি মর্যাদা বৃদ্ধি করেন।"</div>
+      <div class="hadith-ref">— সহীহ মুসলিম: ৩৮৪ | সুনান নাসাঈ: ১২৯৭</div>
+    </div>
+
+    <div class="info-card">
+      <h3>📖 দরুদের ফজিলত</h3>
+      <div class="info-item"><span class="info-dot">✦</span><span>একবার দরুদ পড়লে আল্লাহ দশবার রহমত নাযিল করেন</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>দশটি গুনাহ মাফ হয় ও দশ দরজা মর্যাদা বাড়ে</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>নবী (সা.)-এর কাছে সালাম পৌঁছানো হয়</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>কেয়ামতের দিন নবীজির শাফায়াত লাভের মাধ্যম</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>দোয়া কবুলের জন্য দরুদ দিয়ে শুরু ও শেষ করা উত্তম</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>জুমার দিনে বেশি বেশি দরুদ পড়া সুন্নত</span></div>
+    </div>
+
+    <div class="info-card">
+      <h3>🕰️ কখন দরুদ পড়বেন?</h3>
+      <div class="info-item"><span class="info-dot">•</span><span>নবী (সা.)-এর নাম শুনলে বা বললে</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>নামাজে তাশাহহুদের পরে</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>দোয়া শুরু ও শেষে</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>আজানের পরে</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>জুমার দিনে বেশি বেশি</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সকাল ও সন্ধ্যায় আমলে</span></div>
+    </div>
+  </div>
+
+  <!-- ABOUT TAB -->
+  <div class="tab-panel" id="tab-about">
+    <div class="about-header">
+      <div class="about-logo">☪</div>
+      <div class="about-appname">দরুদ শরীফ সংকলন</div>
+      <div class="about-version">সংস্করণ ১.০</div>
+    </div>
+
+    <div class="info-card" style="margin-top:16px">
+      <h3>🌙 অ্যাপ পরিচিতি</h3>
+      <p>এই অ্যাপে রয়েছে ১০টি সহীহ হাদিসে বর্ণিত দরুদ শরীফ। প্রতিটি দরুদের সাথে রয়েছে আরবি, বাংলা উচ্চারণ, অর্থ এবং হাদিসের রেফারেন্স। এছাড়াও রয়েছে দরুদ কাউন্টার ও ফজিলত বিভাগ।</p>
+    </div>
+
+    <div class="info-card">
+      <h3>📚 হাদিস গ্রন্থসমূহ</h3>
+      <div class="info-item"><span class="info-dot">•</span><span>সহীহ বুখারী</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সহীহ মুসলিম</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সুনান তিরমিজি</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সুনান আবু দাউদ</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সুনান ইবনে মাজাহ</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>মুসনাদে আহমদ</span></div>
+      <div class="info-item"><span class="info-dot">•</span><span>সহীহুল জামে' ও আল-মু'জামুল কাবীর</span></div>
+    </div>
+
+    <div class="info-card">
+      <h3>🤲 উদ্দেশ্য</h3>
+      <p>আল্লাহর রাসুল (সা.)-এর প্রতি ভালোবাসার বহিঃপ্রকাশ এবং উম্মতের মধ্যে দরুদের আমল ছড়িয়ে দেওয়াই এই অ্যাপের মূল উদ্দেশ্য। আল্লাহ আমাদের বেশি বেশি দরুদ পড়ার তাওফিক দান করুন। আমীন।</p>
+    </div>
+
+    <div class="dev-card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        <div class="dev-avatar">AS</div>
+        <div>
+          <div class="dev-name">A.K.M. Safait Rahman</div>
+          <div class="dev-role">Technical Lead</div>
+          <div class="dev-company">Samsung R&amp;D Institute Bangladesh</div>
+        </div>
+      </div>
+      <div class="dev-divider"></div>
+      <a class="dev-link" href="mailto:safait.kuet@gmail.com">
+        <div class="dev-link-icon" style="background:rgba(201,168,76,0.2)">✉️</div>
+        <div>
+          <div class="dev-link-text">safait.kuet@gmail.com</div>
+          <div class="dev-link-label">ইমেইল</div>
+        </div>
+        <div class="dev-link-arrow">›</div>
+      </a>
+      <a class="dev-link" href="https://www.linkedin.com/in/safait-rhmn">
+        <div class="dev-link-icon" style="background:rgba(10,102,194,0.25)">💼</div>
+        <div>
+          <div class="dev-link-text">linkedin.com/in/safait-rhmn</div>
+          <div class="dev-link-label">LinkedIn</div>
+        </div>
+        <div class="dev-link-arrow">›</div>
+      </a>
+      <a class="dev-link" href="https://github.com/safait013">
+        <div class="dev-link-icon" style="background:rgba(255,255,255,0.12)">🐙</div>
+        <div>
+          <div class="dev-link-text">github.com/safait013</div>
+          <div class="dev-link-label">GitHub</div>
+        </div>
+        <div class="dev-link-arrow">›</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  সবার জন্য উন্মুক্ত — বেশি বেশি দরুদ পড়ুন
+  <span class="arabic-footer">اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَّسَلِّمْ</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const daroodData = [
+  {num:1,title:"সবচেয়ে ছোট দরুদ (সালাত)",arabic:"صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمَ",uchchar:"ছাল্লাল্লাহু আলাইহি ওয়া সাল্লাম",ortho:"আল্লাহ তাঁর ওপর রহমত ও শান্তি বর্ষণ করুন।",ref:"সহীহ মুসলিম: ৩৮৪",extra:"নবীজির নাম শুনলে এটি বলা ওয়াজিব।"},
+  {num:2,title:"সংক্ষিপ্ত দরুদ ও সালাম",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَّسَلِّمْ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন ওয়াসাল্লিম",ortho:"হে আল্লাহ, মুহাম্মদ (সা.)-এর ওপর রহমত ও শান্তি বর্ষণ করুন।",ref:"সুনান তিরমিজি: ৩১৪",extra:""},
+  {num:3,title:"কেয়ামতে নৈকট্য লাভের দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ، وَأَنْزِلْهُ الْمَقْعَدَ الْمُقَرَّبَ عِنْدَكَ يَوْمَ الْقِيَامَةِ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন ওয়া আনজিলহুল মাক্ব'আদাল মুক্বাররাবা 'ইনদাকা ইয়াওমাল ক্বিয়ামাহ",ortho:"হে আল্লাহ! মুহাম্মদ (সা.)-এর প্রতি রহমত বর্ষণ করুন এবং কেয়ামত দিবসে তাঁকে আপনার নৈকট্যপ্রাপ্ত আসনে সমাসীন করুন।",ref:"মুসনাদে আহমদ: ১৬৯৯১",extra:""},
+  {num:4,title:"উম্মতের জন্য রহমতের দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ عَبْدِكَ وَرَسُولِكَ كَمَا صَلَّيْتَ عَلٰى إِبْرَاهِيمَ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন 'আবদিকা ওয়া রাসুলিকা কামা সাল্লাইতা 'আলা ইব্রাহীম",ortho:"হে আল্লাহ! আপনার বান্দা ও রাসুল মুহাম্মদের ওপর রহমত বর্ষণ করুন, যেমন ইব্রাহিমের ওপর করেছিলেন।",ref:"সহীহ বুখারী: ৪৭৯৮",extra:""},
+  {num:5,title:"বরকত লাভের সংক্ষিপ্ত দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَعَلٰى اٰلِ مُحَمَّدٍ وَبَارِكْ عَلٰى مُحَمَّدٍ وَعَلٰى اٰلِ مُحَمَّدٍ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন ওয়া 'আলা আলি মুহাম্মদ, ওয়া বারিক 'আলা মুহাম্মাদিন ওয়া 'আলা আলি মুহাম্মদ",ortho:"হে আল্লাহ, মুহাম্মদ ও তাঁর পরিবারের ওপর রহমত করুন এবং মুহাম্মদ ও তাঁর পরিবারের ওপর বরকত দিন।",ref:"মুসনাদে আহমদ: ২৪০৬৫",extra:""},
+  {num:6,title:"নবী ও পবিত্র স্ত্রীদের জন্য দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَأَزْوَاجِهِ وَذُرِّيَّتِهِ كَمَا صَلَّيْتَ عَلٰى اٰلِ إِبْرَاهِيمَ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন ওয়া আজওয়াজিহি ওয়া জুররিয়্যাতিহি কামা সাল্লাইতা 'আলা আলি ইব্রাহীম",ortho:"হে আল্লাহ! মুহাম্মদ, তাঁর স্ত্রীগণ এবং বংশধরদের ওপর রহমত বর্ষণ করুন, যেমন ইব্রাহিমের বংশধরদের ওপর করেছিলেন।",ref:"সহীহ মুসলিম: ৪০৭",extra:""},
+  {num:7,title:"সকাল-সন্ধ্যার আমলের দরুদ",arabic:"اَللّٰهُمَّ صَلِّ وَسَلِّمْ عَلٰى نَبِيِّنَا مُحَمَّدٍ",uchchar:"আল্লাহুম্মা সাল্লি ওয়া সাল্লিম 'আলা নাবিয়্যিনা মুহাম্মাদ",ortho:"হে আল্লাহ! আমাদের নবী মুহাম্মদের ওপর রহমত ও শান্তি বর্ষণ করুন।",ref:"সহীহুল জামে': ৬৩৫৭",extra:"সকাল ও সন্ধ্যায় ১০ বার পড়লে কেয়ামতে নবীজির শাফায়াত লাভ হয়।"},
+  {num:8,title:"উম্মি নবীর ওপর দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ النَّبِيِّ الْأُمِّيِّ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিনিন নাবিয়্যিল উম্মিয়্যি",ortho:"হে আল্লাহ! উম্মি নবী মুহাম্মদের ওপর রহমত বর্ষণ করুন।",ref:"সুনান আবু দাউদ: ৯৮১",extra:""},
+  {num:9,title:"দয়া ও অনুগ্রহ প্রার্থনার দরুদ",arabic:"اَللّٰهُمَّ اجْعَلْ صَلَوَاتِكَ وَرَحْمَتَكَ عَلٰى مُحَمَّدٍ",uchchar:"আল্লাহুম্মাজ-'আল সালাওয়াতিকা ওয়া রাহমাতাকা 'আলা মুহাম্মাদ",ortho:"হে আল্লাহ! আপনার বিশেষ অনুগ্রহ ও রহমত মুহাম্মদ (সা.)-এর ওপর বর্ষণ করুন।",ref:"সুনান ইবনে মাজাহ: ৯০৫",extra:""},
+  {num:10,title:"রহমত ও বরকতের সহজ দরুদ",arabic:"اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَبَارِكْ عَلٰى مُحَمَّدٍ",uchchar:"আল্লাহুম্মা সাল্লি 'আলা মুহাম্মাদিন ওয়া বারিক 'আলা মুহাম্মাদ",ortho:"হে আল্লাহ! মুহাম্মদের ওপর রহমত বর্ষণ করুন এবং মুহাম্মদের ওপর বরকত নাযিল করুন।",ref:"মুসনাদে আহমদ: ২৪৫৮৫",extra:""}
+];
+
+function renderCards(data){
+  const c=document.getElementById('cards-container');
+  if(!data.length){c.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><p>কোনো দরুদ পাওয়া যায়নি</p></div>';return}
+  c.innerHTML=data.map(d=>`
+    <div class="darood-card">
+      <div class="card-header">
+        <div class="card-num">${d.num}</div>
+        <div class="card-title">${d.title}</div>
+      </div>
+      <div class="card-body">
+        <div class="arabic">${d.arabic}</div>
+        <div class="section-label">উচ্চারণ</div>
+        <div class="uchchar">${d.uchchar}</div>
+        <div class="section-label">অর্থ</div>
+        <div class="ortho">${d.ortho}</div>
+        ${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}
+        <div style="margin-top:10px"><span class="ref-tag">📚 ${d.ref}</span></div>
+        <div class="action-row">
+          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'").replace(/"/g,"&quot;")}','${d.uchchar.replace(/'/g,"\\'").replace(/"/g,"&quot;")}','${d.ortho.replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">📋 কপি করুন</button>
+          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'").replace(/"/g,"&quot;")}','${d.uchchar.replace(/'/g,"\\'").replace(/"/g,"&quot;")}','${d.title.replace(/'/g,"\\'")}','${d.ref.replace(/'/g,"\\'")}')">🔗 শেয়ার করুন</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCards(q){
+  const r=q.trim()?daroodData.filter(d=>d.title.includes(q)||d.uchchar.toLowerCase().includes(q.toLowerCase())||d.ortho.includes(q)):daroodData;
+  renderCards(r);
+}
+
+function copyText(btn,arabic,uchchar,ortho){
+  const t=`${arabic}\n\n${uchchar}\n\nঅর্থ: ${ortho}`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(t).then(()=>{
+      btn.textContent='✓ কপি হয়েছে';
+      btn.style.background='#1A3A2A';btn.style.color='#F0D080';btn.style.border='none';
+      showToast('দরুদ কপি হয়েছে! ✓');
+      setTimeout(()=>{btn.textContent='📋 কপি করুন';btn.style.cssText=''},2000);
+    });
+  } else {
+    const el=document.createElement('textarea');
+    el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');
+    document.body.removeChild(el);showToast('কপি হয়েছে! ✓');
+  }
+}
+
+function shareText(arabic,uchchar,title,ref){
+  const text=`📿 ${title}\n\n${arabic}\n\n${uchchar}\n\n📚 রেফারেন্স: ${ref}\n\n— দরুদ শরীফ সংকলন অ্যাপ`;
+  if(navigator.share){navigator.share({title:'দরুদ শরীফ',text:text}).catch(()=>{})}
+  else{copyText(null,arabic,uchchar,'');showToast('শেয়ার করতে কপি করুন')}
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+let count=0,target=0;
+function addCount(){
+  count++;
+  document.getElementById('count').textContent=count;
+  if(target>0){
+    const pct=Math.min(100,(count/target)*100);
+    document.getElementById('progress').style.width=pct+'%';
+    document.getElementById('target-info').textContent=`${count} / ${target} বার`;
+    if(count===target){showToast('মাশাআল্লাহ! লক্ষ্য পূরণ হয়েছে 🎉')}
+  }
+  // Vibrate
+  if(navigator.vibrate)navigator.vibrate(30);
+}
+function resetCount(){count=0;document.getElementById('count').textContent=0;document.getElementById('progress').style.width='0%';if(target>0)document.getElementById('target-info').textContent=`0 / ${target} বার`;}
+function setTarget(t,el){
+  target=t;count=0;
+  document.querySelectorAll('.target-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('count').textContent=0;
+  document.getElementById('progress').style.width='0%';
+  document.getElementById('target-info').textContent=`0 / ${t} বার`;
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderCards(daroodData);
+</script>
+</body>
+</html>
