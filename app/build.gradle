@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.darood.app'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
-        applicationId "com.darood.app"
+        applicationId "com.primebytelabs.durood"
         minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        targetSdk 35
+        versionCode 4
+        versionName "1.0.3"
     }
 
     buildTypes {
