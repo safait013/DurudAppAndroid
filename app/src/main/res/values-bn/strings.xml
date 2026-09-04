@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    বাংলা (Bengali) UI strings.
+    NOTE: Arabic religious content (Durood, Salam, Tashahhud, Tasbih text) is NOT
+    localized here — it lives untouched in app/src/main/assets/index.html.
+-->
+<resources>
+
+    <!-- ===== App / Home ===== -->
+    <string name="app_name">দরুদ ও সালাম</string>
+    <string name="home_tagline">২৫ দরুদ • ১৫ সালাম • হাদিস রেফারেন্স</string>
+    <!-- Lang code applied to the <html lang="..."> attribute of the WebView page -->
+    <string name="html_lang_code">bn</string>
+    <!-- Document direction for the WebView page: ltr for English/Bangla, rtl for Urdu -->
+    <string name="html_dir">ltr</string>
+
+    <!-- ===== First-launch language selection ===== -->
+    <string name="choose_language_title">আপনার ভাষা নির্বাচন করুন</string>
+    <!-- Language names are always shown in their own script (endonyms) -->
+    <string name="lang_name_en">English</string>
+    <string name="lang_name_bn">বাংলা</string>
+    <string name="lang_name_ur">اردو</string>
+
+    <!-- ===== Tabs ===== -->
+    <string name="tab_duroods">দরুদ সমূহ</string>
+    <string name="tab_salam">সালাম</string>
+    <string name="tab_tasbih">তাসবিহ</string>
+    <string name="tab_fazilat">ফজিলত</string>
+
+    <!-- ===== Search ===== -->
+    <string name="search_durood_hint">দরুদ খুঁজুন...</string>
+    <string name="search_salam_hint">সালাম খুঁজুন...</string>
+    <string name="empty_duroods">কোনো দরুদ পাওয়া যায়নি</string>
+    <string name="empty_salams">কোনো সালাম পাওয়া যায়নি</string>
+
+    <!-- ===== Durood / Salam card labels ===== -->
+    <string name="label_transliteration">উচ্চারণ</string>
+    <string name="label_meaning">অর্থ</string>
+    <string name="meaning_prefix">অর্থ:</string>
+    <string name="reference_prefix">রেফারেন্স:</string>
+    <string name="btn_copy">📋 কপি করুন</string>
+    <string name="btn_copied">✓ কপি হয়েছে</string>
+    <string name="btn_share">🔗 শেয়ার করুন</string>
+
+    <!-- ===== Tasbih counter ===== -->
+    <string name="counter_title">দরুদ কাউন্টার</string>
+    <string name="counter_select_target">লক্ষ্য নির্বাচন করুন</string>
+    <string name="btn_recited">+ পড়লাম</string>
+    <string name="btn_reset">রিসেট</string>
+    <string name="target_times_format">%1$s বার</string>
+    <string name="target_progress_format">%1$s / %2$s বার</string>
+    <string name="toast_target_done">মাশাআল্লাহ! লক্ষ্য পূরণ হয়েছে 🎉</string>
+    <string name="salam_counter_title">সালাম কাউন্টার</string>
+    <string name="counter_select_durood">দরুদ নির্বাচন করুন</string>
+    <string name="counter_select_salam">সালাম নির্বাচন করুন</string>
+
+    <!-- ===== Morning & evening practice card ===== -->
+    <string name="amal_title">🌟 সকাল-সন্ধ্যার আমল</string>
+    <string name="amal_item_1">সকালে ১০ বার ও সন্ধ্যায় ১০ বার দরুদ পড়ুন — কেয়ামতে নবীজির শাফায়াত লাভ হবে।</string>
+    <string name="amal_item_2">জুমার দিনে বেশি বেশি দরুদ পড়ুন।</string>
+    <string name="amal_item_3">১০০ বার দরুদ পড়লে ১০০ গুনাহ মাফ হয় ও ১০০ নেকি লেখা হয়।</string>
+
+    <!-- ===== Virtues (Fazilat) ===== -->
+    <string name="fazilat_section_title">ভূমিকা ও ফজিলত</string>
+
+    <!-- ===== Settings screen ===== -->
+    <string name="settings_section_preferences">পছন্দসমূহ</string>
+    <string name="settings_section_about">পরিচিতি</string>
+    <string name="settings_arabic_font">আরবি ফন্ট</string>
+    <string name="settings_arabic_font_size">আরবি ফন্টের আকার</string>
+    <string name="settings_app_version">অ্যাপ সংস্করণ</string>
+    <string name="contact_email">ইমেল</string>
+    <string name="contact_whatsapp">হোয়াটসঅ্যাপ</string>
+    <string name="toast_coming_soon">শীঘ্রই আসছে</string>
+    <string name="app_version">সংস্করণ ১.১.০</string>
+    <!-- ===== Theme option labels ===== -->
+    <string name="theme_default">ডিফল্ট</string>
+    <string name="theme_green">সবুজ</string>
+    <string name="theme_blue">নীল</string>
+    <string name="theme_brown">বাদামী</string>
+    <string name="theme_purple">বেগুনি</string>
+    <string name="theme_dark">ডার্ক</string>
+    <!-- ===== Notifications (নোটিফিকেশন) ===== -->
+    <string name="notification_channel_name">দুরুদ ও সালাম রিমাইন্ডার</string>
+    <string name="notification_channel_description">দুরুদ ও সালাম পাঠের দৈনিক রিমাইন্ডার</string>
+    <string name="notification_text">প্রিয় নবী ﷺ-এর প্রতি দরুদ ও সালাম পাঠের জন্য একটু সময় নিন।</string>
+    <string name="notification_title">দুরুদ ও সালাম</string>
+    <string name="notification_settings_title">নোটিফিকেশন সেটিংস</string>
+    <string name="notifications_enable_label">নোটিফিকেশন চালু করুন</string>
+    <string name="notifications_schedule_label">সময়সূচী</string>
+    <string name="day_sunday">রোববার</string>
+    <string name="day_monday">সোমবার</string>
+    <string name="day_tuesday">মঙ্গলবার</string>
+    <string name="day_wednesday">বুধবার</string>
+    <string name="day_thursday">বৃহস্পতিবার</string>
+    <string name="day_friday">শুক্রবার</string>
+    <string name="day_saturday">শনিবার</string>
+    <string name="notification_save">সংরক্ষণ</string>
+    <string name="notifications_saved">নোটিফিকেশন সময়সূচী সংরক্ষিত হয়েছে</string>
+    <string name="notifications_permission_required">রিমাইন্ডার সেট করতে নোটিফিকেশন অনুমতি প্রয়োজন</string>
+    <string name="notifications_permission_denied">নোটিফিকেশন অনুমতি প্রত্যাখ্যান করা হয়েছে</string>
+    <string name="notifications_disabled">নোটিফিকেশন বন্ধ করা হয়েছে</string>
+    <string name="time_am">সকাল</string>
+    <string name="time_pm">বিকাল</string>
+    <string name="about_title">অ্যাপ পরিচিতি</string>
+    <string name="about_body">এই অ্যাপে রয়েছে ২৫টি সহীহ হাদিসে বর্ণিত দরুদ শরীফ ও ১৫টি সালাম। প্রতিটি দরুদ ও সালামের সাথে রয়েছে আরবি, বাংলা উচ্চারণ, অর্থ এবং হাদিসের রেফারেন্স। এছাড়াও রয়েছে দরুদ কাউন্টার ও ফজিলত বিভাগ।</string>
+    <!-- রচনা ও তথ্যসূত্র (About credit) — Bengali source content, verbatim -->
+    <string name="about_credit_title">✒️ রচনা ও তথ্যসূত্র</string>
+    <string name="about_credit_1">হাকিমুল উম্মত মুফতি মুজাফফিরুল মিল্লাত হযরত মাওলানা শাহ আশরাফ আলী থানভী রহ. রচিত \"মাদরাসা শহীদ\" ও অন্যান্য তথ্যসূত্র কিতাবের আলোকে রচিত</string>
+    <string name="about_credit_2">আরিফবিল্লাহ রুশমিয়ে যামানাহ হযরত মাওলানা শাহ হাকীম মুহাম্মাদ আখতার সাহেব দামাত বারাকাতুহুম এর বিশিষ্ট খলীফা, হযরত মাওলানা মুফতী নুরুল আমীন, খুলনা এর তত্ত্বাবধানে ও নির্দেশনায় সংকলিত</string>
+    <string name="hadith_books_title">📚 হাদিস গ্রন্থসমূহ</string>
+    <string name="book_bukhari">সহীহ বুখারী</string>
+    <string name="book_muslim">সহীহ মুসলিম</string>
+    <string name="book_tirmidhi">সুনান তিরমিজি</string>
+    <string name="book_abu_dawud">সুনান আবু দাউদ</string>
+    <string name="book_ibn_majah">সুনান ইবনে মাজাহ</string>
+    <string name="book_ahmad">মুসনাদে আহমদ</string>
+    <string name="book_nasai">সুনানে নাসাঈ</string>
+    <string name="book_bayhaqi">সুনানে বায়হাকী</string>
+    <string name="book_tabarani">আল-মুজামুল কাবীর (তাবারানি)</string>
+    <string name="book_malik">মুয়াত্তা ইমাম মালিক</string>
+    <string name="purpose_title">🤲 উদ্দেশ্য</string>
+    <string name="purpose_body">আল্লাহর রাসুল (সা.)-এর প্রতি ভালোবাসার বহিঃপ্রকাশ এবং উম্মতের মধ্যে দরুদের আমল ছড়িয়ে দেওয়াই এই অ্যাপের মূল উদ্দেশ্য। আল্লাহ আমাদের বেশি বেশি দরুদ পড়ার তাওফিক দান করুন। আমীন।</string>
+    <string name="contact_title">যোগাযোগ</string>
+    <string name="privacy_policy">প্রাইভেসি পলিসি</string>
+
+    <!-- ===== Footer ===== -->
+    <string name="footer_text">সবার জন্য উন্মুক্ত — বেশি বেশি দরুদ পড়ুন</string>
+
+    <!-- ===== Toasts / system messages (native + WebView) ===== -->
+    <string name="toast_copied">কপি হয়েছে! ✓</string>
+    <string name="toast_share_copied">শেয়ার করতে কপি করুন</string>
+    <string name="share_chooser_title">দরুদ শেয়ার করুন</string>
+    <string name="error_no_email_app">কোনো ইমেল অ্যাপ পাওয়া যায়নি</string>
+    <string name="email_support_subject">%1$s সাপোর্ট</string>
+
+    <!-- ===== Localization helpers (not user-visible) ===== -->
+    <!-- Digits 0-9 in the active script, used to render numbers (10 -> ১০) -->
+    <string name="local_digits">০১২৩৪৫৬৭৮৯</string>
+
+    <!-- ===== Settings rows (used by the Settings screen) ===== -->
+    <string name="settings_title">সেটিংস</string>
+    <string name="language_title">ভাষা</string>
+    <string name="notifications_title">নোটিফিকেশন</string>
+    <string name="theme_title">থিম</string>
+
+    <!-- ===== Menu / screens ===== -->
+    <string name="menu_title">মেনু</string>
+    <string name="my_activity_title">আমার কার্যক্রম</string>
+    <string name="about_the_app_title">অ্যাপ সম্পর্কে</string>
+    <string name="about_us_title">আমাদের সম্পর্কে</string>
+    <string name="contact_us_title">যোগাযোগ করুন</string>
+    <string name="developed_by">নির্মাতা</string>
+    <string name="my_activity_placeholder">আপনার কার্যক্রম এখানে দেখাবে।</string>
+
+    <!-- ===== First-launch setup ===== -->
+    <string name="setup_title">অ্যাপ সেটআপ করুন</string>
+    <string name="setup_done">সম্পন্ন</string>
+
+    <!-- ===== Crash reporting / diagnostics ===== -->
+    <string name="crash_report_consent_title">ক্র্যাশ রিপোর্ট ইমেইলে পাঠান</string>
+    <string name="crash_report_consent_desc">অ্যাপকে ক্র্যাশ সংক্রান্ত ডায়াগনস্টিক তথ্য (একটি .txt ফাইল) ইমেইলে প্রস্তুত করার অনুমতি দেয়। কোনো রিপোর্ট স্বয়ংক্রিয়ভাবে পাঠানো হয় না — পাঠাবেন কিনা তা আপনি ঠিক করবেন।</string>
+    <string name="log_generated">লগ সফলভাবে তৈরি হয়েছে</string>
+    <string name="share_log">লগ শেয়ার করুন</string>
+    <string name="log_generate_failed">লগ তৈরি করা যায়নি</string>
+    <string name="log_share_failed">লগ শেয়ার করা যায়নি</string>
+
+    <!-- ===== My Activity ===== -->
+    <string name="activity_durood_label">দুরুদ</string>
+    <string name="activity_salam_label">সালাম</string>
+    <string name="activity_empty">এখনও কোনো কার্যক্রম রেকর্ড করা হয়নি।</string>
+    <string name="activity_today">আজ</string>
+    <string name="activity_yesterday">গতকাল</string>
+    <string name="activity_total">মোট</string>
+</resources>

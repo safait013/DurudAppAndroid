@@ -6,11 +6,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Android 13+ notification permission (runtime) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Reschedule alarms after reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -28,6 +34,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- First-launch language selection (also reusable from Settings via EXTRA_FROM_SETTINGS) -->
+        <activity
+            android:name=".LanguagePickerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Posted by AlarmManager when a reminder fires -->
+        <receiver
+            android:name=".NotificationReceiver"
+            android:exported="false" />
+
+        <!-- Re-schedules reminders after reboot / app update -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- FileProvider: securely shares generated .txt diagnostic/crash logs -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.primebytelabs.durood.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

@@ -1,4 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Default (English) UI strings.
+    NOTE: Arabic religious content (Durud, Salam, Tashahhud, Tasbih text) is NOT
+    localized here — it lives untouched in app/src/main/assets/index.html.
+-->
 <resources>
-    <string name="app_name">দরুদ শরীফ</string>
+
+    <!-- ===== App / Home ===== -->
+    <string name="app_name">Durud &amp; Salam</string>
+    <string name="home_tagline">25 Duruds • 15 Salams • Hadith References</string>
+    <!-- Lang code applied to the <html lang="..."> attribute of the WebView page -->
+    <string name="html_lang_code">en</string>
+    <!-- Document direction for the WebView page: ltr for English/Bangla, rtl for Urdu -->
+    <string name="html_dir">ltr</string>
+
+    <!-- ===== First-launch language selection ===== -->
+    <string name="choose_language_title">Choose your language</string>
+    <!-- Language names are always shown in their own script (endonyms) -->
+    <string name="lang_name_en">English</string>
+    <string name="lang_name_bn">বাংলা</string>
+    <string name="lang_name_ur">اردو</string>
+
+    <!-- ===== Tabs ===== -->
+    <string name="tab_duroods">Duruds</string>
+    <string name="tab_salam">Salam</string>
+    <string name="tab_tasbih">Tasbih</string>
+    <string name="tab_fazilat">Virtues</string>
+
+    <!-- ===== Search ===== -->
+    <string name="search_durood_hint">Search Durud...</string>
+    <string name="search_salam_hint">Search Salam...</string>
+    <string name="empty_duroods">No Durud found</string>
+    <string name="empty_salams">No Salam found</string>
+
+    <!-- ===== Durud / Salam card labels ===== -->
+    <string name="label_transliteration">Pronunciation</string>
+    <string name="label_meaning">Meaning</string>
+    <string name="meaning_prefix">Meaning:</string>
+    <string name="reference_prefix">Reference:</string>
+    <string name="btn_copy">📋 Copy</string>
+    <string name="btn_copied">✓ Copied</string>
+    <string name="btn_share">🔗 Share</string>
+
+    <!-- ===== Tasbih counter ===== -->
+    <string name="counter_title">Durud Counter</string>
+    <string name="counter_select_target">Select a target</string>
+    <string name="btn_recited">+ Recited</string>
+    <string name="btn_reset">Reset</string>
+    <string name="target_times_format">%1$s times</string>
+    <string name="target_progress_format">%1$s / %2$s times</string>
+    <string name="toast_target_done">MashaAllah! Target achieved 🎉</string>
+    <string name="salam_counter_title">Salam Counter</string>
+    <string name="counter_select_durood">Select Durud</string>
+    <string name="counter_select_salam">Select Salam</string>
+
+    <!-- ===== Morning &amp; evening practice card ===== -->
+    <string name="amal_title">🌟 Morning &amp; Evening Practice</string>
+    <string name="amal_item_1">Recite Durud 10 times in the morning and 10 times in the evening — you will gain the intercession of the Prophet ﷺ on the Day of Judgement.</string>
+    <string name="amal_item_2">Recite abundant Durud on the day of Jumu\'ah (Friday).</string>
+    <string name="amal_item_3">Reciting Durud 100 times erases 100 sins and records 100 good deeds.</string>
+
+    <!-- ===== Virtues (Fazilat) ===== -->
+    <string name="fazilat_section_title">Introduction &amp; Virtues</string>
+
+    <!-- ===== Settings screen ===== -->
+    <string name="settings_section_preferences">Preferences</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_arabic_font">Arabic Font</string>
+    <string name="settings_arabic_font_size">Arabic Font Size</string>
+    <string name="settings_app_version">App Version</string>
+    <string name="contact_email">Email</string>
+    <string name="contact_whatsapp">WhatsApp</string>
+    <string name="toast_coming_soon">Coming soon</string>
+    <string name="app_version">Version 1.1.0</string>
+    <!-- ===== Theme option labels ===== -->
+    <string name="theme_default">Default</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_blue">Blue</string>
+    <string name="theme_brown">Brown</string>
+    <string name="theme_purple">Purple</string>
+    <string name="theme_dark">Dark</string>
+    <!-- ===== Notifications ===== -->
+    <string name="notification_channel_name">Durud &amp; Salam Reminders</string>
+    <string name="notification_channel_description">Daily recitation reminders for Durud and Salam</string>
+    <string name="notification_text">Take a moment to send Durood &amp; Salam upon the beloved Prophet ﷺ.</string>
+    <string name="notification_title">Durood &amp; Salam</string>
+    <string name="notification_settings_title">Notification Settings</string>
+    <string name="notifications_enable_label">Enable notifications</string>
+    <string name="notifications_schedule_label">Schedule</string>
+    <string name="day_sunday">Sunday</string>
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+    <string name="day_saturday">Saturday</string>
+    <string name="notification_save">Save</string>
+    <string name="notifications_saved">Notification schedule saved</string>
+    <string name="notifications_permission_required">Notification permission is required to set reminders</string>
+    <string name="notifications_permission_denied">Notification permission denied</string>
+    <string name="notifications_disabled">Notifications disabled</string>
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+    <string name="about_title">About the App</string>
+    <string name="about_body">This app contains 25 Duruds narrated in authentic Hadith and 15 Salams. Each Durud and Salam comes with the Arabic text, Bengali pronunciation, meaning and Hadith reference. It also includes a Durud counter and a Virtues section.</string>
+    <!-- Authorship &amp; sources (About credit) -->
+    <string name="about_credit_title">✒️ Authorship &amp; Sources</string>
+    <string name="about_credit_1">Composed in the light of “Madrasa Shahid” and other reference books authored by Hakimul Ummat Mufti Muzaffarul Millat Hazrat Maulana Shah Ashraf Ali Thanvi (Rah.).</string>
+    <string name="about_credit_2">Compiled under the supervision and guidance of Hazrat Maulana Mufti Nurul Amin of Khulna, a prominent khalifa of Arifbillah Rushmi-e-Zamana Hazrat Maulana Shah Hakim Muhammad Akhtar Saheb (Damat Barakatuhum).</string>
+    <string name="hadith_books_title">📚 Hadith Collections</string>
+    <string name="book_bukhari">Sahih al-Bukhari</string>
+    <string name="book_muslim">Sahih Muslim</string>
+    <string name="book_tirmidhi">Sunan al-Tirmidhi</string>
+    <string name="book_abu_dawud">Sunan Abu Dawud</string>
+    <string name="book_ibn_majah">Sunan Ibn Majah</string>
+    <string name="book_ahmad">Musnad Ahmad</string>
+    <string name="book_nasai">Sunan an-Nasa\'i</string>
+    <string name="book_bayhaqi">Sunan al-Bayhaqi</string>
+    <string name="book_tabarani">Al-Mu\'jam al-Kabir (Tabarani)</string>
+    <string name="book_malik">Muwatta Imam Malik</string>
+    <string name="purpose_title">🤲 Purpose</string>
+    <string name="purpose_body">Expressing love for the Messenger of Allah ﷺ and spreading the practice of Durud among the Ummah is the core purpose of this app. May Allah grant us the ability to recite abundant Durud. Ameen.</string>
+    <string name="contact_title">Contact</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <!-- ===== Footer ===== -->
+    <string name="footer_text">Free for everyone — recite abundant Durud</string>
+
+    <!-- ===== Toasts / system messages (native + WebView) ===== -->
+    <string name="toast_copied">Copied! ✓</string>
+    <string name="toast_share_copied">Copy to share</string>
+    <string name="share_chooser_title">Share Durud</string>
+    <string name="error_no_email_app">No email app found</string>
+    <string name="email_support_subject">%1$s Support</string>
+
+    <!-- ===== Localization helpers (not user-visible) ===== -->
+    <!-- Digits 0-9 in the active script, used to render numbers (10 -> ১০ / ۱۰) -->
+    <string name="local_digits">0123456789</string>
+
+    <!-- ===== Settings rows (used by the Settings screen) ===== -->
+    <string name="settings_title">Settings</string>
+    <string name="language_title">Language</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="theme_title">Theme</string>
+
+    <!-- ===== Menu / screens ===== -->
+    <string name="menu_title">Menu</string>
+    <string name="my_activity_title">My Activity</string>
+    <string name="about_the_app_title">About the app</string>
+    <string name="about_us_title">About us</string>
+    <string name="contact_us_title">Contact us</string>
+    <string name="developed_by">Developed by</string>
+    <string name="my_activity_placeholder">Your activity will appear here.</string>
+
+    <!-- ===== First-launch setup ===== -->
+    <string name="setup_title">Set up your app</string>
+    <string name="setup_done">Done</string>
+
+    <!-- ===== Crash reporting / diagnostics ===== -->
+    <string name="crash_report_consent_title">Send crash reports by email</string>
+    <string name="crash_report_consent_desc">Allows the app to prepare crash diagnostic information (a .txt file) by email. No report is sent automatically — you choose whether to send it.</string>
+    <string name="log_generated">Log generated successfully</string>
+    <string name="share_log">Share log</string>
+    <string name="log_generate_failed">Failed to generate log</string>
+    <string name="log_share_failed">Failed to share log</string>
+
+    <!-- ===== My Activity ===== -->
+    <string name="activity_durood_label">Durood</string>
+    <string name="activity_salam_label">Salam</string>
+    <string name="activity_empty">No activity recorded yet.</string>
+    <string name="activity_today">Today</string>
+    <string name="activity_yesterday">Yesterday</string>
+    <string name="activity_total">Total</string>
 </resources>

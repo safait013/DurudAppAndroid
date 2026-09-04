@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="bn">
+﻿<!DOCTYPE html>
+<html lang="{{html_lang_code}}" dir="{{html_dir}}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,123 +7,141 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min-height:100vh;overflow-x:hidden}
+body{font-family:'Noto Serif Bengali',serif;background:var(--c-bg);color:var(--c-text);min-height:100vh;overflow-x:hidden}
 
 /* Header */
-.app-header{background:linear-gradient(135deg,#1A3A2A 0%,#2D5A3D 60%,#3D7A55 100%);padding:40px 20px 22px;text-align:center;position:relative;overflow:hidden}
-.header-pattern{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.15;background-image:radial-gradient(circle at 20% 50%,#C9A84C 1px,transparent 1px),radial-gradient(circle at 80% 20%,#C9A84C 1px,transparent 1px),radial-gradient(circle at 60% 80%,#C9A84C 1px,transparent 1px);background-size:80px 80px}
-.star-decor{position:absolute;font-size:40px;opacity:0.08;color:#C9A84C}
+.app-header{background:linear-gradient(135deg,var(--c-primary) 0%,var(--c-primary-2) 60%,var(--c-primary-3) 100%);padding:40px 20px 22px;text-align:center;position:relative;overflow:hidden}
+.header-pattern{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.15;background-image:radial-gradient(circle at 20% 50%,var(--c-accent) 1px,transparent 1px),radial-gradient(circle at 80% 20%,var(--c-accent) 1px,transparent 1px),radial-gradient(circle at 60% 80%,var(--c-accent) 1px,transparent 1px);background-size:80px 80px}
+.star-decor{position:absolute;font-size:40px;opacity:0.08;color:var(--c-accent)}
 .star-decor.s1{top:10px;left:10px}
 .star-decor.s2{top:10px;right:10px}
-.bismillah{font-family:'Amiri',serif;font-size:24px;color:#F0D080;letter-spacing:2px;margin-bottom:10px;position:relative;z-index:1}
-.app-title{font-size:22px;font-weight:600;color:#fff;position:relative;z-index:1;margin-bottom:4px}
+.bismillah{font-family:'Amiri',serif;font-size:24px;color:var(--c-accent-light);letter-spacing:2px;margin-bottom:10px;position:relative;z-index:1}
+.app-title{font-size:22px;font-weight:600;color:var(--c-on-primary);position:relative;z-index:1;margin-bottom:4px}
 .app-subtitle{font-size:13px;color:rgba(255,255,255,0.75);position:relative;z-index:1}
-.gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin:14px 0 0}
+.gold-divider{height:2px;background:linear-gradient(90deg,transparent,var(--c-accent),transparent);margin:14px 0 0}
 
 /* Settings Icon */
 .settings-icon{position:absolute;top:12px;right:16px;z-index:10;font-size:22px;color:rgba(255,255,255,0.7);cursor:pointer;padding:6px;border-radius:50%;transition:all 0.2s;user-select:none}
 .settings-icon:active{background:rgba(255,255,255,0.15);transform:scale(0.92)}
 
 /* Tabs */
-.tabs-wrapper{background:#1A3A2A;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.tabs-wrapper{background:var(--c-primary);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
 .tabs{display:flex;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:none;padding:12px 18px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:'Noto Serif Bengali',serif;transition:all 0.25s;user-select:none}
-.tab.active{color:#F0D080;border-bottom-color:#C9A84C}
+.tab{flex:none;display:flex;align-items:center;gap:6px;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:'Noto Serif Bengali',serif;transition:all 0.25s;user-select:none}
+.tab-icon{width:18px;height:18px;flex-shrink:0}
+.tab.active{color:var(--c-accent-light);border-bottom-color:var(--c-accent)}
 
 /* Content */
 .content{padding:16px;max-width:600px;margin:0 auto}
 
 /* Search */
-.search-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid rgba(201,168,76,0.4);border-radius:12px;padding:10px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.search-bar input{border:none;outline:none;flex:1;font-size:14px;font-family:'Noto Serif Bengali',serif;color:#1A1A0E;background:transparent}
-.search-bar input::placeholder{color:#aaa}
-.search-icon{color:#8B6914;font-size:18px}
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--c-card);border:1.5px solid rgba(201,168,76,0.4);border-radius:12px;padding:10px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.search-bar input{border:none;outline:none;flex:1;font-size:14px;font-family:'Noto Serif Bengali',serif;color:var(--c-text);background:transparent}
+.search-bar input::placeholder{color:var(--c-faint)}
+.search-icon{color:var(--c-accent-text);font-size:18px}
 
 /* Darood Card */
-.darood-card{background:#FFFDF5;border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.1);border:1px solid rgba(201,168,76,0.22);transition:transform 0.15s;animation:fadeIn 0.3s ease}
+.darood-card{background:var(--c-card);border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,0.1);border:1px solid rgba(201,168,76,0.22);transition:transform 0.15s;animation:fadeIn 0.3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .darood-card:active{transform:scale(0.99)}
 
-.card-header{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);padding:13px 16px;display:flex;align-items:center;gap:12px}
-.card-num{width:30px;height:30px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1A3A2A;flex-shrink:0;font-family:sans-serif}
-.card-title{font-size:14px;color:#fff;font-weight:600;flex:1;line-height:1.4}
+.card-header{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-2));padding:13px 16px;display:flex;align-items:center;gap:12px}
+.card-num{width:30px;height:30px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--c-primary);flex-shrink:0;font-family:sans-serif}
+.card-title{font-size:14px;color:var(--c-on-primary);font-weight:600;flex:1;line-height:1.4}
 
 .card-body{padding:16px}
-.arabic{font-family:'Amiri',serif;font-size:24px;line-height:2;text-align:right;color:#1A3A2A;direction:rtl;background:linear-gradient(135deg,#F8F3E0,#FFF8E8);padding:14px 16px;border-radius:10px;border-right:3.5px solid #C9A84C;margin-bottom:14px;word-spacing:4px}
+.arabic{font-family:var(--arabic-font),serif;font-size:var(--arabic-font-size);line-height:2;text-align:right;color:var(--c-primary);direction:rtl;background:linear-gradient(135deg,var(--c-surface),var(--c-bg));padding:14px 16px;border-radius:10px;border-right:3.5px solid var(--c-accent);margin-bottom:14px;word-spacing:4px}
 
-.section-label{font-size:11px;color:#8B6914;font-weight:700;margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase}
-.uchchar{font-size:14px;color:#444;line-height:1.8;margin-bottom:12px;font-style:italic;background:#F5F0E8;padding:11px 14px;border-radius:9px}
-.ortho{font-size:13px;color:#333;line-height:1.85;margin-bottom:10px;padding:11px 14px;background:#EFF8F0;border-radius:9px;border-left:3px solid #3D7A55}
+.section-label{font-size:11px;color:var(--c-accent-text);font-weight:700;margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase}
+.uchchar{font-size:14px;color:var(--c-muted);line-height:1.8;margin-bottom:12px;font-style:italic;background:var(--c-surface);padding:11px 14px;border-radius:9px}
+.ortho{font-size:13px;color:var(--c-muted);line-height:1.85;margin-bottom:10px;padding:11px 14px;background:var(--c-surface-2);border-radius:9px;border-left:3px solid var(--c-primary-3)}
 
-.ref-tag{display:inline-flex;align-items:center;gap:5px;background:#C9A84C;color:#1A3A2A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
-.fazilat-box{background:#FFF8E8;border:1px solid rgba(201,168,76,0.35);border-radius:9px;padding:10px 14px;margin-top:10px;font-size:12.5px;color:#555;line-height:1.8}
-.fazilat-box::before{content:'✦ ';color:#C9A84C;font-size:14px}
+.collapsible-section{margin-bottom:10px}
+.collapsible-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:var(--c-surface);border:1px solid rgba(201,168,76,0.3);border-radius:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.collapsible-header:active{background:var(--c-surface-3)}
+.collapsible-title{font-size:12px;font-weight:700;color:var(--c-accent-text);letter-spacing:0.5px;text-transform:uppercase}
+.collapsible-chevron{font-size:13px;color:var(--c-accent-text);transition:transform 0.2s ease;flex-shrink:0;line-height:1}
+.collapsible-section.open .collapsible-chevron{transform:rotate(180deg)}
+.collapsible-content{display:none;margin-top:6px}
+.collapsible-section.open .collapsible-content{display:block}
+.collapsible-content .uchchar{margin-bottom:0}
+.collapsible-content .ortho{margin-bottom:0}
+.ref-tag{display:inline-flex;align-items:center;gap:5px;background:var(--c-accent);color:var(--c-primary);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.fazilat-box{background:var(--c-bg);border:1px solid rgba(201,168,76,0.35);border-radius:9px;padding:10px 14px;margin-top:10px;font-size:12.5px;color:var(--c-muted);line-height:1.8}
+.fazilat-box::before{content:'✦ ';color:var(--c-accent);font-size:14px}
 
 .action-row{display:flex;gap:8px;margin-top:14px}
 .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:9px;font-size:12px;font-family:'Noto Serif Bengali',serif;cursor:pointer;transition:all 0.2s;border:none;font-weight:600}
-.btn-copy{background:transparent;border:1.5px solid #C9A84C;color:#8B6914}
-.btn-copy:active,.btn-copy.active{background:#C9A84C;color:#1A3A2A}
-.btn-share{background:#1A3A2A;color:#F0D080}
-.btn-share:active{background:#2D5A3D}
+.btn-copy{background:transparent;border:1.5px solid var(--c-accent);color:var(--c-accent-text)}
+.btn-copy:active,.btn-copy.active{background:var(--c-accent);color:var(--c-primary)}
+.btn-share{background:var(--c-primary);color:var(--c-accent-light)}
+.btn-share:active{background:var(--c-primary-2)}
 
 /* Tab Panels */
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
 /* Intro/Fazilat Tab */
-.intro-card{background:#FFFDF5;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(201,168,76,0.18)}
-.intro-card h3{color:#1A3A2A;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(201,168,76,0.25);padding-bottom:8px}
-.intro-card p,.intro-card .intro-body{font-size:13px;line-height:1.95;color:#444;white-space:pre-line}
+.intro-card{background:var(--c-card);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(201,168,76,0.18)}
+.intro-card h3{color:var(--c-primary);font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(201,168,76,0.25);padding-bottom:8px}
+.intro-card p,.intro-card .intro-body{font-size:13px;line-height:1.95;color:var(--c-muted);white-space:pre-line}
+.intro-card .collapsible-header{background:transparent;border:none;border-radius:0;padding:0 0 10px;border-bottom:1px solid rgba(201,168,76,0.25)}
+.intro-card .collapsible-title{text-transform:none;font-size:15px;color:var(--c-primary);letter-spacing:0;font-weight:600}
+.intro-card .collapsible-content{margin-top:12px}
 
-.section-title{font-size:15px;font-weight:600;color:#1A3A2A;margin:6px 0 14px;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,#C9A84C,transparent)}
+.section-title{font-size:15px;font-weight:600;color:var(--c-primary);margin:6px 0 14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--c-accent),transparent)}
 
 /* Counter */
-.counter-section{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
-.counter-title{color:#F0D080;font-size:14px;margin-bottom:14px}
-.counter-display{font-family:'Amiri',serif;font-size:52px;color:#fff;margin:8px 0}
-.counter-arabic{font-family:'Amiri',serif;font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:16px;direction:rtl}
+.counter-section{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-2));border-radius:16px;padding:20px;margin-bottom:16px;text-align:center}
+.counter-title{color:var(--c-accent-light);font-size:14px;margin-bottom:14px}
+.counter-display{font-family:'Amiri',serif;font-size:52px;color:var(--c-on-primary);margin:8px 0}
+.counter-arabic{font-family:var(--arabic-font),serif;font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:16px;direction:rtl}
 .counter-btns{display:flex;gap:10px;justify-content:center}
 .cnt-btn{padding:10px 24px;border-radius:10px;border:none;font-size:15px;cursor:pointer;font-weight:700;transition:all 0.15s}
 .cnt-btn:active{transform:scale(0.95)}
-.cnt-add{background:#C9A84C;color:#1A3A2A}
-.cnt-reset{background:rgba(255,255,255,0.15);color:#fff}
+.cnt-add{background:var(--c-accent);color:var(--c-primary)}
+.cnt-reset{background:rgba(255,255,255,0.15);color:var(--c-on-primary)}
 .target-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
 .target-btn{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;background:transparent;font-family:'Noto Serif Bengali',serif}
-.target-btn.sel{background:#C9A84C;color:#1A3A2A;border-color:#C9A84C}
+.target-btn.sel{background:var(--c-accent);color:var(--c-primary);border-color:var(--c-accent)}
 .progress-bar{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;margin-top:14px;overflow:hidden}
-.progress-fill{height:100%;background:#C9A84C;border-radius:3px;transition:width 0.3s;width:0%}
+.progress-fill{height:100%;background:var(--c-accent);border-radius:3px;transition:width 0.3s;width:0%}
+.counter-select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);color:var(--c-on-primary);font-size:14px;margin-bottom:12px;outline:none;font-family:inherit}
+.counter-select option{color:var(--c-primary);background:var(--c-card)}
+.counter-target-info{color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:14px}
 
 /* Settings Modal */
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:200;display:none;justify-content:center;align-items:flex-start;padding:20px;overflow-y:auto;animation:fadeIn 0.2s ease}
 .modal-overlay.show{display:flex}
-.modal-content{background:#FFFDF5;border-radius:18px;max-width:500px;width:100%;margin-top:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.3);animation:slideUp 0.3s ease}
+.modal-content{background:var(--c-card);border-radius:18px;max-width:500px;width:100%;margin-top:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.3);animation:slideUp 0.3s ease}
 @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-header{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
-.modal-header h2{color:#F0D080;font-size:16px;font-weight:600}
+.modal-header{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-2));padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{color:var(--c-accent-light);font-size:16px;font-weight:600}
 .modal-close{color:rgba(255,255,255,0.7);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px;transition:all 0.2s;user-select:none}
 .modal-close:active{background:rgba(255,255,255,0.15)}
 .modal-body{padding:18px 20px;max-height:70vh;overflow-y:auto}
 
 /* About in Modal */
 .about-header{text-align:center;padding:10px 0 8px}
-.about-logo{font-family:'Amiri',serif;font-size:42px;color:#1A3A2A;margin-bottom:4px}
-.about-appname{font-size:17px;font-weight:600;color:#1A3A2A}
-.about-version{font-size:12px;color:#888;margin-top:2px}
+.about-logo{font-family:'Amiri',serif;font-size:42px;color:var(--c-primary);margin-bottom:4px}
+.about-appname{font-size:17px;font-weight:600;color:var(--c-primary)}
+.about-version{font-size:12px;color:var(--c-muted-2);margin-top:2px}
 
-.info-card{background:#FFFDF5;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(201,168,76,0.18)}
-.info-card h3{color:#1A3A2A;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(201,168,76,0.25);padding-bottom:8px}
-.info-card p,.info-item{font-size:13px;line-height:1.95;color:#444}
+.info-card{background:var(--c-card);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(201,168,76,0.18)}
+.info-card h3{color:var(--c-primary);font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(201,168,76,0.25);padding-bottom:8px}
+.info-card p,.info-item{font-size:13px;line-height:1.95;color:var(--c-muted)}
+.info-card p + p{margin-top:12px}
 .info-item{padding:5px 0;border-bottom:1px dashed rgba(201,168,76,0.2);display:flex;align-items:flex-start;gap:8px}
 .info-item:last-child{border-bottom:none}
-.info-dot{color:#C9A84C;font-size:16px;flex-shrink:0;margin-top:2px}
+.info-dot{color:var(--c-accent);font-size:16px;flex-shrink:0;margin-top:2px}
 
 /* Developer Card */
-.dev-card{background:linear-gradient(135deg,#1A3A2A,#2D5A3D);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
-.dev-avatar{width:56px;height:56px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#1A3A2A;flex-shrink:0;font-family:sans-serif;border:2px solid rgba(240,208,128,0.4)}
-.dev-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px}
-.dev-role{font-size:12px;color:#F0D080;margin-bottom:2px}
+.dev-card{background:linear-gradient(135deg,var(--c-primary),var(--c-primary-2));border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.dev-avatar{width:56px;height:56px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--c-primary);flex-shrink:0;font-family:sans-serif;border:2px solid rgba(240,208,128,0.4)}
+.dev-name{font-size:16px;font-weight:700;color:var(--c-on-primary);margin-bottom:2px}
+.dev-role{font-size:12px;color:var(--c-accent-light);margin-bottom:2px}
 .dev-company{font-size:12px;color:rgba(255,255,255,0.65)}
 .dev-divider{height:1px;background:rgba(255,255,255,0.12);margin:14px 0}
 .dev-link{display:flex;align-items:center;gap:10px;padding:8px 0;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.08)}
@@ -134,17 +152,98 @@ body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min
 .dev-link-arrow{color:rgba(255,255,255,0.3);font-size:12px}
 
 /* Footer */
-.footer{text-align:center;padding:24px 16px;color:#888;font-size:12px;line-height:2;background:#1A3A2A;color:rgba(255,255,255,0.5);margin-top:8px}
-.footer .arabic-footer{font-family:'Amiri',serif;font-size:18px;color:#F0D080;display:block;margin-top:6px}
+.footer{text-align:center;padding:24px 16px;color:var(--c-muted-2);font-size:12px;line-height:2;background:var(--c-primary);color:rgba(255,255,255,0.5);margin-top:8px}
+.footer .arabic-footer{font-family:'Amiri',serif;font-size:18px;color:var(--c-accent-light);display:block;margin-top:6px}
 
 /* Toast */
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A3A2A;color:#F0D080;padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--c-primary);color:var(--c-accent-light);padding:10px 24px;border-radius:24px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* Empty State */
-.empty{text-align:center;padding:40px 20px;color:#aaa}
+.empty{text-align:center;padding:40px 20px;color:var(--c-faint)}
 .empty-icon{font-size:48px;margin-bottom:12px}
 .empty p{font-size:14px}
+</style>
+<style>
+/* ===== Bundled Arabic fonts (offline) ===== */
+@font-face{font-family:'AmiriLocal';src:url('fonts/Amiri-Regular.ttf') format('truetype');font-weight:400;font-style:normal}
+@font-face{font-family:'ScheherazadeNewLocal';src:url('fonts/ScheherazadeNew-Regular.ttf') format('truetype');font-weight:400;font-style:normal}
+@font-face{font-family:'LateefLocal';src:url('fonts/Lateef-Regular.ttf') format('truetype');font-weight:400;font-style:normal}
+@font-face{font-family:'NotoNaskhLocal';src:url('fonts/NotoNaskhArabic-Regular.ttf') format('truetype');font-weight:400;font-style:normal}
+
+/* ===== Theme palette (default = original green/gold) ===== */
+:root{
+  --c-primary:#1A3A2A;--c-primary-2:#2D5A3D;--c-primary-3:#3D7A55;
+  --c-accent:#C9A84C;--c-accent-light:#F0D080;--c-accent-text:#8B6914;
+  --c-bg:#FFF8E8;--c-card:#FFFDF5;--c-text:#1A1A0E;--c-on-primary:#ffffff;
+  --c-surface:#F5F0E8;--c-surface-2:#EFF8F0;--c-surface-3:#EDE4D2;
+  --c-muted:#555555;--c-muted-2:#888888;--c-faint:#aaaaaa;
+  --arabic-font:'Amiri';--arabic-font-size:24px;
+}
+[data-theme="green"]{--c-primary:#0E2F1F;--c-primary-2:#1D4A30;--c-primary-3:#2E6B43;--c-accent:#E5C15C;--c-accent-light:#F4DC8A;--c-accent-text:#9A7B1C;--c-bg:#F4F1E0;--c-card:#FFFDF2;--c-text:#10200F;--c-surface:#EFE9D4;--c-surface-2:#E7F3E2;--c-surface-3:#E3DCC3}
+[data-theme="blue"]{--c-primary:#0D2B45;--c-primary-2:#1B4A6B;--c-primary-3:#2E6E99;--c-accent:#E8B64C;--c-accent-light:#F6D27E;--c-accent-text:#9A6F14;--c-bg:#EEF4FA;--c-card:#FBFCFF;--c-text:#0E1A24;--c-surface:#E7EEF6;--c-surface-2:#E4F0F7;--c-surface-3:#D8E3EE}
+[data-theme="brown"]{--c-primary:#3E2A1E;--c-primary-2:#5C4028;--c-primary-3:#7A5A38;--c-accent:#D9A94C;--c-accent-light:#F0C87E;--c-accent-text:#8A6A1F;--c-bg:#F7F0E6;--c-card:#FEFBF4;--c-text:#241A10;--c-surface:#EFE4D3;--c-surface-2:#F0E8DA;--c-surface-3:#E4D6BF}
+[data-theme="purple"]{--c-primary:#2A1A3E;--c-primary-2:#4A2D6B;--c-primary-3:#6A4A99;--c-accent:#D8A94C;--c-accent-light:#F2CF7E;--c-accent-text:#8A6A1F;--c-bg:#F4EFF8;--c-card:#FDFBFE;--c-text:#1E1428;--c-surface:#EAE2F2;--c-surface-2:#EFE9F5;--c-surface-3:#DDD2EA}
+[data-theme="dark"]{--c-primary:#0C1510;--c-primary-2:#12241B;--c-primary-3:#1C3A2A;--c-accent:#C9A84C;--c-accent-light:#F0D080;--c-accent-text:#E5C96A;--c-bg:#0D1110;--c-card:#151B17;--c-text:#E7E7E7;--c-on-primary:#ffffff;--c-surface:#1C2420;--c-surface-2:#18221C;--c-surface-3:#202A24;--c-muted:#B6B6B6;--c-muted-2:#9A9A9A;--c-faint:#777777}
+</style>
+<!--ARABIC_FONT-->
+<!--APP_SETTINGS-->
+<style>
+/* Settings modal controls */
+.set-group{margin-bottom:18px}
+.set-group-title{font-size:12px;color:var(--c-accent-text);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.06)}
+.set-row label{font-size:14px;color:var(--c-text);font-weight:600;margin:0}
+.set-select{background:var(--c-card);color:var(--c-text);border:1.5px solid var(--c-accent);border-radius:8px;padding:7px 10px;font-size:13px;outline:none;font-family:inherit;max-width:150px}
+.set-range{width:120px;accent-color:var(--c-accent)}
+.set-size-val{font-size:12px;color:var(--c-muted);min-width:28px;text-align:center}
+.set-btn{background:var(--c-accent);color:var(--c-primary);border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.set-note{font-size:11px;color:var(--c-muted-2);margin-top:3px;line-height:1.5}
+.switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--c-muted-2);transition:.3s;border-radius:24px}
+.slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+.switch input:checked+.slider{background:var(--c-primary-3)}
+.switch input:checked+.slider:before{transform:translateX(20px)}
+.notif-box{border:1px solid var(--c-accent);border-radius:10px;padding:10px 12px;margin-top:6px}
+.notif-hidden{display:none}
+.day-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.05)}
+.day-row:last-child{border-bottom:none}
+.day-row .day-name{font-size:13px;color:var(--c-text);font-weight:600}
+.day-row .day-time{font-size:13px;color:var(--c-accent-text);background:transparent;border:none;cursor:pointer;font-weight:700;padding:4px 6px;border-radius:6px}
+.day-row .day-time:hover{background:rgba(201,168,76,0.12)}
+.day-times{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end;max-width:65%}
+.time-chip{display:inline-flex;align-items:center;gap:2px;background:rgba(201,168,76,0.15);border-radius:6px;padding:2px 5px}
+.chip-remove{background:transparent;border:none;color:var(--c-muted);cursor:pointer;font-size:15px;padding:0 3px;line-height:1}
+.chip-add{background:var(--c-accent);color:var(--c-primary);border:none;border-radius:6px;min-width:26px;height:26px;cursor:pointer;font-size:16px;font-weight:700;line-height:1}
+.menu-item{display:flex;align-items:center;gap:12px;width:100%;padding:14px 12px;border:none;border-bottom:1px solid rgba(0,0,0,0.06);background:transparent;cursor:pointer;font-size:15px;color:var(--c-text);font-weight:600;text-align:left}
+.menu-item span{font-size:18px}
+.menu-item:last-child{border-bottom:none}
+.menu-item:active{background:rgba(0,0,0,0.03)}
+.modal-back{font-size:20px;color:var(--c-on-primary);cursor:pointer;padding:0 6px;user-select:none}
+.screen{display:none}
+.screen.active{display:block}
+.setup-lang-row{display:flex;gap:8px;flex-wrap:wrap}
+.setup-lang-row .set-btn{flex:1;min-width:80px}
+.contact-row{display:flex;align-items:center;gap:12px;padding:10px 4px;text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.06)}
+.contact-row:last-child{border-bottom:none}
+.contact-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.contact-label{font-size:13px;font-weight:600;color:var(--c-text);flex:1}
+.contact-arrow{color:var(--c-muted-2);font-size:14px}
+.activity-section{margin-bottom:16px}
+.activity-card{background:var(--c-card);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
+.activity-title{font-size:14px;font-weight:700;color:var(--c-text);margin-bottom:8px;line-height:1.5}
+.activity-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0;border-bottom:1px dashed rgba(0,0,0,0.08);font-size:13px}
+.activity-row:last-child{border-bottom:none}
+.activity-date{color:var(--c-muted);font-weight:600}
+.activity-count{color:var(--c-accent-text);font-weight:700}
+.activity-total{margin-top:8px;font-size:12px;font-weight:700;color:var(--c-accent);text-align:right}
+.empty{text-align:center;padding:28px 16px}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty p{color:var(--c-muted);font-size:14px;line-height:1.6;margin:0}
+html[dir="rtl"] .activity-total{text-align:left}
+html[dir="rtl"] .dev-link-arrow{transform:scaleX(-1)}
+html[dir="rtl"] .settings-icon{right:auto;left:16px}
 </style>
 </head>
 <body>
@@ -154,18 +253,18 @@ body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min
   <div class="star-decor s1">☪</div>
   <div class="star-decor s2">☪</div>
   <div class="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
-  <div class="app-title">দরুদ শরীফ সংকলন</div>
-  <div class="app-subtitle">২৫টি দরুদ ও ১৫টি সালাম — অর্থ, উচ্চারণ ও হাদিস রেফারেন্সসহ</div>
+  <div class="app-title">{{app_name}}</div>
+  <div class="app-subtitle">{{home_tagline}}</div>
   <div class="gold-divider"></div>
-  <div class="settings-icon" onclick="openSettings()">⚙️</div>
+  <div class="settings-icon" onclick="openMenu()">☰</div>
 </div>
 
 <div class="tabs-wrapper">
   <div class="tabs" id="tabs">
-    <div class="tab active" onclick="switchTab('darood',this)">📿 দরুদ সমূহ</div>
-    <div class="tab" onclick="switchTab('salam',this)">🕊️ সালাম</div>
-    <div class="tab" onclick="switchTab('counter',this)">📿 তাসবিহ</div>
-    <div class="tab" onclick="switchTab('fazilat',this)">⭐ ফজিলত</div>
+    <div class="tab active" onclick="switchTab('darood',this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 13.5A8.5 8.5 0 1 1 10.5 3.5a7 7 0 0 0 10 10z"/><path d="M18 2.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg><span>{{tab_duroods}}</span></div>
+    <div class="tab" onclick="switchTab('salam',this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12.5V7a2 2 0 0 1 4 0v4"/><path d="M12 11V5.5a2 2 0 0 1 4 0V11"/><path d="M16 11V7a2 2 0 0 1 4 0v7c0 4-2.5 7-6.5 7S7 18 7 13.5"/></svg><span>{{tab_salam}}</span></div>
+    <div class="tab" onclick="switchTab('counter',this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span>{{tab_tasbih}}</span></div>
+    <div class="tab" onclick="switchTab('fazilat',this)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>{{tab_fazilat}}</span></div>
   </div>
 </div>
 
@@ -175,7 +274,7 @@ body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min
   <div class="tab-panel active" id="tab-darood">
     <div class="search-bar">
       <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="দরুদ খুঁজুন..." oninput="filterCards(this.value)">
+      <input type="text" id="search" placeholder="{{search_durood_hint}}" oninput="filterCards(this.value)">
     </div>
     <div id="cards-container"></div>
   </div>
@@ -184,7 +283,7 @@ body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min
   <div class="tab-panel" id="tab-salam">
     <div class="search-bar">
       <span class="search-icon">🔍</span>
-      <input type="text" id="salam-search" placeholder="সালাম খুঁজুন..." oninput="filterSalamCards(this.value)">
+      <input type="text" id="salam-search" placeholder="{{search_salam_hint}}" oninput="filterSalamCards(this.value)">
     </div>
     <div id="salam-cards-container"></div>
   </div>
@@ -192,120 +291,257 @@ body{font-family:'Noto Serif Bengali',serif;background:#FFF8E8;color:#1A1A0E;min
   <!-- COUNTER TAB -->
   <div class="tab-panel" id="tab-counter">
     <div class="counter-section">
-      <div class="counter-title">দরুদ কাউন্টার</div>
-      <div class="counter-arabic">اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَّسَلِّمْ</div>
-      <div class="counter-display" id="count">0</div>
-      <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:14px" id="target-info">লক্ষ্য নির্বাচন করুন</div>
+      <div class="counter-title">{{counter_title}}</div>
+      <select id="durood-select" class="counter-select" onchange="selectDurood(this.value)"></select>
+      <div class="counter-arabic" id="durood-arabic"></div>
+      <div class="counter-display" id="durood-count">0</div>
+      <div class="counter-target-info" id="durood-target-info">{{counter_select_target}}</div>
       <div class="counter-btns">
-        <button class="cnt-btn cnt-add" onclick="addCount()">+ পড়লাম</button>
-        <button class="cnt-btn cnt-reset" onclick="resetCount()">রিসেট</button>
+        <button class="cnt-btn cnt-add" onclick="addDuroodCount()">{{btn_recited}}</button>
+        <button class="cnt-btn cnt-reset" onclick="resetDuroodCount()">{{btn_reset}}</button>
       </div>
       <div class="target-row">
-        <button class="target-btn" onclick="setTarget(10,this)">১০ বার</button>
-        <button class="target-btn" onclick="setTarget(33,this)">৩৩ বার</button>
-        <button class="target-btn" onclick="setTarget(100,this)">১০০ বার</button>
-        <button class="target-btn" onclick="setTarget(300,this)">৩০০ বার</button>
+        <button class="target-btn durood-target" onclick="setDuroodTarget(10,this)">{{target_10}}</button>
+        <button class="target-btn durood-target" onclick="setDuroodTarget(33,this)">{{target_33}}</button>
+        <button class="target-btn durood-target" onclick="setDuroodTarget(100,this)">{{target_100}}</button>
+        <button class="target-btn durood-target" onclick="setDuroodTarget(300,this)">{{target_300}}</button>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div class="progress-bar"><div class="progress-fill" id="durood-progress"></div></div>
+    </div>
+    <div class="counter-section">
+      <div class="counter-title">{{salam_counter_title}}</div>
+      <select id="salam-select" class="counter-select" onchange="selectSalam(this.value)"></select>
+      <div class="counter-arabic" id="salam-arabic"></div>
+      <div class="counter-display" id="salam-count">0</div>
+      <div class="counter-target-info" id="salam-target-info">{{counter_select_target}}</div>
+      <div class="counter-btns">
+        <button class="cnt-btn cnt-add" onclick="addSalamCount()">{{btn_recited}}</button>
+        <button class="cnt-btn cnt-reset" onclick="resetSalamCount()">{{btn_reset}}</button>
+      </div>
+      <div class="target-row">
+        <button class="target-btn salam-target" onclick="setSalamTarget(10,this)">{{target_10}}</button>
+        <button class="target-btn salam-target" onclick="setSalamTarget(33,this)">{{target_33}}</button>
+        <button class="target-btn salam-target" onclick="setSalamTarget(100,this)">{{target_100}}</button>
+        <button class="target-btn salam-target" onclick="setSalamTarget(300,this)">{{target_300}}</button>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="salam-progress"></div></div>
     </div>
     <div class="info-card">
-      <h3>🌟 সকাল-সন্ধ্যার আমল</h3>
-      <div class="info-item"><span class="info-dot">✦</span><span>সকালে ১০ বার ও সন্ধ্যায় ১০ বার দরুদ পড়ুন — কেয়ামতে নবীজির শাফায়াত লাভ হবে।</span></div>
-      <div class="info-item"><span class="info-dot">✦</span><span>জুমার দিনে বেশি বেশি দরুদ পড়ুন।</span></div>
-      <div class="info-item"><span class="info-dot">✦</span><span>১০০ বার দরুদ পড়লে ১০০ গুনাহ মাফ হয় ও ১০০ নেকি লেখা হয়।</span></div>
+      <h3>🌟 {{amal_title}}</h3>
+      <div class="info-item"><span class="info-dot">✦</span><span>{{amal_item_1}}</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>{{amal_item_2}}</span></div>
+      <div class="info-item"><span class="info-dot">✦</span><span>{{amal_item_3}}</span></div>
     </div>
   </div>
 
   <!-- FAZILAT TAB (Intro) -->
   <div class="tab-panel" id="tab-fazilat">
-    <div class="section-title">ভূমিকা ও ফজিলত</div>
+    <div class="section-title">{{fazilat_section_title}}</div>
     <div id="intro-container"></div>
   </div>
 
 </div>
 
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="settings-modal">
+<!-- SETUP SCREEN (first launch) -->
+<div class="modal-overlay" id="setup-screen">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>⚙️ সেটিংস ও পরিচিতি</h2>
-      <span class="modal-close" onclick="closeSettings()">✕</span>
+      <h2>{{setup_title}}</h2>
     </div>
     <div class="modal-body">
-      <div class="about-header">
-        <div class="about-logo">☪</div>
-        <div class="about-appname">দরুদ শরীফ সংকলন</div>
-        <div class="about-version">সংস্করণ ১.০</div>
+      <div class="set-group">
+        <div class="set-group-title">{{language_title}}</div>
+        <div class="setup-lang-row">
+          <button class="set-btn" id="setup-lang-en" onclick="setupLang('en')">{{lang_name_en}}</button>
+          <button class="set-btn" id="setup-lang-bn" onclick="setupLang('bn')">{{lang_name_bn}}</button>
+          <button class="set-btn" id="setup-lang-ur" onclick="setupLang('ur')">{{lang_name_ur}}</button>
+        </div>
+      </div>
+      <div class="set-group">
+        <div class="set-group-title">{{settings_arabic_font}}</div>
+        <select id="setup-font" class="set-select"></select>
+      </div>
+      <div class="set-group">
+        <div class="set-group-title">{{settings_arabic_font_size}}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="range" id="setup-fontsize" class="set-range" min="16" max="32" step="1" oninput="onSetupSizeInput(this.value)">
+          <span class="set-size-val" id="setup-fontsize-val"></span>
+        </div>
+      </div>
+      <div class="set-group">
+        <div class="set-group-title">{{theme_title}}</div>
+        <select id="setup-theme" class="set-select"></select>
+      </div>
+      <button class="set-btn" style="width:100%" onclick="finishSetup()">{{setup_done}}</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="modal-overlay" id="menu-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>{{menu_title}}</h2>
+      <span class="modal-close" onclick="closeMenu()">✕</span>
+    </div>
+    <div class="modal-body">
+      <button class="menu-item" onclick="showScreen('settings')"><span>⚙️</span>{{settings_title}}</button>
+      <button class="menu-item" onclick="showScreen('activity')"><span>📊</span>{{my_activity_title}}</button>
+      <button class="menu-item" onclick="showScreen('notifications')"><span>🔔</span>{{notifications_title}}</button>
+      <button class="menu-item" onclick="showScreen('about')"><span>ℹ️</span>{{about_the_app_title}}</button>
+      <button class="menu-item" onclick="showScreen('aboutus')"><span>👥</span>{{about_us_title}}</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN -->
+<div class="modal-overlay" id="screen-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-back" onclick="backToMenu()">←</span>
+      <h2 id="screen-title">{{settings_title}}</h2>
+      <span class="modal-close" onclick="closeScreen()">✕</span>
+    </div>
+    <div class="modal-body">
+      <!-- ===== SETTINGS ===== -->
+      <div class="screen" id="screen-settings">
+      <div class="set-group">
+        <div class="set-group-title">{{settings_section_preferences}}</div>
+
+        <div class="set-row">
+          <label>{{theme_title}}</label>
+          <select id="set-theme" class="set-select" onchange="onThemeChange(this.value)"></select>
+        </div>
+
+        <div class="set-row">
+          <label>{{settings_arabic_font}}</label>
+          <select id="set-font" class="set-select" onchange="onFontChange(this.value)"></select>
+        </div>
+
+        <div class="set-row">
+          <label>{{settings_arabic_font_size}}</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="set-fontsize" class="set-range" min="16" max="32" step="1" oninput="onFontSizeInput(this.value)" onchange="onFontSizeChange(this.value)">
+            <span class="set-size-val" id="set-fontsize-val"></span>
+          </div>
+        </div>
+
+        <div class="set-row">
+          <label>{{language_title}}</label>
+          <button class="set-btn" onclick="onLanguageClick()">{{language_title}}</button>
+        </div>
+      </div>
       </div>
 
-      <div class="info-card" style="margin-top:16px">
-        <h3>🌙 অ্যাপ পরিচিতি</h3>
-        <p>এই অ্যাপে রয়েছে ২৫টি সহীহ হাদিসে বর্ণিত দরুদ শরীফ ও ১৫টি সালাম। প্রতিটি দরুদ ও সালামের সাথে রয়েছে আরবি, বাংলা উচ্চারণ, অর্থ এবং হাদিসের রেফারেন্স। এছাড়াও রয়েছে দরুদ কাউন্টার ও ফজিলত বিভাগ।</p>
-      </div>
-
-      <div class="info-card">
-        <h3>📚 হাদিস গ্রন্থসমূহ</h3>
-        <div class="info-item"><span class="info-dot">•</span><span>সহীহ বুখারী</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সহীহ মুসলিম</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সুনান তিরমিজি</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সুনান আবু দাউদ</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সুনান ইবনে মাজাহ</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>মুসনাদে আহমদ</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সুনানে নাসাঈ</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>সুনানে বায়হাকী</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>আল-মুজামুল কাবীর (তাবারানি)</span></div>
-        <div class="info-item"><span class="info-dot">•</span><span>মুয়াত্তা ইমাম মালিক</span></div>
-      </div>
-
-      <div class="info-card">
-        <h3>🤲 উদ্দেশ্য</h3>
-        <p>আল্লাহর রাসুল (সা.)-এর প্রতি ভালোবাসার বহিঃপ্রকাশ এবং উম্মতের মধ্যে দরুদের আমল ছড়িয়ে দেওয়াই এই অ্যাপের মূল উদ্দেশ্য। আল্লাহ আমাদের বেশি বেশি দরুদ পড়ার তাওফিক দান করুন। আমীন।</p>
-      </div>
-
-      <div class="dev-card">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
-          <div class="dev-avatar">PB</div>
+      <!-- ===== NOTIFICATIONS ===== -->
+      <div class="screen" id="screen-notifications">
+      <div class="set-group">
+        <div class="set-group-title">{{notifications_title}}</div>
+        <div class="set-row" style="align-items:flex-start">
           <div>
-            <div class="dev-name">PrimeBite Labs</div>
+            <label>{{notifications_title}}</label>
+            <div class="set-note">{{notifications_schedule_label}}</div>
           </div>
+          <label class="switch">
+            <input type="checkbox" id="set-notif-enable" onchange="onNotifToggle(this.checked)">
+            <span class="slider"></span>
+          </label>
         </div>
-        <div class="dev-divider"></div>
-        <div style="display:flex;align-items:center;gap:16px;padding:8px 0">
-          <span style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;white-space:nowrap">Contact</span>
-          <div style="display:flex;gap:16px">
-            <a class="dev-link" href="mailto:primebytelabs.support@gmail.com" style="border-bottom:none;justify-content:center">
-              <div class="dev-link-icon" style="background:rgba(201,168,76,0.2)">✉️</div>
-            </a>
-            <a class="dev-link" href="https://www.linkedin.com/in/safait-rhmn" style="border-bottom:none;justify-content:center">
-              <div class="dev-link-icon" style="background:rgba(10,102,194,0.25)">💼</div>
-            </a>
-            <a class="dev-link" href="https://github.com/safait013" style="border-bottom:none;justify-content:center">
-              <div class="dev-link-icon" style="background:rgba(255,255,255,0.12)">🐙</div>
-            </a>
-            <a class="dev-link" href="https://wa.me/8801713442666" style="border-bottom:none;justify-content:center">
-              <div class="dev-link-icon" style="background:rgba(37,211,102,0.25)">💬</div>
-            </a>
-          </div>
+        <div id="notif-days" class="notif-box notif-hidden">
+          <div id="notif-days-list"></div>
         </div>
-        <div style="height:1px;background:rgba(255,255,255,0.12);margin:8px 0 12px"></div>
-        <div style="text-align:center">
-          <a href="https://safait013.github.io/durood-privacy-policy/privacy-policy.html" style="color:#F0D080;text-decoration:underline;font-size:13px" target="_blank">Privacy Policy</a>
-        </div>
+      </div>
+      </div>
+
+      <!-- ===== ABOUT THE APP ===== -->
+      <div class="screen" id="screen-about">
+      <div class="info-card">
+        <h3>{{about_title}}</h3>
+        <p>{{about_body}}</p>
+      </div>
+      <div class="info-card">
+        <h3>{{about_credit_title}}</h3>
+        <p>{{about_credit_1}}</p>
+        <p>{{about_credit_2}}</p>
+      </div>
+      <div class="info-card">
+        <h3>🤲 {{purpose_title}}</h3>
+        <p>{{purpose_body}}</p>
+      </div>
+      <div class="info-card">
+        <h3>{{developed_by}} PrimeByte Labs</h3>
+      </div>
+      <div class="info-card">
+        <h3>{{settings_app_version}}</h3>
+        <p id="app-version-text" onclick="onVersionTap()" style="cursor:pointer">{{app_version}}</p>
+      </div>
+      <div class="info-card" id="log-share-card" style="display:none">
+        <h3>{{log_generated}}</h3>
+        <button class="set-btn" onclick="shareGeneratedLog()">{{share_log}}</button>
+      </div>
+      <div class="info-card">
+        <h3>{{crash_report_consent_title}}</h3>
+        <p style="font-size:12px;line-height:1.7;color:var(--c-muted);margin-bottom:12px">{{crash_report_consent_desc}}</p>
+        <label class="switch">
+          <input type="checkbox" id="crash-consent" onchange="onCrashConsentToggle(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+      </div>
+
+      <!-- ===== ABOUT US ===== -->
+      <div class="screen" id="screen-aboutus">
+      <div class="set-group">
+        <div class="set-group-title">{{contact_us_title}}</div>
+      </div>
+      <div class="info-card">
+        <a class="contact-row" href="mailto:primebytelabs.support@gmail.com">
+          <span class="contact-icon" style="background:rgba(201,168,76,0.2)">✉️</span>
+          <span class="contact-label">{{contact_email}}</span>
+          <span class="contact-arrow">›</span>
+        </a>
+        <a class="contact-row" href="https://wa.me/8801713442666">
+          <span class="contact-icon" style="background:rgba(37,211,102,0.2)">💬</span>
+          <span class="contact-label">{{contact_whatsapp}}</span>
+          <span class="contact-arrow">›</span>
+        </a>
+      </div>
+      <div class="info-card" style="text-align:center">
+        <a href="https://safait013.github.io/durood-privacy-policy/privacy-policy.html" style="color:var(--c-accent-text);text-decoration:underline;font-size:13px" target="_blank">{{privacy_policy}}</a>
+      </div>
+      </div>
+
+      <!-- ===== MY ACTIVITY ===== -->
+      <div class="screen" id="screen-activity">
+      <div class="activity-section">
+        <div class="set-group-title">{{activity_durood_label}}</div>
+        <div id="activity-durood-list"></div>
+      </div>
+      <div class="activity-section">
+        <div class="set-group-title">{{activity_salam_label}}</div>
+        <div id="activity-salam-list"></div>
+      </div>
+      <div class="empty" id="activity-empty">
+        <div class="empty-icon">📊</div>
+        <p>{{activity_empty}}</p>
+      </div>
       </div>
     </div>
   </div>
 </div>
 
 <div class="footer">
-  সবার জন্য উন্মুক্ত — বেশি বেশি দরুদ পড়ুন
+  {{footer_text}}
   <span class="arabic-footer">اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَّسَلِّمْ</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!--APP_STRINGS-->
+<!--RELIGIOUS_DATA-->
 <script>
 // ====== 25 DAROOD DATA ======
-const daroodData = [
+let daroodData = [
   {num:1,title:"দরূদ শরীফ ১ - আল-মুজামুল কাবীর (তাবারানি)",arabic:"اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ وَأَنْزِلْهُ الْمَقْعَدَ الْمُقَرَّبَ عِنْدَكَ",uchchar:"আল্লাহুম্মা সাল্লি আলা মুহাম্মাদিওঁ ওয়া আলা আলি মুহাম্মাদ, ওয়া আনযিলহুল মাকআদাল মুকাররাবা ইনদাক।",ortho:"হে আল্লাহ! মুহাম্মাদ (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম)-এর ওপর এবং তাঁর বংশধরদের ওপর রহমত বর্ষণ করুন এবং তাঁকে আপনার নিকটবর্তী সম্মানিত স্থানে (জান্নাতে) অধিষ্ঠিত করুন।",ref:"আল-মুজামুল কাবীর (তাবারানি)",extra:"হযরত রাসূলে কারীম (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম) ইরশাদ করেছেন, 'যে ব্যক্তি এই দুরুদ শরীফ পাঠ করবে, তার জন্য কেয়ামতের দিন আমার সুপারিশ (শাফায়াত) ওয়াজিব বা অবধারিত হয়ে যাবে।' (তাবারানি)"},
   {num:2,title:"দরূদ শরীফ ২ - মুসনাদে আহমাদ",arabic:"اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ الْقَائِمَةِ وَالصَّلَاةِ النَّافِعَةِ صَلِّ عَلَى مُحَمَّدٍ وَارْضَ عَنِّي رِضًا لَا تَسْخَطُ بَعْدَهُ أَبَدًا",uchchar:"আল্লাহুম্মা রব্বা হাযিহিদ দাওয়াতিল কয়িমাতি ওয়াছ ছলাতিন নাফিয়াতি ছল্লি আলা মুহাম্মাদিওঁ ওয়ারদ' আন্নি রিদাল লা তাসখাতু বা'দাহু আবাদা।",ortho:"হে আল্লাহ! এই প্রতিষ্ঠিত আহ্বান ও কল্যাণকর সালাতের প্রভু, আপনি মুহাম্মাদ (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম)-এর ওপর রহমত বর্ষণ করুন এবং আমার ওপর এমন সন্তুষ্ট হোন যার পর আর কখনোই অসন্তুষ্ট হবেন না।",ref:"মুসনাদে আহমাদ",extra:"হাদীস শরীফে বর্ণিত রয়েছে, এটি পাঠ করলে মহান আল্লাহ তাআলা বান্দার ওপর অত্যন্ত সন্তুষ্ট হন এবং এমন সন্তুষ্টি দান করেন যার পর আর কোনো অসন্তুষ্টি থাকে না।"},
   {num:3,title:"দরূদ শরীফ ৩ - সহীহ ইবনে হিব্বান",arabic:"اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ عَبْدِكَ وَرَسُولِكَ وَصَلِّ عَلَى الْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ وَالْمُسْلِمِينَ وَالْمُسْلِمَاتِ",uchchar:"আল্লাহুম্মা সাল্লি আলা মুহাম্মাদিন আবদিকা ওয়া রাসূলিকা ওয়া সাল্লি আলাল মু'মিনিনা ওয়াল মু'মিনাত ওয়াল মুসলিমিনা ওয়াল মুসলিমাত।",ortho:"হে আল্লাহ! আপনার বান্দা ও রাসূল মুহাম্মাদ (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম)-এর ওপর রহমত বর্ষণ করুন এবং সমস্ত মুমিন নর-নারী ও মুসলিম নর-নারীর ওপর রহমত বর্ষণ করুন।",ref:"সহীহ ইবনে হিব্বান",extra:"হযরত আবু সাঈদ খুদরী (রা.) থেকে বর্ণিত, রাসূলে কারীম (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম) ইরশাদ করেছেন, 'যে ব্যক্তির দান-সদকাহ করার মতো কোনো সম্পদ বা অর্থ নেই, সে যেন তার দুআয় এই দুরুদ পাঠ করে; এটি তার আত্মশুদ্ধি ও আমলনামার পবিত্রতার (যাকাত) মাধ্যম হবে।' (ইবনে হিব্বান)"},
@@ -334,7 +570,7 @@ const daroodData = [
 ];
 
 // ====== 15 SALAM DATA ======
-const salamData = [
+let salamData = [
   {num:1,title:"তাশাহহুদ ও সালাম ১ - সহীহ বুখারী, সুনানে নাসাঈ",arabic:"التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",uchchar:"আত্তাহিয়্যাতু লিল্লাহি ওয়াছ ছলাওয়াতু ওয়াত্তায়্যিবাতু আসসালামু আলাইকা আইয়্যুহান নাবিয়্যু ওয়া রহমাতুল্লাহি ওয়া বারাকাতুহু, আসসালামু আলাইনা ওয়া আলা ইবাদিল্লাহিছ ছালিহীন। আশহাদু আল লা ইলাহা ইল্লাল্লাহু ওয়া আশহাদু আন্না মুহাম্মাদান আব্দুহু ওয়া রাসূলুহু।",ortho:"যাবতীয় সম্ভাষণ, যাবতীয় ইবাদত ও যাবতীয় পবিত্রতা একমাত্র আল্লাহর জন্য। হে নবী! আপনার প্রতি শান্তি, আল্লাহর রহমত ও তাঁর বরকত বর্ষিত হোক। আমাদের প্রতি এবং আল্লাহর নেক বান্দাদের প্রতি শান্তি বর্ষিত হোক। আমি সাক্ষ্য দিচ্ছি যে, আল্লাহ ছাড়া কোনো উপাস্য নেই এবং আমি আরও সাক্ষ্য দিচ্ছি যে, মুহাম্মাদ আল্লাহর বান্দা ও তাঁর রাসূল।",ref:"সহীহ বুখারী, সুনানে নাসাঈ (হাদিস ২৬)",extra:"এটি সর্বাধিক বিশুদ্ধ এবং জমহুর ওলামাদের নিকট সর্বাধিক গ্রহণযোগ্য ও বহুল পঠিত তাশাহুদ ও সালামের বাক্য।"},
   {num:2,title:"তাশাহহুদ ও সালাম ২ - সহীহ মুসলিম, সুনানে নাসাঈ",arabic:"التَّحِيَّاتُ الطَّيِّبَاتُ الصَّلَوَاتُ لِلَّهِ السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",uchchar:"আত্তাহিয়্যাতুত্তায়্যিবাতুছ ছলাওয়াতু লিল্লাহি আসসালামু আলাইকা আইয়্যুহান নাবিয়্যু ওয়া রহমাতুল্লাহি ওয়া বারাকাতুহু, আসসালামু আলাইনা ওয়া আলা ইবাদিল্লাহিছ ছালিহীন। আশহাদু আল লা ইলাহা ইল্লাল্লাহু ওয়া আশহাদু আন্না মুহাম্মাদান আব্দুহু ওয়া রাসূলুহু।",ortho:"পবিত্রতম অভিবাদনসমূহ এবং সমস্ত সালাত আল্লাহর জন্য। হে নবী! আপনার প্রতি শান্তি, আল্লাহর রহমত ও বরকত বর্ষিত হোক। আমাদের প্রতি এবং আল্লাহর সৎকর্মশীল বান্দাদের প্রতি শান্তি বর্ষিত হোক। আমি সাক্ষ্য দিচ্ছি যে, আল্লাহ ছাড়া কোনো সত্য মাবুদ নেই এবং আমি সাক্ষ্য দিচ্ছি যে, মুহাম্মাদ আল্লাহর বান্দা ও তাঁর রাসূল।",ref:"সহীহ মুসলিম, সুনানে নাসাঈ (হাদিস ২৭)",extra:"হযরত আব্দুল্লাহ ইবনে ওমর রা. বর্ণিত অত্যন্ত গ্রহণযোগ্য এবং ফযীলতপূর্ণ তাশাহুদের আরেকটি রূপ।"},
   {num:3,title:"তাশাহহুদ ও সালাম ৩ - সুনানে নাসাঈ",arabic:"التَّحِيَّاتُ لِلَّهِ الطَّيِّبَاتُ الصَّلَوَاتُ لِلَّهِ السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",uchchar:"আত্তাহিয়্যাতু লিল্লাহিত্তায়্যিবাতুছ ছলাওয়াতু লিল্লাহি আসসালামু আলাইকা আইয়্যুহান নাবিয়্যু ওয়া রহমাতুল্লাহি ওয়া বারাকাতুহু, আসসালামু আলাইনা ওয়া আলা ইবাদিল্লাহিছ ছালিহীন। আশহাদু আল লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু ওয়া আশহাদু আন্না মুহাম্মাদান আব্দুহু ওয়া রাসূলুহু।",ortho:"আল্লাহর জন্য যাবতীয় মৌখিক ইবাদত, পবিত্রতা এবং সমস্ত শারীরিক ইবাদত। হে নবী! আপনার প্রতি শান্তি, আল্লাহর দয়া ও তাঁর বরকতসমূহ বর্ষিত হোক। আমাদের ওপর এবং আল্লাহর নেক বান্দাদের ওপর শান্তি বর্ষিত হোক। আমি সাক্ষ্য দিচ্ছি যে, আল্লাহ ব্যতীত কোনো উপাস্য নেই, তিনি একক, তাঁর কোনো শরীক নেই এবং আমি সাক্ষ্য দিচ্ছি যে, মুহাম্মাদ আল্লাহর বান্দা ও তাঁর রাসূল।",ref:"সুনানে নাসাঈ (হাদিস ২৮)",extra:"এই তাশাহুদে তাওহীদের প্রমাণের পাশাপাশি আল্লাহর একত্ববাদের সাক্ষ্য অত্যন্ত স্পষ্টভাবে যুক্ত করা হয়েছে।"},
@@ -353,7 +589,7 @@ const salamData = [
 ];
 
 // ====== INTRO DATA (for Fazilat tab) ======
-const introData = [
+let introData = [
   {id:1,title:"ভূমিকা",body:"আল্লাহ রব্বুল আলামীনের জন্য অগণিত প্রশংসা যিনি আমাদেরকে এমন এক মহান নবী ও রসূলের উম্মত করেছেন, ইহকাল-পরকালে যাঁর মর্যাদা বৃদ্ধিকল্পে প্রতিনিয়ত তাঁর উপর স্বয়ং আল্লাহ রব্বুল আলামীন দরূদ পাঠান।\n\nমহানবী ﷺ এর শানে ফেরেশতাগণও দরূদ পাঠ করেন। অর্থাৎ তারা নবীজী সা.-এর মর্যাদা বৃদ্ধি ও তাঁর উম্মতের গুনাহ মাফ করার জন্য দু'আ করেন। নবীজী ﷺ এর প্রতি ভালোবাসা প্রকাশ এবং দুনিয়া ও আখেরাতের মহাসৌভাগ্য অর্জনে দরূদ ও সালামের গুরুত্ব অপরিসীম।"},
   {id:2,title:"কুরআনুল কারীমের নির্দেশ",body:"আল্লাহ তা'আলা পবিত্র কুরআনে মুমিনদেরকে সরাসরি দরূদ পাঠের নির্দেশ দিয়েছেন। সূরা আল-আহযাবের ৫৬ নম্বর আয়াতে আল্লাহ তা'আলা ইরশাদ করেন:\n\nإِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا\n\nঅনুবাদ: নিশ্চয়ই আল্লাহ এবং তাঁর ফেরেশতাগণ নবীর প্রতি রহমত ও দরূদ বর্ষণ করেন। হে মুমিনগণ! তোমরাও তাঁর প্রতি দরূদ পাঠ করো এবং যথাযথভাবে সালাম পেশ করো।"},
   {id:3,title:"হাদীস শরীফের নির্দেশনা",body:"রাসূলুল্লাহ ﷺ তাঁর উম্মতকে অধিক পরিমাণে দরূদ শরীফ পড়ার জন্য অনুপ্রাণিত করেছেন।\n\nতিনি ইরশাদ করেন: 'তোমরা জুমু'আর দিন আমার উপর বেশি করে দরূদ পাঠ করো। কারণ ওইদিন তোমাদের দরূদ আমার সামনে পেশ করা হয়।' (সুনানে আবু দাউদ, নাসাঈ)\n\nঅন্যত্র ইরশাদ হয়েছে: 'যার সামনে আমার নাম উল্লেখ করা হলো কিন্তু সে আমার উপর দরূদ পড়ল না, সে ব্যক্তি ধ্বংস হোক।' (তিরমিযী)"},
@@ -367,10 +603,52 @@ const introData = [
   {id:11,title:"উপসংহার ও বিদায় বাণী",body:"দরূদ ও সালাম হলো একজন মুমিনের আত্মিক প্রশান্তি এবং রাসূলুল্লাহ ﷺ এর প্রতি ভালোবাসার প্রধান বহিঃপ্রকাশ। আসুন, আমরা আমাদের অবসর সময়গুলোকে দরূদ ও সালামের মাধ্যমে সুরভিত করি।\n\nআল্লাহ তা'আলা আমাদের সকলকে প্রিয় নবীজী ﷺ এর প্রতি নিয়মিত, বিশুদ্ধ এবং আদবসহ দরূদ ও সালাম পেশ করার তাওফিক দান করুন। আমীন।\n\n- দরূদ ও সালাম টিম"}
 ];
 
+// ====== LANGUAGE & CONTENT LOADING ======
+const BN_DAROOD = daroodData;
+const BN_SALAM = salamData;
+const BN_INTRO = introData;
+
+function currentLang(){
+  const l = window.APP_STRINGS && window.APP_STRINGS.html_lang_code;
+  return (l==='en'||l==='ur') ? l : 'bn';
+}
+
+function loadContentData(){
+  const lang = currentLang();
+  if(lang === 'bn'){ renderAll(); return; }
+  const ns = lang === 'ur' ? 'religiousContentUr' : 'religiousContentEn';
+  applyContentData(ns);
+}
+
+function applyContentData(ns){
+  const o = window[ns] || {};
+  if(o.darood && o.darood.length){
+    daroodData = o.darood.map((d,i)=>Object.assign({},d,{arabic:(BN_DAROOD[i]||{}).arabic||''}));
+  }
+  if(o.salam && o.salam.length){
+    salamData = o.salam.map((d,i)=>Object.assign({},d,{arabic:(BN_SALAM[i]||{}).arabic||''}));
+  }
+  if(o.intro && o.intro.length){ introData = o.intro; }
+  renderAll();
+}
+
+function renderAll(){
+  initCounterSelects();
+  renderCards(daroodData);
+  renderSalamCards(salamData);
+  renderIntro();
+}
+
+// ====== HELPERS ======
+function STR(k,fb){return (window.APP_STRINGS&&window.APP_STRINGS[k]!==undefined&&window.APP_STRINGS[k]!==null)?window.APP_STRINGS[k]:(fb!==undefined?fb:k)}
+function toggleSection(h){const s=h.closest('.collapsible-section');if(s){s.classList.toggle('open');if(h.hasAttribute('aria-expanded'))h.setAttribute('aria-expanded',s.classList.contains('open'));}}
+function fmt(key){let s=STR(key);for(let i=1;i<arguments.length;i++){s=s.split('%'+i+'$s').join(arguments[i])}return s}
+function toLocalDigits(v){const d=STR('local_digits','0123456789');return String(v).replace(/[0-9]/g,c=>d[+c])}
+
 // ====== RENDER FUNCTIONS ======
 function renderCards(data){
   const c=document.getElementById('cards-container');
-  if(!data.length){c.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><p>কোনো দরুদ পাওয়া যায়নি</p></div>';return}
+  if(!data.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>${STR('empty_duroods','কোনো দরুদ পাওয়া যায়নি')}</p></div>`;return}
   c.innerHTML=data.map(d=>`
     <div class="darood-card">
       <div class="card-header">
@@ -379,15 +657,31 @@ function renderCards(data){
       </div>
       <div class="card-body">
         <div class="arabic">${d.arabic}</div>
-        <div class="section-label">উচ্চারণ</div>
-        <div class="uchchar">${d.uchchar}</div>
-        <div class="section-label">অর্থ</div>
-        <div class="ortho">${d.ortho}</div>
-        ${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}
-        <div style="margin-top:10px"><span class="ref-tag">📚 ${d.ref}</span></div>
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('label_transliteration','উচ্চারণ')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><div class="uchchar">${d.uchchar}</div></div>
+        </div>
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('label_meaning','অর্থ')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><div class="ortho">${d.ortho}</div></div>
+        </div>
+
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('reference_prefix','রেফারেন্স:').replace(/:$/,'')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        </div>
         <div class="action-row">
-          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">📋 কপি করুন</button>
-          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}','${d.ref.replace(/'/g,"\\'")}')">🔗 শেয়ার করুন</button>
+          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">{{btn_copy}}</button>
+          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">{{btn_share}}</button>
         </div>
       </div>
     </div>
@@ -396,7 +690,7 @@ function renderCards(data){
 
 function renderSalamCards(data){
   const c=document.getElementById('salam-cards-container');
-  if(!data.length){c.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><p>কোনো সালাম পাওয়া যায়নি</p></div>';return}
+  if(!data.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>${STR('empty_salams','কোনো সালাম পাওয়া যায়নি')}</p></div>`;return}
   c.innerHTML=data.map(d=>`
     <div class="darood-card">
       <div class="card-header">
@@ -405,15 +699,31 @@ function renderSalamCards(data){
       </div>
       <div class="card-body">
         <div class="arabic">${d.arabic}</div>
-        <div class="section-label">উচ্চারণ</div>
-        <div class="uchchar">${d.uchchar}</div>
-        <div class="section-label">অর্থ</div>
-        <div class="ortho">${d.ortho}</div>
-        ${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}
-        <div style="margin-top:10px"><span class="ref-tag">📚 ${d.ref}</span></div>
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('label_transliteration','উচ্চারণ')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><div class="uchchar">${d.uchchar}</div></div>
+        </div>
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('label_meaning','অর্থ')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><div class="ortho">${d.ortho}</div></div>
+        </div>
+
+        <div class="collapsible-section">
+          <div class="collapsible-header" onclick="toggleSection(this)">
+            <span class="collapsible-title">${STR('reference_prefix','রেফারেন্স:').replace(/:$/,'')}</span>
+            <span class="collapsible-chevron">▾</span>
+          </div>
+          <div class="collapsible-content"><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        </div>
         <div class="action-row">
-          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">📋 কপি করুন</button>
-          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}','${d.ref.replace(/'/g,"\\'")}')">🔗 শেয়ার করুন</button>
+          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">{{btn_copy}}</button>
+          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">{{btn_share}}</button>
         </div>
       </div>
     </div>
@@ -423,9 +733,14 @@ function renderSalamCards(data){
 function renderIntro(){
   const c=document.getElementById('intro-container');
   c.innerHTML=introData.map(d=>`
-    <div class="intro-card">
-      <h3>📖 ${d.title}</h3>
-      <div class="intro-body">${d.body}</div>
+    <div class="intro-card collapsible-section">
+      <div class="collapsible-header" onclick="toggleSection(this)" role="button" aria-expanded="false">
+        <span class="collapsible-title">📖 ${d.title}</span>
+        <span class="collapsible-chevron" aria-hidden="true">▾</span>
+      </div>
+      <div class="collapsible-content">
+        <div class="intro-body">${d.body}</div>
+      </div>
     </div>
   `).join('');
 }
@@ -441,25 +756,32 @@ function filterSalamCards(q){
 }
 
 function copyText(btn,arabic,uchchar,ortho){
-  const t=`${arabic}\n\n${uchchar}\n\nঅর্থ: ${ortho}`;
-  if(navigator.clipboard){
+  const t=`${arabic}\n\n${uchchar}\n\n${STR('meaning_prefix','অর্থ:')} ${ortho}`;
+  if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(t).then(()=>{
-      btn.textContent='✓ কপি হয়েছে';
-      btn.style.background='#1A3A2A';btn.style.color='#F0D080';btn.style.border='none';
-      showToast('কপি হয়েছে! ✓');
-      setTimeout(()=>{btn.textContent='📋 কপি করুন';btn.style.cssText=''},2000);
+      if(btn){btn.textContent=STR('btn_copied','✓ কপি হয়েছে');btn.style.background='var(--c-primary)';btn.style.color='var(--c-accent-light)';btn.style.border='none';}
+      showToast(STR('toast_copied','কপি হয়েছে! ✓'));
+      setTimeout(()=>{if(btn){btn.textContent=STR('btn_copy','📋 কপি করুন');btn.style.cssText='';}},2000);
     });
   } else {
     const el=document.createElement('textarea');
-    el.value=t;document.body.appendChild(el);el.select();document.execCommand('copy');
-    document.body.removeChild(el);showToast('কপি হয়েছে! ✓');
+    el.value=t;document.body.appendChild(el);el.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(el);showToast(STR('toast_copied','কপি হয়েছে! ✓'));
   }
 }
 
-function shareText(arabic,uchchar,title,ref){
-  const text=`📿 ${title}\n\n${arabic}\n\n${uchchar}\n\n📚 রেফারেন্স: ${ref}\n\n— দরুদ শরীফ সংকলন অ্যাপ`;
-  if(navigator.share){navigator.share({title:'দরুদ শরীফ',text:text}).catch(()=>{})}
-  else{copyText(null,arabic,uchchar,'');showToast('শেয়ার করতে কপি করুন')}
+function shareText(arabic,ortho,title){
+  const text=`📿 ${title}\n\n${arabic}\n\n${ortho}`;
+  if(window.Android&&Android.share){Android.share(text);return}
+  if(navigator.share){navigator.share({title:title,text:text}).catch(()=>{})}
+  else{
+    const el=document.createElement('textarea');
+    el.value=text;document.body.appendChild(el);el.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(el);
+    showToast(STR('toast_share_copied','শেয়ার করতে কপি করুন'));
+  }
 }
 
 function switchTab(id,el){
@@ -469,38 +791,447 @@ function switchTab(id,el){
   document.getElementById('tab-'+id).classList.add('active');
 }
 
-// Settings Modal
-function openSettings(){
-  document.getElementById('settings-modal').classList.add('show');
+// Menu & Screens
+function openMenu(){
+  document.getElementById('menu-modal').classList.add('show');
 }
-function closeSettings(){
-  document.getElementById('settings-modal').classList.remove('show');
+function closeMenu(){
+  document.getElementById('menu-modal').classList.remove('show');
 }
-// Close modal on overlay click
-document.getElementById('settings-modal').addEventListener('click',function(e){
-  if(e.target===this) closeSettings();
+function showScreen(name){
+  closeMenu();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if(el) el.classList.add('active');
+  const titleMap = {
+    settings: STR('settings_title','Settings'),
+    activity: STR('my_activity_title','My Activity'),
+    notifications: STR('notifications_title','Notifications'),
+    about: STR('about_the_app_title','About the app'),
+    aboutus: STR('about_us_title','About us')
+  };
+  const t = document.getElementById('screen-title');
+  if(t) t.textContent = titleMap[name] || '';
+  document.getElementById('screen-modal').classList.add('show');
+  if(name === 'activity') loadActivityData();
+}
+function backToMenu(){
+  document.getElementById('screen-modal').classList.remove('show');
+  openMenu();
+}
+function closeScreen(){
+  document.getElementById('screen-modal').classList.remove('show');
+}
+
+// First-launch setup
+let SETUP_LANG = 'en';
+function initSetup(){
+  const s = window.APP_SETTINGS || {};
+  const tSel = document.getElementById('setup-theme');
+  if(tSel){
+    tSel.innerHTML = THEMES.map(t=>'<option value="'+t+'">'+STR('theme_'+t,t)+'</option>').join('');
+    tSel.value = s.theme || 'default';
+  }
+  const fSel = document.getElementById('setup-font');
+  if(fSel){
+    fSel.innerHTML = FONTS.map(f=>'<option value="'+f.code+'">'+f.label+'</option>').join('');
+    fSel.value = s.arabic_font || 'amiri';
+  }
+  const fs = document.getElementById('setup-fontsize');
+  const fv = document.getElementById('setup-fontsize-val');
+  if(fs && fv){
+    fs.value = s.arabic_font_size || 24;
+    fv.textContent = fs.value;
+  }
+  setupLang('en');
+}
+function setupLang(code){
+  SETUP_LANG = code;
+  ['en','bn','ur'].forEach(c=>{
+    const b = document.getElementById('setup-lang-'+c);
+    if(b) b.style.opacity = (c===code) ? '1' : '0.45';
+  });
+}
+function onSetupSizeInput(v){
+  document.getElementById('setup-fontsize-val').textContent = v;
+}
+function finishSetup(){
+  const fontEl = document.getElementById('setup-font');
+  const sizeEl = document.getElementById('setup-fontsize');
+  const themeEl = document.getElementById('setup-theme');
+  const font = fontEl ? fontEl.value : 'amiri';
+  const size = sizeEl ? parseInt(sizeEl.value,10) : 24;
+  const theme = themeEl ? themeEl.value : 'default';
+  if(window.Android){
+    if(Android.setArabicFont) Android.setArabicFont(font);
+    if(Android.setArabicFontSize) Android.setArabicFontSize(size);
+    if(Android.setTheme) Android.setTheme(theme);
+    if(Android.changeLanguage) Android.changeLanguage(SETUP_LANG);
+  }
+}
+
+// Crash-report consent + diagnostic log (About the app)
+let lastLogFile = '';
+function initCrashConsent(){
+  if(window.Android && Android.getCrashReportConsent){
+    const el = document.getElementById('crash-consent');
+    if(el) el.checked = Android.getCrashReportConsent();
+  }
+}
+function onCrashConsentToggle(checked){
+  if(window.Android && Android.setCrashReportConsent){
+    Android.setCrashReportConsent(checked);
+  }
+}
+// Triple-tap on the app version
+let versionTapCount = 0;
+let versionTapTimer = null;
+function onVersionTap(){
+  versionTapCount++;
+  clearTimeout(versionTapTimer);
+  versionTapTimer = setTimeout(function(){ versionTapCount = 0; }, 1500);
+  if(versionTapCount >= 3){
+    versionTapCount = 0;
+    clearTimeout(versionTapTimer);
+    generateDiagnosticLog();
+  }
+}
+function generateDiagnosticLog(){
+  if(window.Android && Android.generateDiagnosticLog){
+    const name = Android.generateDiagnosticLog();
+    if(name){
+      lastLogFile = name;
+      const card = document.getElementById('log-share-card');
+      if(card) card.style.display = 'block';
+      showToast(STR('log_generated','Log generated successfully'));
+    } else {
+      showToast(STR('log_generate_failed','Failed to generate log'));
+    }
+  } else {
+    showToast(STR('log_generate_failed','Failed to generate log'));
+  }
+}
+function shareGeneratedLog(){
+  if(window.Android && Android.shareLog && lastLogFile){
+    Android.shareLog(lastLogFile);
+  }
+}
+
+// ====== MY ACTIVITY ======
+function recordActivity(type, contentId){
+  try {
+    if(window.Android && Android.recordActivity) Android.recordActivity(type, contentId);
+  } catch(e){}
+}
+function loadActivityData(){
+  try {
+    if(window.Android && Android.loadActivity) Android.loadActivity();
+  } catch(e){}
+}
+function localDateStr(offsetDays){
+  var d = new Date();
+  d.setDate(d.getDate() + (offsetDays||0));
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+}
+function escHtml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+window.__activityLoaded = function(json){
+  try { renderActivity(JSON.parse(json)); } catch(e){}
+};
+function renderActivity(list){
+  var data = (list && list.length) ? list : [];
+  var duroodMap = {};
+  var salamMap = {};
+  data.forEach(function(r){
+    var map = (r.type === 'salam') ? salamMap : duroodMap;
+    (map[r.contentId] = map[r.contentId] || []).push({date:r.date, count:r.count});
+  });
+  var dl = document.getElementById('activity-durood-list');
+  var sl = document.getElementById('activity-salam-list');
+  var emptyEl = document.getElementById('activity-empty');
+  if(dl) dl.innerHTML = renderActivityGroup('durood', duroodMap);
+  if(sl) sl.innerHTML = renderActivityGroup('salam', salamMap);
+  if(emptyEl) emptyEl.style.display = data.length ? 'none' : 'block';
+}
+function renderActivityGroup(type, map){
+  var ids = Object.keys(map).map(Number).sort(function(a,b){return a-b;});
+  if(!ids.length) return '';
+  var today = localDateStr(0);
+  var yesterday = localDateStr(-1);
+  var source = (type === 'salam') ? salamData : daroodData;
+  var html = '';
+  ids.forEach(function(id){
+    var entry = null;
+    for(var i=0;i<source.length;i++){ if(source[i].num === id){ entry = source[i]; break; } }
+    var title = entry ? entry.title : ((type === 'salam') ? (STR('activity_salam_label','Salam')+' '+id) : (STR('activity_durood_label','Durood')+' '+id));
+    var records = map[id].slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+    var total = records.reduce(function(s,r){ return s + r.count; }, 0);
+    var rows = '';
+    records.forEach(function(r){
+      var label;
+      if(r.date === today) label = STR('activity_today','Today');
+      else if(r.date === yesterday) label = STR('activity_yesterday','Yesterday');
+      else label = r.date;
+      rows += '<div class="activity-row"><span class="activity-date">'+escHtml(label)+'</span><span class="activity-count">'+fmt('target_times_format', toLocalDigits(r.count))+'</span></div>';
+    });
+    html += '<div class="activity-card">'
+      + '<div class="activity-title">'+escHtml(title)+'</div>'
+      + rows
+      + '<div class="activity-total">'+STR('activity_total','Total')+': '+fmt('target_times_format', toLocalDigits(total))+'</div>'
+      + '</div>';
+  });
+  return html;
+}
+
+// ====== SETTINGS CONTROLS ======
+const THEMES = ['default','green','blue','brown','purple','dark'];
+const FONTS = [
+  {code:'amiri', label:'Amiri'},
+  {code:'scheherazade', label:'Scheherazade New'},
+  {code:'lateef', label:'Lateef'},
+  {code:'notonaskh', label:'Noto Naskh Arabic'}
+];
+let NOTIF_CONFIG = {enabled:false, days:{}};
+
+function pad2(n){ return (n<10?'0':'')+n; }
+
+function initSettings(){
+  const s = window.APP_SETTINGS || {};
+  const tSel = document.getElementById('set-theme');
+  if(tSel){
+    tSel.innerHTML = THEMES.map(t=>'<option value="'+t+'">'+STR('theme_'+t,t)+'</option>').join('');
+    tSel.value = (s.theme && THEMES.indexOf(s.theme)>=0) ? s.theme : 'default';
+  }
+  const fSel = document.getElementById('set-font');
+  if(fSel){
+    fSel.innerHTML = FONTS.map(f=>'<option value="'+f.code+'">'+f.label+'</option>').join('');
+    fSel.value = s.arabic_font || 'amiri';
+  }
+  const fs = document.getElementById('set-fontsize');
+  const fv = document.getElementById('set-fontsize-val');
+  if(fs && fv){
+    fs.value = s.arabic_font_size || 24;
+    fv.textContent = fs.value;
+  }
+  let cfg = {enabled:false, days:{}};
+  if(window.Android && Android.getNotificationConfig){
+    try{ cfg = JSON.parse(Android.getNotificationConfig()); }catch(e){}
+  }
+  NOTIF_CONFIG = cfg || {enabled:false, days:{}};
+  // Normalize old single-time format ({day:{h,m}}) to the new array format ({day:[{h,m}]}).
+  if(NOTIF_CONFIG.days){
+    for(const k in NOTIF_CONFIG.days){
+      if(NOTIF_CONFIG.days[k] && !Array.isArray(NOTIF_CONFIG.days[k])){
+        NOTIF_CONFIG.days[k] = [NOTIF_CONFIG.days[k]];
+      }
+    }
+  }
+  const en = document.getElementById('set-notif-enable');
+  if(en) en.checked = !!NOTIF_CONFIG.enabled;
+  renderNotifDays();
+  const box = document.getElementById('notif-days');
+  if(box) box.classList.toggle('notif-hidden', !NOTIF_CONFIG.enabled);
+}
+
+function onThemeChange(v){
+  if(!v) return;
+  document.documentElement.setAttribute('data-theme', v);
+  if(window.APP_SETTINGS) window.APP_SETTINGS.theme = v;
+  if(window.Android && Android.setTheme) Android.setTheme(v);
+}
+
+function onFontChange(v){
+  if(!v) return;
+  const fam = (v==='scheherazade')?'ScheherazadeNewLocal':(v==='lateef')?'LateefLocal':(v==='notonaskh')?'NotoNaskhLocal':'AmiriLocal';
+  document.documentElement.style.setProperty('--arabic-font', "'"+fam+"'");
+  if(window.APP_SETTINGS) window.APP_SETTINGS.arabic_font = v;
+  if(window.Android && Android.setArabicFont) Android.setArabicFont(v);
+}
+
+function onFontSizeInput(v){
+  document.getElementById('set-fontsize-val').textContent = v;
+  const scale = (window.APP_SETTINGS && window.APP_SETTINGS.font_scale) || 1;
+  document.documentElement.style.setProperty('--arabic-font-size', Math.round(parseInt(v,10)*scale)+'px');
+}
+
+function onFontSizeChange(v){
+  if(window.APP_SETTINGS) window.APP_SETTINGS.arabic_font_size = parseInt(v,10);
+  if(window.Android && Android.setArabicFontSize) Android.setArabicFontSize(parseInt(v,10));
+}
+
+function onLanguageClick(){
+  if(window.Android && Android.openLanguageSelector) Android.openLanguageSelector();
+  else showToast(STR('toast_coming_soon','শীঘ্রই আসছে'));
+}
+
+function onNotifToggle(checked){
+  NOTIF_CONFIG.enabled = checked;
+  document.getElementById('notif-days').classList.toggle('notif-hidden', !checked);
+  if(checked && (!NOTIF_CONFIG.days || !Object.keys(NOTIF_CONFIG.days).length)){
+    NOTIF_CONFIG.days = { '6': [{h:20, m:0}] }; // Friday 8:00 PM default
+  }
+  renderNotifDays();
+  saveNotifications();
+}
+
+function dayKey(d){
+  const map = {1:'sunday',2:'monday',3:'tuesday',4:'wednesday',5:'thursday',6:'friday',7:'saturday'};
+  return map[d] || 'sunday';
+}
+
+function formatTime(h,m){
+  const s = window.APP_STRINGS || {};
+  const am = s.time_am || 'AM';
+  const pm = s.time_pm || 'PM';
+  let hh = h % 12; if(hh === 0) hh = 12;
+  return hh + ':' + pad2(m) + ' ' + (h >= 12 ? pm : am);
+}
+
+function notifTimesFor(d){
+  const v = (NOTIF_CONFIG.days || {})[d];
+  return Array.isArray(v) ? v : (v ? [v] : []);
+}
+
+function renderNotifDays(){
+  const list = document.getElementById('notif-days-list');
+  if(!list) return;
+  const days = [1,2,3,4,5,6,7];
+  list.innerHTML = days.map(d=>{
+    const times = notifTimesFor(d);
+    const chips = times.map((t,i)=>
+      '<span class="time-chip"><button class="day-time" onclick="pickTime('+d+','+i+')">'+formatTime(t.h, t.m)+'</button>'
+      + '<button class="chip-remove" onclick="removeTime('+d+','+i+')">×</button></span>'
+    ).join('');
+    return '<div class="day-row"><span class="day-name">'+STR('day_'+dayKey(d), dayKey(d))+'</span>'
+      + '<span class="day-times">'+chips+'<button class="chip-add" onclick="addTime('+d+')">+</button></span></div>';
+  }).join('');
+}
+
+function addTime(d){
+  NOTIF_CONFIG.days = NOTIF_CONFIG.days || {};
+  NOTIF_CONFIG.days[d] = notifTimesFor(d);
+  if(NOTIF_CONFIG.days[d].length >= 20) return;
+  NOTIF_CONFIG.days[d].push({h:8, m:0});
+  renderNotifDays();
+  saveNotifications();
+}
+
+function removeTime(d, i){
+  const arr = notifTimesFor(d);
+  if(!arr.length) return;
+  arr.splice(i, 1);
+  NOTIF_CONFIG.days = NOTIF_CONFIG.days || {};
+  if(arr.length){ NOTIF_CONFIG.days[d] = arr; }
+  else { delete NOTIF_CONFIG.days[d]; }
+  renderNotifDays();
+  saveNotifications();
+}
+
+function pickTime(d, i){
+  const times = notifTimesFor(d);
+  const t = times[i] || {h:20, m:0};
+  if(window.Android && Android.openTimePicker) Android.openTimePicker(d, i, t.h, t.m);
+}
+
+window.__notificationTimePicked = function(day, index, hour, minute){
+  NOTIF_CONFIG.days = NOTIF_CONFIG.days || {};
+  const arr = notifTimesFor(day);
+  arr[index] = {h:hour, m:minute};
+  NOTIF_CONFIG.days[day] = arr;
+  renderNotifDays();
+  saveNotifications();
+};
+
+function saveNotifications(){
+  if(window.Android && Android.saveNotifications){
+    Android.saveNotifications(JSON.stringify(NOTIF_CONFIG));
+  }
+}
+// Close modals on overlay click
+['menu-modal','screen-modal'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el){
+    el.addEventListener('click',function(e){
+      if(e.target===this){
+        if(id==='menu-modal') closeMenu();
+        else closeScreen();
+      }
+    });
+  }
 });
 
-let count=0,target=0;
-function addCount(){
-  count++;
-  document.getElementById('count').textContent=count;
-  if(target>0){
-    const pct=Math.min(100,(count/target)*100);
-    document.getElementById('progress').style.width=pct+'%';
-    document.getElementById('target-info').textContent=`${count} / ${target} বার`;
-    if(count===target){showToast('মাশাআল্লাহ! লক্ষ্য পূরণ হয়েছে 🎉')}
+let duroodCount=0,duroodTarget=0,duroodSelected=0;
+let salamCount=0,salamTarget=0,salamSelected=0;
+function initCounterSelects(){
+  const ds=document.getElementById('durood-select');
+  if(ds&&daroodData.length){ds.innerHTML=daroodData.map((d,i)=>`<option value="${i}">${d.title}</option>`).join('');selectDurood(0);}
+  const ss=document.getElementById('salam-select');
+  if(ss&&salamData.length){ss.innerHTML=salamData.map((s,i)=>`<option value="${i}">${s.title}</option>`).join('');selectSalam(0);}
+}
+function selectDurood(idx){
+  duroodSelected=parseInt(idx,10)||0;
+  const d=daroodData[duroodSelected];
+  if(d){document.getElementById('durood-arabic').textContent=d.arabic;}
+}
+function selectSalam(idx){
+  salamSelected=parseInt(idx,10)||0;
+  const s=salamData[salamSelected];
+  if(s){document.getElementById('salam-arabic').textContent=s.arabic;}
+}
+function addDuroodCount(){
+  duroodCount++;
+  document.getElementById('durood-count').textContent=toLocalDigits(duroodCount);
+  if(duroodTarget>0){
+    const pct=Math.min(100,(duroodCount/duroodTarget)*100);
+    document.getElementById('durood-progress').style.width=pct+'%';
+    document.getElementById('durood-target-info').textContent=fmt('target_progress_format',toLocalDigits(duroodCount),toLocalDigits(duroodTarget));
+    if(duroodCount===duroodTarget){showToast(STR('toast_target_done'));}
   }
   if(navigator.vibrate)navigator.vibrate(30);
+  var _d=daroodData[duroodSelected];
+  if(_d) recordActivity('durood', _d.num);
 }
-function resetCount(){count=0;document.getElementById('count').textContent=0;document.getElementById('progress').style.width='0%';if(target>0)document.getElementById('target-info').textContent=`0 / ${target} বার`;}
-function setTarget(t,el){
-  target=t;count=0;
-  document.querySelectorAll('.target-btn').forEach(b=>b.classList.remove('sel'));
+function resetDuroodCount(){
+  duroodCount=0;
+  document.getElementById('durood-count').textContent=0;
+  document.getElementById('durood-progress').style.width='0%';
+  if(duroodTarget>0)document.getElementById('durood-target-info').textContent=fmt('target_progress_format',toLocalDigits(0),toLocalDigits(duroodTarget));
+}
+function setDuroodTarget(t,el){
+  duroodTarget=t;duroodCount=0;
+  document.querySelectorAll('.durood-target').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
-  document.getElementById('count').textContent=0;
-  document.getElementById('progress').style.width='0%';
-  document.getElementById('target-info').textContent=`0 / ${t} বার`;
+  document.getElementById('durood-count').textContent=0;
+  document.getElementById('durood-progress').style.width='0%';
+  document.getElementById('durood-target-info').textContent=fmt('target_progress_format',toLocalDigits(0),toLocalDigits(t));
+}
+function addSalamCount(){
+  salamCount++;
+  document.getElementById('salam-count').textContent=toLocalDigits(salamCount);
+  if(salamTarget>0){
+    const pct=Math.min(100,(salamCount/salamTarget)*100);
+    document.getElementById('salam-progress').style.width=pct+'%';
+    document.getElementById('salam-target-info').textContent=fmt('target_progress_format',toLocalDigits(salamCount),toLocalDigits(salamTarget));
+    if(salamCount===salamTarget){showToast(STR('toast_target_done'));}
+  }
+  if(navigator.vibrate)navigator.vibrate(30);
+  var _s=salamData[salamSelected];
+  if(_s) recordActivity('salam', _s.num);
+}
+function resetSalamCount(){
+  salamCount=0;
+  document.getElementById('salam-count').textContent=0;
+  document.getElementById('salam-progress').style.width='0%';
+  if(salamTarget>0)document.getElementById('salam-target-info').textContent=fmt('target_progress_format',toLocalDigits(0),toLocalDigits(salamTarget));
+}
+function setSalamTarget(t,el){
+  salamTarget=t;salamCount=0;
+  document.querySelectorAll('.salam-target').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('salam-count').textContent=0;
+  document.getElementById('salam-progress').style.width='0%';
+  document.getElementById('salam-target-info').textContent=fmt('target_progress_format',toLocalDigits(0),toLocalDigits(t));
 }
 
 function showToast(msg){
@@ -509,9 +1240,13 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-renderCards(daroodData);
-renderSalamCards(salamData);
-renderIntro();
+loadContentData();
+initSettings();
+initSetup();
+initCrashConsent();
+if(window.Android && !Android.isSetupComplete()){
+  document.getElementById('setup-screen').classList.add('show');
+}
 </script>
 </body>
 </html>

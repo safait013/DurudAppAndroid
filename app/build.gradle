@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'com.darood.app'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.primebytelabs.durood"
         minSdk 21
-        targetSdk 35
-        versionCode 4
-        versionName "1.0.3"
+        targetSdk 36
+        versionCode 6
+        versionName "1.1.0"
     }
 
     buildTypes {
@@ -22,11 +22,15 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }

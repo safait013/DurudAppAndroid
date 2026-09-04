@@ -1,0 +1,17 @@
+window.religiousContentEn.salam=[
+{num:1,title:"Tashahhud & Salam 1 - Sahih Bukhari",uchchar:"Attahiyyatu lillahi was salawatu wattayyibatu assalamu alaika ayyuhan nabiyyu wa rahmatullahi wa barakatuhu.",ortho:"All greetings, prayers and pure words are for Allah. Peace be upon you, O Prophet, and Allah's mercy and blessings.",ref:"Sahih Bukhari, Sunan Nasa'i",extra:"The most authentic Tashahhud, accepted by the majority of scholars."},
+{num:2,title:"Tashahhud & Salam 2 - Sahih Muslim",uchchar:"Attahiyyatut tayyibatus salawatu lillahi assalamu alaika ayyuhan nabiyyu.",ortho:"The purest greetings and prayers are for Allah. Peace be upon you, O Prophet.",ref:"Sahih Muslim, Sunan Nasa'i",extra:"Narrated by Abdullah ibn Umar (RA)."},
+{num:3,title:"Tashahhud & Salam 3 - Sunan Nasa'i",uchchar:"Attahiyyatu lillahit tayyibatus salawatu lillahi... Ashhadu alla ilaha illallahu wahdahu la sharika lahu.",ortho:"All worship is for Allah. I bear witness there is no god but Allah alone, without partner.",ref:"Sunan Nasa'i",extra:"Includes clear testimony of Tawhid."},
+{num:4,title:"Tashahhud & Salam 4 - Sahih Muslim",uchchar:"Attahiyyatul mubarakatush salawatut tayyibatu lillahi salamun alaika ayyuhan nabiyyu.",ortho:"All blessed greetings and prayers are for Allah. Peace be upon you, O Prophet.",ref:"Sahih Muslim, Sunan Nasa'i",extra:"Includes 'mubarakat' (blessed) in greetings."},
+{num:5,title:"Salam 5 - Various Books",uchchar:"Assalamu alaika ayyuhan nabiyyu wa rahmatullahi wa barakatuhu.",ortho:"Peace be upon you, O Prophet, and Allah's mercy and blessings.",ref:"Sunan Nasa'i (Hadith 30)",extra:"A concise salam for the Prophet."},
+{num:6,title:"Salam 6",uchchar:"Assalamu alaika ayyuhan nabiyyu wa rahmatullahi.",ortho:"Peace be upon you, O Prophet, and Allah's mercy.",ref:"Muwatta Imam Malik (Hadith 31)",extra:"Short salam emphasizing peace and mercy."},
+{num:7,title:"Salam 7",uchchar:"Assalamu ala Muhammadin.",ortho:"Peace be upon Muhammad.",ref:"Al-Mu'jam al-Kabir (Tabarani, Hadith 32)",extra:"The simplest form of salam."},
+{num:8,title:"Salam 8",uchchar:"Sallallahu alayhi wa sallam.",ortho:"May Allah send blessings and peace upon him.",ref:"Sunan Abu Dawud (Hadith 33)",extra:"The most common form of salutation."},
+{num:9,title:"Salam 9",uchchar:"Alayhis salam.",ortho:"Peace be upon him.",ref:"Muwatta Imam Malik (Hadith 34 - Aisha RA)",extra:"Used for prophets and angels."},
+{num:10,title:"Salam 10",uchchar:"Radiyallahu anhu.",ortho:"May Allah be pleased with him.",ref:"Muwatta Imam Malik (Hadith 35 - Aisha RA)",extra:"Used for companions."},
+{num:11,title:"Salam 11",uchchar:"Rahmatullahi alayhi.",ortho:"May Allah's mercy be upon him.",ref:"Muwatta Imam Malik (Hadith 36)",extra:"Used for scholars."},
+{num:12,title:"Salam 12",uchchar:"Assalamu alaykum wa rahmatullahi wa barakatuhu.",ortho:"Peace, mercy and blessings of Allah be upon you.",ref:"Sharh Ma'ani al-Athar - Imam Tahawi (Hadith 37)",extra:"The complete Islamic greeting."},
+{num:13,title:"Salam 13",uchchar:"Wa alaykum assalam wa rahmatullahi wa barakatuhu.",ortho:"And upon you be peace, mercy and blessings of Allah.",ref:"Sunan Abu Dawud (Hadith 38)",extra:"The response to the greeting."},
+{num:14,title:"Salam 14",uchchar:"Assalamu alaykum.",ortho:"Peace be upon you.",ref:"Sahih Muslim (Hadith 39)",extra:"The basic Islamic greeting."},
+{num:15,title:"Salam 15",uchchar:"Wa alaykum assalam.",ortho:"And upon you be peace.",ref:"Al-Mustadrak alas-Sahihain (Imam Hakim, Hadith 40)",extra:"The basic response."}
+];

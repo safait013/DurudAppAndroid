@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    اردو (Urdu) UI strings.
+    NOTE: Arabic religious content (Durood, Salam, Tashahhud, Tasbih text) is NOT
+    localized here — it lives untouched in app/src/main/assets/index.html.
+-->
+<resources>
+
+    <!-- ===== App / Home ===== -->
+    <string name="app_name">دروود و سلام</string>
+    <string name="home_tagline">۲۵ درود • ۱۵ سلام • احادیث کے حوالے</string>
+    <!-- Lang code applied to the <html lang="..."> attribute of the WebView page -->
+    <string name="html_lang_code">ur</string>
+    <!-- Document direction for the WebView page: ltr for English/Bangla, rtl for Urdu -->
+    <string name="html_dir">rtl</string>
+
+    <!-- ===== First-launch language selection ===== -->
+    <string name="choose_language_title">اپنی زبان منتخب کریں</string>
+    <!-- Language names are always shown in their own script (endonyms) -->
+    <string name="lang_name_en">English</string>
+    <string name="lang_name_bn">বাংলা</string>
+    <string name="lang_name_ur">اردو</string>
+
+    <!-- ===== Tabs ===== -->
+    <string name="tab_duroods">درود شریف</string>
+    <string name="tab_salam">سلام</string>
+    <string name="tab_tasbih">تسبیح</string>
+    <string name="tab_fazilat">فضیلت</string>
+
+    <!-- ===== Search ===== -->
+    <string name="search_durood_hint">درود تلاش کریں...</string>
+    <string name="search_salam_hint">سلام تلاش کریں...</string>
+    <string name="empty_duroods">کوئی درود نہیں ملا</string>
+    <string name="empty_salams">کوئی سلام نہیں ملا</string>
+
+    <!-- ===== Durood / Salam card labels ===== -->
+    <string name="label_transliteration">تلفظ</string>
+    <string name="label_meaning">ترجمہ</string>
+    <string name="meaning_prefix">ترجمہ:</string>
+    <string name="reference_prefix">حوالہ:</string>
+    <string name="btn_copy">📋 کاپی کریں</string>
+    <string name="btn_copied">✓ کاپی ہو گئی</string>
+    <string name="btn_share">🔗 شیئر کریں</string>
+
+    <!-- ===== Tasbih counter ===== -->
+    <string name="counter_title">درود کاؤنٹر</string>
+    <string name="counter_select_target">ہدف منتخب کریں</string>
+    <string name="btn_recited">+ پڑھا</string>
+    <string name="btn_reset">ری سیٹ</string>
+    <string name="target_times_format">%1$s بار</string>
+    <string name="target_progress_format">%1$s / %2$s بار</string>
+    <string name="toast_target_done">ماشاءاللہ! ہدف مکمل ہو گیا 🎉</string>
+    <string name="salam_counter_title">سلام کاؤنٹر</string>
+    <string name="counter_select_durood">درود منتخب کریں</string>
+    <string name="counter_select_salam">سلام منتخب کریں</string>
+
+    <!-- ===== Morning & evening practice card ===== -->
+    <string name="amal_title">🌟 صبح و شام کا عمل</string>
+    <string name="amal_item_1">صبح ۱۰ بار اور شام ۱۰ بار درود پڑھیں — قیامت میں نبی کریم ﷺ کی شفاعت نصیب ہوگی۔</string>
+    <string name="amal_item_2">جمعے کے دن کثرت سے درود پڑھیں۔</string>
+    <string name="amal_item_3">۱۰۰ بار درود پڑھنے پر ۱۰۰ گناہ معاف اور ۱۰۰ نیکیاں لکھی جاتی ہیں۔</string>
+
+    <!-- ===== Virtues (Fazilat) ===== -->
+    <string name="fazilat_section_title">تعارف اور فضیلت</string>
+
+    <!-- ===== Settings screen ===== -->
+    <string name="settings_section_preferences">ترجیحات</string>
+    <string name="settings_section_about">تعارف</string>
+    <string name="settings_arabic_font">عربی فونٹ</string>
+    <string name="settings_arabic_font_size">عربی فونٹ کا سائز</string>
+    <string name="settings_app_version">ایپ کا ورژن</string>
+    <string name="contact_email">ای میل</string>
+    <string name="contact_whatsapp">واٹس ایپ</string>
+    <string name="toast_coming_soon">جلد آ رہا ہے</string>
+    <string name="app_version">ورژن ۱.۱.۰</string>
+    <!-- ===== Theme option labels ===== -->
+    <string name="theme_default">ڈیفالٹ</string>
+    <string name="theme_green">سبز</string>
+    <string name="theme_blue">نیلا</string>
+    <string name="theme_brown">بھورا</string>
+    <string name="theme_purple">جامنی</string>
+    <string name="theme_dark">ڈارک</string>
+    <!-- ===== Notifications (نوٹیفکیشنز) ===== -->
+    <string name="notification_channel_name">درود و سلام کی یاد دہانیاں</string>
+    <string name="notification_channel_description">درود و سلام پڑھنے کی روزانہ یاد دہانیاں</string>
+    <string name="notification_text">محبوب نبی ﷺ پر درود و سلام پڑھنے کے لیے کچھ وقت نکالیے۔</string>
+    <string name="notification_title">درود و سلام</string>
+    <string name="notification_settings_title">نوٹیفکیشن سیٹنگز</string>
+    <string name="notifications_enable_label">نوٹیفکیشنز چالو کریں</string>
+    <string name="notifications_schedule_label">شیڈیول</string>
+    <string name="day_sunday">اتوار</string>
+    <string name="day_monday">پیر</string>
+    <string name="day_tuesday">منگل</string>
+    <string name="day_wednesday">بدھ</string>
+    <string name="day_thursday">جمعرات</string>
+    <string name="day_friday">جمعہ</string>
+    <string name="day_saturday">ہفتہ</string>
+    <string name="notification_save">محفوظ کریں</string>
+    <string name="notifications_saved">نوٹیفکیشن شیڈیول محفوظ ہو گیا</string>
+    <string name="notifications_permission_required">ریمائنڈر سیٹ کرنے کے لیے نوٹیفکیشن کی اجازت درکار ہے</string>
+    <string name="notifications_permission_denied">نوٹیفکیشن کی اجازت مسترد کر دی گئی</string>
+    <string name="notifications_disabled">نوٹیفکیشنز بند کر دی گئیں</string>
+    <string name="time_am">صبح</string>
+    <string name="time_pm">شام</string>
+    <string name="about_title">ایپ کا تعارف</string>
+    <string name="about_body">اس ایپ میں ۲۵ صحیح احادیث سے مروی درود شریف اور ۱۵ سلام موجود ہیں۔ ہر درود اور سلام کے ساتھ عربی متن، بنگلا تلفظ، ترجمہ اور حدیث کا حوالہ دیا گیا ہے۔ اس کے علاوہ درود کاؤنٹر اور فضیلت کا حصہ بھی شامل ہے۔</string>
+    <!-- تصنیف اور حوالے (About credit) -->
+    <string name="about_credit_title">✒️ تصنیف اور حوالے</string>
+    <string name="about_credit_1">حکیم الامت مفتی مظفر الملت حضرت مولانا شاہ اشرف علی تھانوی رحمہ اللہ کی تصنیف کردہ \"مدرسہ شہید\" اور دیگر حوالہ کتابوں کی روشنی میں مرتب کیا گیا ہے</string>
+    <string name="about_credit_2">عارف باللہ روشمیِ زمانہ حضرت مولانا شاہ حکیم محمد اختر صاحب دامت برکاتہم کے ممتاز خلیفہ حضرت مولانا مفتی نور الامین خلنہ کی نگرانی اور رہنمائی میں مرتب کیا گیا ہے</string>
+    <string name="hadith_books_title">📚 احادیث کی کتابیں</string>
+    <string name="book_bukhari">صحیح بخاری</string>
+    <string name="book_muslim">صحیح مسلم</string>
+    <string name="book_tirmidhi">سنن ترمذی</string>
+    <string name="book_abu_dawud">سنن ابو داود</string>
+    <string name="book_ibn_majah">سنن ابن ماجہ</string>
+    <string name="book_ahmad">مسند احمد</string>
+    <string name="book_nasai">سنن نسائی</string>
+    <string name="book_bayhaqi">سنن بیہقی</string>
+    <string name="book_tabarani">المعجم الکبیر (طبرانی)</string>
+    <string name="book_malik">موطأ امام مالک</string>
+    <string name="purpose_title">🤲 مقصد</string>
+    <string name="purpose_body">اللہ کے رسول ﷺ سے محبت کا اظہار اور امت میں درود کا عمل پھیلانا اسی ایپ کا بنیادی مقصد ہے۔ اللہ ہمیں کثرت سے درود پڑھنے کی توفیق عطا فرمائے۔ آمین۔</string>
+    <string name="contact_title">رابطہ</string>
+    <string name="privacy_policy">پرائیویسی پالیسی</string>
+
+    <!-- ===== Footer ===== -->
+    <string name="footer_text">سب کے لیے کھلا — کثرت سے درود پڑھیں</string>
+
+    <!-- ===== Toasts / system messages (native + WebView) ===== -->
+    <string name="toast_copied">کاپی ہو گئی! ✓</string>
+    <string name="toast_share_copied">شیئر کرنے کے لیے کاپی کریں</string>
+    <string name="share_chooser_title">درود شیئر کریں</string>
+    <string name="error_no_email_app">کوئی ای میل ایپ نہیں ملی</string>
+    <string name="email_support_subject">%1$s سپورٹ</string>
+
+    <!-- ===== Localization helpers (not user-visible) ===== -->
+    <!-- Digits 0-9 in the active script, used to render numbers (10 -> ۱۰) -->
+    <string name="local_digits">۰۱۲۳۴۵۶۷۸۹</string>
+
+    <!-- ===== Settings rows (used by the Settings screen) ===== -->
+    <string name="settings_title">ترتیبات</string>
+    <string name="language_title">زبان</string>
+    <string name="notifications_title">اطلاعات</string>
+    <string name="theme_title">تھیم</string>
+
+    <!-- ===== Menu / screens ===== -->
+    <string name="menu_title">مینو</string>
+    <string name="my_activity_title">میری سرگرمیاں</string>
+    <string name="about_the_app_title">ایپ کے بارے میں</string>
+    <string name="about_us_title">ہمارے بارے میں</string>
+    <string name="contact_us_title">رابطہ کریں</string>
+    <string name="developed_by">تیار کردہ</string>
+    <string name="my_activity_placeholder">آپ کی سرگرمیاں یہاں ظاہر ہوں گی۔</string>
+
+    <!-- ===== First-launch setup ===== -->
+    <string name="setup_title">ایپ سیٹ اپ کریں</string>
+    <string name="setup_done">مکمل</string>
+
+    <!-- ===== Crash reporting / diagnostics ===== -->
+    <string name="crash_report_consent_title">کریش رپورٹس ای میل کے ذریعے بھیجیں</string>
+    <string name="crash_report_consent_desc">ایپ کو کریش سے متعلق تشخیصی معلومات (ایک .txt فائل) ای میل کے ذریعے تیار کرنے کی اجازت دیتا ہے۔ کوئی رپورٹ خودکار طور پر نہیں بھیجی جاتی — بھیجنا ہے یا نہیں یہ آپ طے کرتے ہیں۔</string>
+    <string name="log_generated">لاگ کامیابی سے تیار ہو گئی</string>
+    <string name="share_log">لاگ شیئر کریں</string>
+    <string name="log_generate_failed">لاگ تیار کرنے میں ناکامی</string>
+    <string name="log_share_failed">لاگ شیئر کرنے میں ناکامی</string>
+
+    <!-- ===== My Activity ===== -->
+    <string name="activity_durood_label">درود</string>
+    <string name="activity_salam_label">سلام</string>
+    <string name="activity_empty">ابھی تک کوئی سرگرمی ریکارڈ نہیں کی گئی۔</string>
+    <string name="activity_today">آج</string>
+    <string name="activity_yesterday">کل</string>
+    <string name="activity_total">کل تعداد</string>
+</resources>
