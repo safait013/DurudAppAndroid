@@ -25,6 +25,8 @@ public class App extends Application {
             enableStrictMode();
         }
         AppLogger.i("App", "Application started");
+        // Asynchronous and cached: this cannot delay launch or run on every screen load.
+        UpdateChecker.checkIfDue(this);
     }
 
     @SuppressWarnings("deprecation")
