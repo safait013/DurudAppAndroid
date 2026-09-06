@@ -132,6 +132,7 @@
     <string name="toast_share_copied">Copy to share</string>
     <string name="share_chooser_title">Share Durud</string>
     <string name="error_no_email_app">No email app found</string>
+    <string name="whatsapp_not_installed">WhatsApp not installed</string>
     <string name="email_support_subject">%1$s Support</string>
 
     <!-- ===== Localization helpers (not user-visible) ===== -->
@@ -160,6 +161,9 @@
     <!-- ===== Crash reporting / diagnostics ===== -->
     <string name="crash_report_consent_title">Send crash reports by email</string>
     <string name="crash_report_consent_desc">Allows the app to prepare crash diagnostic information (a .txt file) by email. No report is sent automatically — you choose whether to send it.</string>
+    <string name="crash_report_chooser_title">Send crash report</string>
+    <string name="crash_report_subject">Durood &amp; Salam Crash Report - %1$s</string>
+    <string name="crash_report_body">A crash diagnostic file is attached. It contains technical information that helps diagnose the problem.</string>
     <string name="log_generated">Log generated successfully</string>
     <string name="share_log">Share log</string>
     <string name="log_generate_failed">Failed to generate log</string>
@@ -168,8 +172,59 @@
     <!-- ===== My Activity ===== -->
     <string name="activity_durood_label">Durood</string>
     <string name="activity_salam_label">Salam</string>
-    <string name="activity_empty">No activity recorded yet.</string>
+    <string name="activity_empty">No activity yet.</string>
     <string name="activity_today">Today</string>
     <string name="activity_yesterday">Yesterday</string>
     <string name="activity_total">Total</string>
+    <!-- ===== App update notifications ===== -->
+    <string name="update_notification_channel_name">App updates</string>
+    <string name="update_notification_channel_description">Notifications when a new app version is available</string>
+    <string name="update_notification_title">Update Durood &amp; Salam</string>
+    <string name="update_notification_message">A new version of Durood &amp; Salam is available. Please update the app.</string>
+
+    <!-- ===== Location-aware Hijri date ===== -->
+    <string name="hijri_header_loading">Hijri date…</string>
+    <string name="hijri_ah">AH</string>
+    <string name="hijri_month_1">Muharram</string>
+    <string name="hijri_month_2">Safar</string>
+    <string name="hijri_month_3">Rabi\' al-Awwal</string>
+    <string name="hijri_month_4">Rabi\' al-Thani</string>
+    <string name="hijri_month_5">Jumada al-Awwal</string>
+    <string name="hijri_month_6">Jumada al-Thani</string>
+    <string name="hijri_month_7">Rajab</string>
+    <string name="hijri_month_8">Sha\'ban</string>
+    <string name="hijri_month_9">Ramadan</string>
+    <string name="hijri_month_10">Shawwal</string>
+    <string name="hijri_month_11">Dhu al-Qi\'dah</string>
+    <string name="hijri_month_12">Dhu al-Hijjah</string>
+    <string name="hijri_settings_title">Hijri Date</string>
+    <string name="hijri_settings_auto">Automatic</string>
+    <string name="hijri_current_title">Current Hijri date</string>
+    <string name="hijri_sunset_format">Sunset %1$s</string>
+    <string name="hijri_overrides_title">Manual overrides</string>
+    <string name="hijri_add_override">Add override</string>
+    <string name="hijri_overrides_empty">No manual overrides yet. The automatic date is used.</string>
+    <string name="hijri_gregorian_date_label">Gregorian date</string>
+    <string name="hijri_hijri_date_label">Hijri date</string>
+    <string name="hijri_day_label">Day</string>
+    <string name="hijri_month_label">Month</string>
+    <string name="hijri_year_label">Year</string>
+    <string name="hijri_save">Save override</string>
+    <string name="hijri_edit_override">Edit override</string>
+    <string name="hijri_delete">Delete</string>
+    <string name="hijri_after_sunset_note">A manual override applies from the local sunset before the selected Gregorian date until sunset on that date. After sunset, the form selects tomorrow so you can change the date currently shown on Home. Overrides take priority over the automatic date.</string>
+    <string name="hijri_saved_toast">Hijri date override saved.</string>
+    <string name="hijri_deleted_toast">Hijri date override removed.</string>
+    <string name="hijri_invalid_gregorian_toast">Please choose a valid Gregorian date.</string>
+    <string name="hijri_invalid_hijri_toast">Enter a valid day (1–30), month (1–12) and year (1200–1600 AH).</string>
+    <string name="hijri_delete_confirm">Delete this manual override? The automatic date will be used for that day again.</string>
+    <string name="hijri_source_manual">Manual override</string>
+    <string name="hijri_source_api">AlAdhan API</string>
+    <string name="hijri_source_cache">Saved data (offline)</string>
+    <string name="hijri_source_fallback">Approximate</string>
+    <string name="hijri_location_note">For an accurate local sunset the app may ask for your location. It is optional and the app works fully without it.</string>
+    <string name="hijri_29_notification_title">Check Hijri Date</string>
+    <string name="hijri_29_notification_message">After sunset, the Hijri date may change. If the date is not correct, please change it manually.</string>
+    <string name="hijri_new_month_notification_title">New Hijri Month</string>
+    <string name="hijri_new_month_notification_message">A new Hijri month has started: %1$s %2$d AH.</string>
 </resources>

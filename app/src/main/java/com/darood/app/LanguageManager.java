@@ -65,6 +65,7 @@ public final class LanguageManager {
      * when supported; otherwise the default (English) resources apply.
      * Call from attachBaseContext() of every activity.
      */
+    @SuppressWarnings("deprecation") // Configuration.setLocale is required on API 21–23 (minSdk).
     public static Context applyLanguage(Context base) {
         String saved = getSavedLanguage(base);
         Locale target;

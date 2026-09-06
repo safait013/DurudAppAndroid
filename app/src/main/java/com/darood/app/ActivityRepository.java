@@ -43,6 +43,14 @@ public final class ActivityRepository {
 
     /** Records one read for the given content on today's local date (async). */
     public void record(String type, int contentId) {
+        if (!TYPE_DUROOD.equals(type) && !TYPE_SALAM.equals(type)) {
+            AppLogger.w("ActivityRepository", "Ignoring invalid activity type: " + type);
+            return;
+        }
+        if (contentId <= 0) {
+            AppLogger.w("ActivityRepository", "Ignoring invalid contentId: " + contentId);
+            return;
+        }
         final String date = today();
         EXECUTOR.execute(() -> {
             try {

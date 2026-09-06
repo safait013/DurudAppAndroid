@@ -1,0 +1,26 @@
+C:\Users\safait\Downloads\DaroodApp\app\src\main\java\com\darood\app\MainActivity.java:87: error: <identifier> expected
+        settings.setAllowFileAccessFromFileURLs(true);
+                                               ^
+C:\Users\safait\Downloads\DaroodApp\app\src\main\java\com\darood\app\MainActivity.java:89: error: <identifier> expected
+        settings.setAllowUniversalAccessFromFileURLs(true);
+                                                    ^
+2 errors
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugJavaWithJavac' (registered by plugin 'com.android.internal.application').
+> Compilation failed; see the compiler output below.
+  C:\Users\safait\Downloads\DaroodApp\app\src\main\java\com\darood\app\MainActivity.java:87: error: <identifier> expected
+          settings.setAllowFileAccessFromFileURLs(true);
+                                                 ^
+  C:\Users\safait\Downloads\DaroodApp\app\src\main\java\com\darood\app\MainActivity.java:89: error: <identifier> expected
+          settings.setAllowUniversalAccessFromFileURLs(true);
+                                                      ^
+  2 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 4m 29s

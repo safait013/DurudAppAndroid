@@ -132,6 +132,7 @@
     <string name="toast_share_copied">শেয়ার করতে কপি করুন</string>
     <string name="share_chooser_title">দরুদ শেয়ার করুন</string>
     <string name="error_no_email_app">কোনো ইমেল অ্যাপ পাওয়া যায়নি</string>
+    <string name="whatsapp_not_installed">হোয়াটসঅ্যাপ ইনস্টল নেই</string>
     <string name="email_support_subject">%1$s সাপোর্ট</string>
 
     <!-- ===== Localization helpers (not user-visible) ===== -->
@@ -160,6 +161,9 @@
     <!-- ===== Crash reporting / diagnostics ===== -->
     <string name="crash_report_consent_title">ক্র্যাশ রিপোর্ট ইমেইলে পাঠান</string>
     <string name="crash_report_consent_desc">অ্যাপকে ক্র্যাশ সংক্রান্ত ডায়াগনস্টিক তথ্য (একটি .txt ফাইল) ইমেইলে প্রস্তুত করার অনুমতি দেয়। কোনো রিপোর্ট স্বয়ংক্রিয়ভাবে পাঠানো হয় না — পাঠাবেন কিনা তা আপনি ঠিক করবেন।</string>
+    <string name="crash_report_chooser_title">ক্র্যাশ রিপোর্ট পাঠান</string>
+    <string name="crash_report_subject">দুরুদ ও সালাম ক্র্যাশ রিপোর্ট - %1$s</string>
+    <string name="crash_report_body">একটি ক্র্যাশ ডায়াগনস্টিক ফাইল সংযুক্ত করা আছে। এটি সমস্যা নির্ণয়ে সাহায্য করার জন্য প্রযুক্তিগত তথ্য অন্তর্ভুক্ত করে।</string>
     <string name="log_generated">লগ সফলভাবে তৈরি হয়েছে</string>
     <string name="share_log">লগ শেয়ার করুন</string>
     <string name="log_generate_failed">লগ তৈরি করা যায়নি</string>
@@ -168,8 +172,59 @@
     <!-- ===== My Activity ===== -->
     <string name="activity_durood_label">দুরুদ</string>
     <string name="activity_salam_label">সালাম</string>
-    <string name="activity_empty">এখনও কোনো কার্যক্রম রেকর্ড করা হয়নি।</string>
+    <string name="activity_empty">এখনও কোনো আমল করা হয়নি।</string>
     <string name="activity_today">আজ</string>
     <string name="activity_yesterday">গতকাল</string>
     <string name="activity_total">মোট</string>
+    <!-- ===== App update notifications ===== -->
+    <string name="update_notification_channel_name">অ্যাপ আপডেট</string>
+    <string name="update_notification_channel_description">নতুন অ্যাপ সংস্করণ উপলব্ধ হলে বিজ্ঞপ্তি</string>
+    <string name="update_notification_title">দুরুদ ও সালাম আপডেট করুন</string>
+    <string name="update_notification_message">দুরুদ ও সালাম অ্যাপের নতুন সংস্করণ উপলব্ধ। দয়া করে অ্যাপটি আপডেট করুন।</string>
+
+    <!-- ===== Location-aware Hijri date ===== -->
+    <string name="hijri_header_loading">হিজরি তারিখ…</string>
+    <string name="hijri_ah">AH</string>
+    <string name="hijri_month_1">মুহাররম</string>
+    <string name="hijri_month_2">সফর</string>
+    <string name="hijri_month_3">রবিউল আউয়াল</string>
+    <string name="hijri_month_4">রবিউস সানি</string>
+    <string name="hijri_month_5">জুমাদাল উলা</string>
+    <string name="hijri_month_6">জুমাদাস সানি</string>
+    <string name="hijri_month_7">রজব</string>
+    <string name="hijri_month_8">শাবান</string>
+    <string name="hijri_month_9">রমজান</string>
+    <string name="hijri_month_10">শাওয়াল</string>
+    <string name="hijri_month_11">জিলকদ</string>
+    <string name="hijri_month_12">জিলহজ</string>
+    <string name="hijri_settings_title">হিজরি তারিখ</string>
+    <string name="hijri_settings_auto">স্বয়ংক্রিয়</string>
+    <string name="hijri_current_title">বর্তমান হিজরি তারিখ</string>
+    <string name="hijri_sunset_format">সূর্যাস্ত %1$s</string>
+    <string name="hijri_overrides_title">ম্যানুয়াল ওভাররাইড</string>
+    <string name="hijri_add_override">ওভাররাইড যোগ করুন</string>
+    <string name="hijri_overrides_empty">এখনও কোনো ম্যানুয়াল ওভাররাইড নেই। স্বয়ংক্রিয় তারিখ ব্যবহার হচ্ছে।</string>
+    <string name="hijri_gregorian_date_label">গ্রেগরীয় তারিখ</string>
+    <string name="hijri_hijri_date_label">হিজরি তারিখ</string>
+    <string name="hijri_day_label">দিন</string>
+    <string name="hijri_month_label">মাস</string>
+    <string name="hijri_year_label">বছর</string>
+    <string name="hijri_save">ওভাররাইড সংরক্ষণ</string>
+    <string name="hijri_edit_override">ওভাররাইড সম্পাদনা</string>
+    <string name="hijri_delete">মুছুন</string>
+    <string name="hijri_after_sunset_note">ম্যানুয়াল তারিখ নির্বাচিত গ্রেগরীয় দিনের আগের সূর্যাস্ত থেকে ওই দিনের সূর্যাস্ত পর্যন্ত কার্যকর থাকে। সূর্যাস্তের পর হোমে দেখানো বর্তমান তারিখ পরিবর্তনের জন্য ফর্মে আগামী দিন নির্বাচিত থাকে। ম্যানুয়াল তারিখ স্বয়ংক্রিয় তারিখের চেয়ে অগ্রাধিকার পায়।</string>
+    <string name="hijri_saved_toast">হিজরি তারিখ ওভাররাইড সংরক্ষিত হয়েছে।</string>
+    <string name="hijri_deleted_toast">হিজরি তারিখ ওভাররাইড মুছে ফেলা হয়েছে।</string>
+    <string name="hijri_invalid_gregorian_toast">একটি সঠিক গ্রেগরীয় তারিখ নির্বাচন করুন।</string>
+    <string name="hijri_invalid_hijri_toast">সঠিক দিন (১–৩০), মাস (১–১২) ও বছর (১২০০–১৬০০ হিজরি) লিখুন।</string>
+    <string name="hijri_delete_confirm">এই ম্যানুয়াল ওভাররাইডটি মুছবেন? সেদিনের জন্য আবার স্বয়ংক্রিয় তারিখ ব্যবহার হবে।</string>
+    <string name="hijri_source_manual">ম্যানুয়াল ওভাররাইড</string>
+    <string name="hijri_source_api">আলআধান API</string>
+    <string name="hijri_source_cache">সংরক্ষিত তথ্য (অফলাইন)</string>
+    <string name="hijri_source_fallback">আনুমানিক</string>
+    <string name="hijri_location_note">সঠিক স্থানীয় সূর্যাস্তের জন্য অ্যাপ আপনার অবস্থান জানতে চাইতে পারে। এটি ঐচ্ছিক; এ ছাড়াও অ্যাপ সম্পূর্ণ চলে।</string>
+    <string name="hijri_29_notification_title">হিজরি তারিখ যাচাই করুন</string>
+    <string name="hijri_29_notification_message">সূর্যাস্তের পর হিজরি তারিখ পরিবর্তন হতে পারে। তারিখ সঠিক না থাকলে দয়া করে ম্যানুয়ালি পরিবর্তন করুন।</string>
+    <string name="hijri_new_month_notification_title">নতুন হিজরি মাস</string>
+    <string name="hijri_new_month_notification_message">নতুন হিজরি মাস শুরু হয়েছে: %1$s %2$d হিজরি।</string>
 </resources>

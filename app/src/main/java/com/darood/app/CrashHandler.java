@@ -75,14 +75,12 @@ public final class CrashHandler implements Thread.UncaughtExceptionHandler {
             Intent send = new Intent(Intent.ACTION_SEND);
             send.setType("text/plain");
             send.putExtra(Intent.EXTRA_EMAIL, new String[]{AppSettings.SUPPORT_EMAIL});
-            send.putExtra(Intent.EXTRA_SUBJECT, "Durood & Salam Crash Report - " + versionName());
-            send.putExtra(Intent.EXTRA_TEXT,
-                    "A crash diagnostic file is attached. It contains technical information "
-                            + "that helps diagnose the problem.");
+            send.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.crash_report_subject, versionName()));
+            send.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.crash_report_body));
             send.putExtra(Intent.EXTRA_STREAM, uri);
             send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            Intent chooser = Intent.createChooser(send, "Send crash report");
+            Intent chooser = Intent.createChooser(send, context.getString(R.string.crash_report_chooser_title));
             chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(chooser);
             AppLogger.i("CrashHandler", "Crash report email prepared");

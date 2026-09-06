@@ -23,6 +23,11 @@ public class BootReceiver extends BroadcastReceiver {
             AppLogger.i("BootReceiver", "Boot/update received; rescheduling notifications");
             Context localized = LanguageManager.applyLanguage(context);
             NotificationScheduler.rescheduleAll(localized);
+            NotificationScheduler.restoreUpdateReminder(context);
+            // The sunset alarm is cancelled by the system on reboot, and
+            // PendingIntents are invalidated by an app update: re-arm it so the
+            // location-aware Hijri date keeps rolling without user action.
+            HijriCoordinator.get().onBootCompleted(localized);
         }
     }
 }

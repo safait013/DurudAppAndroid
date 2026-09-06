@@ -2,6 +2,7 @@ package com.darood.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -25,7 +26,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements HijriCoordinator.HijriRefreshListener {
 
     private WebView webView;
 
@@ -33,6 +34,8 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CODE_LANGUAGE = 1001;
     /** Request code for the Android 13+ POST_NOTIFICATIONS runtime permission. */
     private static final int REQUEST_CODE_NOTIFICATIONS_PERMISSION = 1002;
+    /** Request code for the optional location permission used by the Hijri date. */
+    private static final int REQUEST_CODE_LOCATION = 1003;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -41,6 +44,9 @@ public class MainActivity extends Activity {
         super.attachBaseContext(LanguageManager.applyLanguage(base));
     }
 
+    // Note: onCreate intentionally uses deprecated WebSettings file-access APIs (API 30+)
+    // so the bundled @font-face Arabic fonts can load via file:// URLs.
+    @SuppressWarnings("deprecation")
     @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +87,8 @@ public class MainActivity extends Activity {
         settings.setSupportZoom(false);
         settings.setTextZoom(100);
 
-        // Font Loading
+        // Font Loading: deprecated since API 30, intentionally required so the bundled
+        // @font-face Arabic fonts can load via file:// URLs — no network access needed.
         settings.setAllowFileAccessFromFileURLs(true);
         settings.setAllowUniversalAccessFromFileURLs(true);
 
@@ -127,8 +134,8 @@ public class MainActivity extends Activity {
                         }
                     } catch (Exception e) {
                         AppLogger.w("MainActivity", "Intent handling failed (target app may be missing)", e);
-                        Toast.makeText(MainActivity.this,
-                                "WhatsApp not installed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this,
+                                        getString(R.string.whatsapp_not_installed), Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
@@ -272,7 +279,48 @@ public class MainActivity extends Activity {
             R.string.activity_empty,
             R.string.activity_today,
             R.string.activity_yesterday,
-            R.string.activity_total
+            R.string.activity_total,
+            // ===== Location-aware Hijri date =====
+            R.string.hijri_header_loading,
+            R.string.hijri_ah,
+            R.string.hijri_month_1,
+            R.string.hijri_month_2,
+            R.string.hijri_month_3,
+            R.string.hijri_month_4,
+            R.string.hijri_month_5,
+            R.string.hijri_month_6,
+            R.string.hijri_month_7,
+            R.string.hijri_month_8,
+            R.string.hijri_month_9,
+            R.string.hijri_month_10,
+            R.string.hijri_month_11,
+            R.string.hijri_month_12,
+            R.string.hijri_settings_title,
+            R.string.hijri_settings_auto,
+            R.string.hijri_current_title,
+            R.string.hijri_sunset_format,
+            R.string.hijri_overrides_title,
+            R.string.hijri_add_override,
+            R.string.hijri_overrides_empty,
+            R.string.hijri_gregorian_date_label,
+            R.string.hijri_hijri_date_label,
+            R.string.hijri_day_label,
+            R.string.hijri_month_label,
+            R.string.hijri_year_label,
+            R.string.hijri_save,
+            R.string.hijri_edit_override,
+            R.string.hijri_delete,
+            R.string.hijri_after_sunset_note,
+            R.string.hijri_saved_toast,
+            R.string.hijri_deleted_toast,
+            R.string.hijri_invalid_gregorian_toast,
+            R.string.hijri_invalid_hijri_toast,
+            R.string.hijri_delete_confirm,
+            R.string.hijri_source_manual,
+            R.string.hijri_source_api,
+            R.string.hijri_source_cache,
+            R.string.hijri_source_fallback,
+            R.string.hijri_location_note
     };
 
     /** Loads assets/index.html with localized UI strings and passes it to the WebView. */
@@ -417,7 +465,14 @@ public class MainActivity extends Activity {
             try {
                 Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                 if (v != null && v.hasVibrator()) {
-                    v.vibrate(ms);
+                    if (android.os.Build.VERSION.SDK_INT >= 26) {
+                        v.vibrate(android.os.VibrationEffect.createOneShot(
+                                Math.max(0, ms),
+                                android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        // Legacy path required for minSdk 21–25 (API < 26).
+                        v.vibrate(ms);
+                    }
                 }
             } catch (Exception e) {
                 AppLogger.e("MainActivity", "Vibration failed", e);
@@ -520,10 +575,17 @@ public class MainActivity extends Activity {
             });
         }
 
-        /** True once the user completed the first-launch setup (language chosen). */
+        /** True once the user completed the first-launch setup (separate persisted flag). */
         @JavascriptInterface
         public boolean isSetupComplete() {
-            return LanguageManager.isLanguageSelected(MainActivity.this);
+            return AppSettings.isSetupComplete(MainActivity.this);
+        }
+
+        /** Marks the first-launch setup as completed (persisted). */
+        @JavascriptInterface
+        public void completeSetup() {
+            AppSettings.saveSetupCompleted(MainActivity.this, true);
+            AppLogger.i("MainActivity", "First-launch setup completed");
         }
 
         /** Generates a diagnostic log file; returns its file name, or "" on failure. */
@@ -683,12 +745,80 @@ public class MainActivity extends Activity {
                 dialog.show();
             });
         }
+
+        /**
+         * Home header / Settings → Hijri Date: returns the current snapshot
+         * (manual → cached API → fallback) synchronously for first paint.
+         * The async path refreshes it via refreshHijriDate().
+         */
+        @JavascriptInterface
+        public String getHijriDateSnapshot() {
+            return HijriCoordinator.get().snapshotJson(MainActivity.this);
+        }
+
+        /** Home header / Settings → Hijri Date: full foreground refresh. */
+        @JavascriptInterface
+        public void refreshHijriDate() {
+            HijriCoordinator.get().refresh(MainActivity.this);
+        }
+
+        /** Settings → Hijri Date: loads the manual-override list (async push). */
+        @JavascriptInterface
+        public void loadHijriOverrides() {
+            HijriCoordinator.get().loadOverrides(MainActivity.this);
+        }
+
+        /**
+         * Settings → Hijri Date: saves a manual override.
+         * @param json {"gregorianDate":"yyyy-MM-dd","hijriDay":n,"hijriMonth":n,"hijriYear":n}
+         * @return "ok" or "invalid"
+         */
+        @JavascriptInterface
+        public String saveHijriOverride(String json) {
+            return HijriCoordinator.get().saveOverride(MainActivity.this, json);
+        }
+
+        /**
+         * Settings → Hijri Date: deletes a manual override.
+         * @return "ok" or "invalid"
+         */
+        @JavascriptInterface
+        public String deleteHijriOverride(String gregorianDate) {
+            return HijriCoordinator.get().deleteOverride(MainActivity.this, gregorianDate);
+        }
+
+        /**
+         * Settings → Hijri Date: opens the platform date picker. The chosen date
+         * is delivered back via window.__hijriDatePicked(year, month0, day).
+         */
+        @JavascriptInterface
+        public void openHijriDatePicker(final int day, final int month0, final int year) {
+            runOnUiThread(() -> {
+                DatePickerDialog dialog = new DatePickerDialog(MainActivity.this,
+                        (view, pickedYear, pickedMonth, pickedDay) -> {
+                            final String js = "window.__hijriDatePicked("
+                                    + pickedYear + "," + pickedMonth + "," + pickedDay + ")";
+                            webView.post(() -> webView.evaluateJavascript(js, null));
+                        },
+                        year, month0, day);
+                dialog.show();
+            });
+        }
     }
 
     /** Continues saving after the POST_NOTIFICATIONS runtime permission result. */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            AppLogger.i("MainActivity", "Location permission result: granted=" + granted);
+            // Whether granted or denied the app remains fully usable: location
+            // simply upgrades the automatic date, cache/fallback handle the rest.
+            HijriCoordinator.get().refresh(this);
+            return;
+        }
         if (requestCode != REQUEST_CODE_NOTIFICATIONS_PERMISSION) {
             return;
         }
@@ -717,12 +847,62 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         webView.onResume();
+        // Hijri date: foreground verification + push updates from background work.
+        HijriCoordinator.setForegroundListener(this);
+        maybeRefreshHijriDate();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        HijriCoordinator.setForegroundListener(null);
         webView.onPause();
+    }
+
+    /**
+     * Foreground step for the location-aware Hijri date: on first run the
+     * (optional) location permission is requested; afterwards a full refresh
+     * (location → sunset → manual/API/cache/fallback → schedule) runs.
+     */
+    private void maybeRefreshHijriDate() {
+        if (!HijriCoordinator.hasLocationPermission(this)
+                && !AppSettings.isHijriLocationPermissionAsked(this)) {
+            AppSettings.setHijriLocationPermissionAsked(this, true);
+            if (android.os.Build.VERSION.SDK_INT >= 23) {
+                requestPermissions(new String[]{
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                }, REQUEST_CODE_LOCATION);
+                return; // onRequestPermissionsResult triggers the refresh
+            }
+        }
+        HijriCoordinator.get().refresh(this);
+    }
+
+    // ===== HijriCoordinator.HijriRefreshListener =====
+
+    /** Pushes a fresh Hijri date snapshot into the WebView (any thread). */
+    @Override
+    public void onHijriDateUpdated(String snapshotJson) {
+        runOnUiThread(() -> {
+            if (webView != null) {
+                webView.evaluateJavascript(
+                        "window.__hijriDateUpdated && window.__hijriDateUpdated("
+                                + snapshotJson + ");", null);
+            }
+        });
+    }
+
+    /** Pushes the manual-override list into the WebView (any thread). */
+    @Override
+    public void onHijriOverridesLoaded(String overridesJson) {
+        runOnUiThread(() -> {
+            if (webView != null) {
+                webView.evaluateJavascript(
+                        "window.__hijriOverridesLoaded && window.__hijriOverridesLoaded("
+                                + overridesJson + ");", null);
+            }
+        });
     }
 
     @Override

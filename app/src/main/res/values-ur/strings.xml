@@ -132,6 +132,7 @@
     <string name="toast_share_copied">شیئر کرنے کے لیے کاپی کریں</string>
     <string name="share_chooser_title">درود شیئر کریں</string>
     <string name="error_no_email_app">کوئی ای میل ایپ نہیں ملی</string>
+    <string name="whatsapp_not_installed">واٹس ایپ انسٹال نہیں ہے</string>
     <string name="email_support_subject">%1$s سپورٹ</string>
 
     <!-- ===== Localization helpers (not user-visible) ===== -->
@@ -160,6 +161,9 @@
     <!-- ===== Crash reporting / diagnostics ===== -->
     <string name="crash_report_consent_title">کریش رپورٹس ای میل کے ذریعے بھیجیں</string>
     <string name="crash_report_consent_desc">ایپ کو کریش سے متعلق تشخیصی معلومات (ایک .txt فائل) ای میل کے ذریعے تیار کرنے کی اجازت دیتا ہے۔ کوئی رپورٹ خودکار طور پر نہیں بھیجی جاتی — بھیجنا ہے یا نہیں یہ آپ طے کرتے ہیں۔</string>
+    <string name="crash_report_chooser_title">کریش رپورٹ بھیجیں</string>
+    <string name="crash_report_subject">دروود و سلام کریش رپورٹ - %1$s</string>
+    <string name="crash_report_body">ایک کریش ڈایگنوسٹک فائل منسلک ہے۔ یہ مسئلے کی تشخیص میں مدد کرنے والا تکنیکی معلومات مشتمل ہے۔</string>
     <string name="log_generated">لاگ کامیابی سے تیار ہو گئی</string>
     <string name="share_log">لاگ شیئر کریں</string>
     <string name="log_generate_failed">لاگ تیار کرنے میں ناکامی</string>
@@ -168,8 +172,59 @@
     <!-- ===== My Activity ===== -->
     <string name="activity_durood_label">درود</string>
     <string name="activity_salam_label">سلام</string>
-    <string name="activity_empty">ابھی تک کوئی سرگرمی ریکارڈ نہیں کی گئی۔</string>
+    <string name="activity_empty">ابھی تک کوئی عمل ریکارڈ نہیں ہوا۔</string>
     <string name="activity_today">آج</string>
     <string name="activity_yesterday">کل</string>
     <string name="activity_total">کل تعداد</string>
+    <!-- ===== App update notifications ===== -->
+    <string name="update_notification_channel_name">ایپ اپ ڈیٹس</string>
+    <string name="update_notification_channel_description">نیا ایپ ورژن دستیاب ہونے پر اطلاع</string>
+    <string name="update_notification_title">درود و سلام اپ ڈیٹ کریں</string>
+    <string name="update_notification_message">درود و سلام ایپ کا نیا ورژن دستیاب۔ براہِ کرم ایپ کو اپ ڈیٹ کریں۔</string>
+
+    <!-- ===== Location-aware Hijri date ===== -->
+    <string name="hijri_header_loading">تاریخ ہجری…</string>
+    <string name="hijri_ah">ھ</string>
+    <string name="hijri_month_1">محرم</string>
+    <string name="hijri_month_2">صفر</string>
+    <string name="hijri_month_3">ربیع الاول</string>
+    <string name="hijri_month_4">ربیع الثانی</string>
+    <string name="hijri_month_5">جمادی الاول</string>
+    <string name="hijri_month_6">جمادی الثانی</string>
+    <string name="hijri_month_7">رجب</string>
+    <string name="hijri_month_8">شعبان</string>
+    <string name="hijri_month_9">رمضان</string>
+    <string name="hijri_month_10">شوال</string>
+    <string name="hijri_month_11">ذو القعدہ</string>
+    <string name="hijri_month_12">ذو الحجہ</string>
+    <string name="hijri_settings_title">تاریخ ہجری</string>
+    <string name="hijri_settings_auto">خودکار</string>
+    <string name="hijri_current_title">موجودہ تاریخ ہجری</string>
+    <string name="hijri_sunset_format">غروبِ آفتاب %1$s</string>
+    <string name="hijri_overrides_title">دستی تاریخ</string>
+    <string name="hijri_add_override">دستی تاریخ شامل کریں</string>
+    <string name="hijri_overrides_empty">ابھی کوئی دستی تاریخ موجود نہیں۔ خودکار تاریخ استعمال ہو رہی ہے۔</string>
+    <string name="hijri_gregorian_date_label">عیسوی تاریخ</string>
+    <string name="hijri_hijri_date_label">تاریخ ہجری</string>
+    <string name="hijri_day_label">دن</string>
+    <string name="hijri_month_label">مہینہ</string>
+    <string name="hijri_year_label">سال</string>
+    <string name="hijri_save">دستی تاریخ محفوظ کریں</string>
+    <string name="hijri_edit_override">دستی تاریخ میں ترمیم</string>
+    <string name="hijri_delete">حذف کریں</string>
+    <string name="hijri_after_sunset_note">دستی تاریخ منتخب عیسوی تاریخ سے پہلے کے مقامی غروب سے اس تاریخ کے غروب تک نافذ رہتی ہے۔ غروب کے بعد ہوم پر دکھائی گئی موجودہ تاریخ بدلنے کے لیے فارم میں اگلا دن منتخب ہوتا ہے۔ دستی تاریخ کو خودکار تاریخ پر ترجیح دی جاتی ہے۔</string>
+    <string name="hijri_saved_toast">تاریخ ہجری کی دستی وضاحت محفوظ ہو گئی۔</string>
+    <string name="hijri_deleted_toast">تاریخ ہجری کی دستی وضاحت حذف ہو گئی۔</string>
+    <string name="hijri_invalid_gregorian_toast">براہ کرم ایک درست عیسوی تاریخ منتخب کریں۔</string>
+    <string name="hijri_invalid_hijri_toast">درست دن (۱–۳۰)، مہینہ (۱–۱۲) اور سال (۱۲۰۰–۱۶۰۰ھ) درج کریں۔</string>
+    <string name="hijri_delete_confirm">کیا یہ دستی تاریخ حذف کریں؟ اس دن کے لیے دوبارہ خودکار تاریخ استعمال ہوگی۔</string>
+    <string name="hijri_source_manual">دستی تاریخ</string>
+    <string name="hijri_source_api">الاذان API</string>
+    <string name="hijri_source_cache">محفوظ شدہ معلومات (آف لائن)</string>
+    <string name="hijri_source_fallback">تخمینی</string>
+    <string name="hijri_location_note">درست مقامی غروبِ آفتاب کے لیے ایپ آپ کا مقام پوچھ سکتی ہے۔ یہ اختیاری ہے اور اس کے بغیر بھی ایپ مکمل چلتی ہے۔</string>
+    <string name="hijri_29_notification_title">ہجری تاریخ چیک کریں</string>
+    <string name="hijri_29_notification_message">غروبِ آفتاب کے بعد ہجری تاریخ تبدیل ہو سکتی ہے۔ اگر تاریخ درست نہ ہو تو براہِ کرم اسے دستی طور پر تبدیل کریں۔</string>
+    <string name="hijri_new_month_notification_title">نیا ہجری مہینہ</string>
+    <string name="hijri_new_month_notification_message">نیا ہجری مہینہ شروع ہو گیا ہے: %1$s %2$d ہجری۔</string>
 </resources>

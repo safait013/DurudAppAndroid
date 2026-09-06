@@ -38,6 +38,12 @@ public final class AppSettings {
 
     public static final String KEY_CRASH_REPORT_CONSENT = "crash_report_consent";
 
+    /** Separate one-time flag marking that first-launch setup was completed. */
+    public static final String KEY_SETUP_COMPLETED = "setup_completed";
+
+    /** One-time flag: the optional location permission dialog was already shown. */
+    public static final String KEY_HIJRI_LOCATION_ASKED = "hijri_location_permission_asked";
+
     /** Official developer/contact email (matches the mailto link in the About/Contact UI). */
     public static final String SUPPORT_EMAIL = "primebytelabs.support@gmail.com";
 
@@ -52,6 +58,26 @@ public final class AppSettings {
     /** Persists the crash-report email consent. */
     public static void saveCrashReportConsent(Context context, boolean consent) {
         prefs(context).edit().putBoolean(KEY_CRASH_REPORT_CONSENT, consent).apply();
+    }
+
+    /** @return whether the one-time first-launch setup has been completed (default false). */
+    public static boolean isSetupComplete(Context context) {
+        return prefs(context).getBoolean(KEY_SETUP_COMPLETED, false);
+    }
+
+    /** Marks the first-launch setup as completed (separate from the individual setting values). */
+    public static void saveSetupCompleted(Context context, boolean completed) {
+        prefs(context).edit().putBoolean(KEY_SETUP_COMPLETED, completed).apply();
+    }
+
+    /** True once the optional location permission dialog has been shown. */
+    public static boolean isHijriLocationPermissionAsked(Context context) {
+        return prefs(context).getBoolean(KEY_HIJRI_LOCATION_ASKED, false);
+    }
+
+    /** Records that the optional location permission dialog was shown. */
+    public static void setHijriLocationPermissionAsked(Context context, boolean asked) {
+        prefs(context).edit().putBoolean(KEY_HIJRI_LOCATION_ASKED, asked).apply();
     }
 
     /** @return the saved Arabic font code (defaults to Amiri; invalid values fall back). */

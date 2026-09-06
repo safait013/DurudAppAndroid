@@ -1,5 +1,6 @@
 package com.darood.app;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -42,11 +43,13 @@ public final class NotificationScheduler {
 
     public static final String CHANNEL_ID = "durood_reminders";
     public static final String ACTION_NOTIFICATION = "com.darood.app.ACTION_DUROOD_NOTIFICATION";
+    public static final String ACTION_UPDATE_REMINDER = "com.darood.app.ACTION_UPDATE_REMINDER";
 
     public static final String EXTRA_DAY = "day";
     public static final String EXTRA_HOUR = "hour";
     public static final String EXTRA_MINUTE = "minute";
     public static final String EXTRA_INDEX = "index";
+    private static final String EXTRA_UPDATE_VERSION_CODE = "update_version_code";
 
     /** Stable unique alarm PendingIntent request codes per weekday (1..7). */
     private static final int ALARM_ID_BASE = 4000;
@@ -58,6 +61,14 @@ public final class NotificationScheduler {
     private static final int CONTENT_REQUEST_CODE = 300;
     private static final int DEFAULT_HOUR = 20; // 8:00 PM default
     private static final int DEFAULT_MINUTE = 0;
+
+    private static final String UPDATE_CHANNEL_ID = "app_updates";
+    private static final int UPDATE_NOTIFICATION_ID = 2901;
+    private static final int UPDATE_ALARM_REQUEST_CODE = 5901;
+    private static final String KEY_UPDATE_TRACKED_VERSION = "update_reminder_version_code";
+    private static final String KEY_UPDATE_LAST_NOTIFIED_VERSION = "update_last_notified_version_code";
+    private static final String KEY_UPDATE_LAST_NOTIFICATION_TIME = "update_last_notification_time";
+    private static final String KEY_UPDATE_NEXT_REMINDER_TIME = "update_next_reminder_time";
 
     private NotificationScheduler() {
     }
@@ -109,6 +120,7 @@ public final class NotificationScheduler {
     }
 
     /** Schedules a one-shot alarm for the next occurrence of the given weekday/time. */
+    @SuppressWarnings("deprecation") // AlarmManager.set is only used on API 21–22 (minSdk).
     public static void scheduleDay(Context context, int dayOfWeek, int index, int hour, int minute) {
         if (dayOfWeek < Calendar.SUNDAY || dayOfWeek > Calendar.SATURDAY) {
             return;
@@ -180,6 +192,7 @@ public final class NotificationScheduler {
      * the day enabled (or notifications got disabled), the alarm is cancelled
      * instead without showing anything.
      */
+    @SuppressLint("MissingPermission") // Permission is checked before scheduling and again before posting.
     public static void handleNotificationFire(Context context, Intent fired) {
         if (!isEnabled(context)) {
             cancelAll(context);
@@ -224,6 +237,10 @@ public final class NotificationScheduler {
             builder.setVibrate(new long[]{0L});
         }
 
+        if (!hasNotificationPermission(context)) {
+            AppLogger.w("NotificationScheduler", "Notification permission not granted at delivery");
+            return;
+        }
         NotificationManagerCompat.from(context).notify(notificationId(day, index), builder.build());
     }
 
@@ -246,6 +263,188 @@ public final class NotificationScheduler {
         nm.createNotificationChannel(channel);
     }
 
+    // ===== App update reminders =====
+
+    /** Called only after a valid remote version response has been compared with this install. */
+    public static void handleUpdateAvailability(Context context, long installedVersionCode,
+                                                long latestVersionCode) {
+        if (installedVersionCode >= latestVersionCode) {
+            AppLogger.i("NotificationScheduler", "Update installed; stopping old update reminder");
+            cancelUpdateReminder(context, true);
+            return;
+        }
+
+        AppLogger.i("NotificationScheduler", "Update detected: versionCode=" + latestVersionCode);
+        SharedPreferences preferences = prefs(context);
+        long trackedVersion = preferences.getLong(KEY_UPDATE_TRACKED_VERSION, -1L);
+        long lastNotifiedVersion = preferences.getLong(KEY_UPDATE_LAST_NOTIFIED_VERSION, -1L);
+        long lastNotificationTime = preferences.getLong(KEY_UPDATE_LAST_NOTIFICATION_TIME, 0L);
+        long now = System.currentTimeMillis();
+
+        if (trackedVersion != latestVersionCode) {
+            // A newly published version always begins its own notification cycle.
+            preferences.edit().putLong(KEY_UPDATE_TRACKED_VERSION, latestVersionCode).apply();
+            postUpdateNotification(context, latestVersionCode);
+            return;
+        }
+        if (lastNotifiedVersion != latestVersionCode || lastNotificationTime <= 0L) {
+            // Permission may have been denied. Keep its already-scheduled retry intact.
+            if (preferences.getLong(KEY_UPDATE_NEXT_REMINDER_TIME, 0L) > now) {
+                AppLogger.i("NotificationScheduler", "Update reminder skipped because 3 days have not passed");
+                return;
+            }
+            postUpdateNotification(context, latestVersionCode);
+            return;
+        }
+
+        long dueAt = lastNotificationTime + updateReminderIntervalMs();
+        if (now < dueAt) {
+            AppLogger.i("NotificationScheduler", "Update reminder skipped because 3 days have not passed");
+            if (preferences.getLong(KEY_UPDATE_NEXT_REMINDER_TIME, 0L) <= 0L) {
+                scheduleUpdateReminder(context, latestVersionCode, dueAt);
+            }
+            return;
+        }
+        postUpdateNotification(context, latestVersionCode);
+    }
+
+    /** Receives the one-shot update alarm. It deliberately re-checks installed metadata first. */
+    public static void handleUpdateReminder(Context context, Intent fired) {
+        long versionCode = fired.getLongExtra(EXTRA_UPDATE_VERSION_CODE, -1L);
+        SharedPreferences preferences = prefs(context);
+        if (versionCode <= 0L || preferences.getLong(KEY_UPDATE_TRACKED_VERSION, -1L) != versionCode) {
+            AppLogger.i("NotificationScheduler", "Ignoring stale update reminder");
+            return;
+        }
+        long installedVersionCode = UpdateChecker.getInstalledVersionCode(context);
+        if (installedVersionCode >= versionCode) {
+            AppLogger.i("NotificationScheduler", "Update installed; old reminder cancelled");
+            cancelUpdateReminder(context, true);
+            return;
+        }
+        long lastNotificationTime = preferences.getLong(KEY_UPDATE_LAST_NOTIFICATION_TIME, 0L);
+        long dueAt = lastNotificationTime + updateReminderIntervalMs();
+        long now = System.currentTimeMillis();
+        if (lastNotificationTime > 0L && now < dueAt) {
+            AppLogger.i("NotificationScheduler", "Update reminder skipped because 3 days have not passed");
+            scheduleUpdateReminder(context, versionCode, dueAt);
+            return;
+        }
+        postUpdateNotification(context, versionCode);
+    }
+
+    /** Restores the one stable update alarm after reboot or package replacement. */
+    public static void restoreUpdateReminder(Context context) {
+        SharedPreferences preferences = prefs(context);
+        long versionCode = preferences.getLong(KEY_UPDATE_TRACKED_VERSION, -1L);
+        if (versionCode <= 0L) {
+            return;
+        }
+        if (UpdateChecker.getInstalledVersionCode(context) >= versionCode) {
+            AppLogger.i("NotificationScheduler", "Update installed; old reminder cancelled");
+            cancelUpdateReminder(context, true);
+            return;
+        }
+        long triggerAt = preferences.getLong(KEY_UPDATE_NEXT_REMINDER_TIME, 0L);
+        if (triggerAt <= 0L) {
+            triggerAt = System.currentTimeMillis() + updateReminderIntervalMs();
+        }
+        scheduleUpdateReminder(context, versionCode, triggerAt);
+    }
+
+    @SuppressLint("MissingPermission") // hasNotificationPermission() is checked immediately below.
+    private static void postUpdateNotification(Context context, long versionCode) {
+        Context localized = LanguageManager.applyLanguage(context);
+        if (!hasNotificationPermission(localized)) {
+            AppLogger.w("NotificationScheduler", "Update notification permission failure");
+            // Keep the cycle alive without showing a notification or requesting permission.
+            scheduleUpdateReminder(context, versionCode,
+                    System.currentTimeMillis() + updateReminderIntervalMs());
+            return;
+        }
+        createUpdateChannel(localized);
+        Intent launchStore = new Intent(localized, UpdateStoreActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= 23) flags |= PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent contentIntent = PendingIntent.getActivity(localized, UPDATE_NOTIFICATION_ID,
+                launchStore, flags);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(localized, UPDATE_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(localized.getString(R.string.update_notification_title))
+                .setContentText(localized.getString(R.string.update_notification_message))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(localized.getString(R.string.update_notification_message)))
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(contentIntent);
+        AppLogger.i("NotificationScheduler", "Update notification scheduled");
+        NotificationManagerCompat.from(localized).notify(UPDATE_NOTIFICATION_ID, builder.build());
+
+        long now = System.currentTimeMillis();
+        prefs(context).edit()
+                .putLong(KEY_UPDATE_TRACKED_VERSION, versionCode)
+                .putLong(KEY_UPDATE_LAST_NOTIFIED_VERSION, versionCode)
+                .putLong(KEY_UPDATE_LAST_NOTIFICATION_TIME, now)
+                .apply();
+        AppLogger.i("NotificationScheduler", "Update notification generated");
+        scheduleUpdateReminder(context, versionCode, now + updateReminderIntervalMs());
+    }
+
+    private static void scheduleUpdateReminder(Context context, long versionCode, long triggerAt) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (manager == null || versionCode <= 0L) return;
+        Intent intent = new Intent(context, NotificationReceiver.class)
+                .setAction(ACTION_UPDATE_REMINDER)
+                .putExtra(EXTRA_UPDATE_VERSION_CODE, versionCode);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= 23) flags |= PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent pending = PendingIntent.getBroadcast(context, UPDATE_ALARM_REQUEST_CODE, intent, flags);
+        long safeTriggerAt = Math.max(System.currentTimeMillis() + 1_000L, triggerAt);
+        if (Build.VERSION.SDK_INT >= 23) {
+            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, safeTriggerAt, pending);
+        } else {
+            manager.set(AlarmManager.RTC_WAKEUP, safeTriggerAt, pending);
+        }
+        prefs(context).edit().putLong(KEY_UPDATE_NEXT_REMINDER_TIME, safeTriggerAt).apply();
+        AppLogger.i("NotificationScheduler", "Update reminder scheduled");
+    }
+
+    private static void cancelUpdateReminder(Context context, boolean clearState) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationReceiver.class).setAction(ACTION_UPDATE_REMINDER);
+        int flags = PendingIntent.FLAG_NO_CREATE;
+        if (Build.VERSION.SDK_INT >= 23) flags |= PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent pending = PendingIntent.getBroadcast(context, UPDATE_ALARM_REQUEST_CODE, intent, flags);
+        if (manager != null && pending != null) {
+            manager.cancel(pending);
+            pending.cancel();
+        }
+        NotificationManagerCompat.from(context).cancel(UPDATE_NOTIFICATION_ID);
+        if (clearState) {
+            prefs(context).edit().remove(KEY_UPDATE_TRACKED_VERSION)
+                    .remove(KEY_UPDATE_LAST_NOTIFIED_VERSION)
+                    .remove(KEY_UPDATE_LAST_NOTIFICATION_TIME)
+                    .remove(KEY_UPDATE_NEXT_REMINDER_TIME).apply();
+        }
+        AppLogger.i("NotificationScheduler", "Old update reminder cancelled");
+    }
+
+    private static void createUpdateChannel(Context context) {
+        if (Build.VERSION.SDK_INT < 26) return;
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (manager == null) return;
+        NotificationChannel channel = new NotificationChannel(UPDATE_CHANNEL_ID,
+                context.getString(R.string.update_notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(context.getString(R.string.update_notification_channel_description));
+        manager.createNotificationChannel(channel);
+    }
+
+    private static long updateReminderIntervalMs() {
+        // Debug builds are intentionally short for manual verification; release remains ~3 days.
+        return AppLogger.isDebuggable() ? 3L * 60L * 1000L : 3L * 24L * 60L * 60L * 1000L;
+    }
     // ===== Permission =====
 
     /** POST_NOTIFICATIONS is only required on Android 13+ (API 33+). */

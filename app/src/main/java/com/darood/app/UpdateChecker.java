@@ -115,6 +115,9 @@ public final class UpdateChecker {
                     .putBoolean(KEY_UPDATE_AVAILABLE, available)
                     .apply();
             AppLogger.i(TAG, available ? "Update available" : "Update not available");
+            NotificationScheduler.handleUpdateAvailability(context, installedVersionCode,
+                    remote.versionCode);
+            AppLogger.i(TAG, "Update check completed");
         } catch (IOException e) {
             AppLogger.w(TAG, "Update check network failure", e);
         } catch (Exception e) {

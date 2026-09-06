@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{html_lang_code}}" dir="{{html_dir}}">
 <head>
 <meta charset="UTF-8">
@@ -18,6 +18,7 @@ body{font-family:'Noto Serif Bengali',serif;background:var(--c-bg);color:var(--c
 .bismillah{font-family:'Amiri',serif;font-size:24px;color:var(--c-accent-light);letter-spacing:2px;margin-bottom:10px;position:relative;z-index:1}
 .app-title{font-size:22px;font-weight:600;color:var(--c-on-primary);position:relative;z-index:1;margin-bottom:4px}
 .app-subtitle{font-size:13px;color:rgba(255,255,255,0.75);position:relative;z-index:1}
+.hijri-date{border:0;background:transparent;font-family:inherit;cursor:pointer;font-size:14px;line-height:1.6;color:var(--c-accent-light);position:relative;z-index:1;margin-top:8px}
 .gold-divider{height:2px;background:linear-gradient(90deg,transparent,var(--c-accent),transparent);margin:14px 0 0}
 
 /* Settings Icon */
@@ -231,17 +232,16 @@ body{font-family:'Noto Serif Bengali',serif;background:var(--c-bg);color:var(--c
 .contact-label{font-size:13px;font-weight:600;color:var(--c-text);flex:1}
 .contact-arrow{color:var(--c-muted-2);font-size:14px}
 .activity-section{margin-bottom:16px}
-.activity-card{background:var(--c-card);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
-.activity-title{font-size:14px;font-weight:700;color:var(--c-text);margin-bottom:8px;line-height:1.5}
+.activity-date-section{background:var(--c-card);border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
+.activity-date-header{font-size:13px;font-weight:700;color:var(--c-accent-text);margin-bottom:6px;letter-spacing:0.3px}
+.activity-type-label{font-size:11px;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 4px}
 .activity-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0;border-bottom:1px dashed rgba(0,0,0,0.08);font-size:13px}
 .activity-row:last-child{border-bottom:none}
-.activity-date{color:var(--c-muted);font-weight:600}
+.activity-name{color:var(--c-text);font-weight:600}
 .activity-count{color:var(--c-accent-text);font-weight:700}
-.activity-total{margin-top:8px;font-size:12px;font-weight:700;color:var(--c-accent);text-align:right}
 .empty{text-align:center;padding:28px 16px}
 .empty-icon{font-size:40px;margin-bottom:10px}
 .empty p{color:var(--c-muted);font-size:14px;line-height:1.6;margin:0}
-html[dir="rtl"] .activity-total{text-align:left}
 html[dir="rtl"] .dev-link-arrow{transform:scaleX(-1)}
 html[dir="rtl"] .settings-icon{right:auto;left:16px}
 </style>
@@ -255,6 +255,7 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
   <div class="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
   <div class="app-title">{{app_name}}</div>
   <div class="app-subtitle">{{home_tagline}}</div>
+  <button id="hijri-date" class="hijri-date" onclick="showScreen('hijri')" aria-label="{{hijri_settings_title}}" aria-live="polite">{{hijri_header_loading}}</button>
   <div class="gold-divider"></div>
   <div class="settings-icon" onclick="openMenu()">☰</div>
 </div>
@@ -405,6 +406,7 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
     <div class="modal-body">
       <!-- ===== SETTINGS ===== -->
       <div class="screen" id="screen-settings">
+      <button class="menu-item" onclick="showScreen('hijri')">{{hijri_settings_title}} &#8250;</button>
       <div class="set-group">
         <div class="set-group-title">{{settings_section_preferences}}</div>
 
@@ -433,6 +435,28 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
       </div>
       </div>
 
+      <!-- ===== HIJRI DATE ===== -->
+      <div class="screen" id="screen-hijri">
+        <div class="set-group">
+          <div class="set-group-title">{{hijri_current_title}}</div>
+          <p id="hijri-current" aria-live="polite"></p>
+          <p id="hijri-source" class="set-note"></p>
+          <p class="set-note">{{hijri_after_sunset_note}}</p>
+        </div>
+        <form id="hijri-form" class="set-group" onsubmit="saveHijriForm(event)">
+          <div class="set-group-title">{{hijri_add_override}}</div>
+          <div class="set-row"><label for="hijri-gregorian">{{hijri_gregorian_date_label}}</label><input id="hijri-gregorian" class="set-select" type="date" required></div>
+          <div class="set-row"><label for="hijri-day">{{hijri_day_label}}</label><select id="hijri-day" class="set-select" required></select></div>
+          <div class="set-row"><label for="hijri-month">{{hijri_month_label}}</label><select id="hijri-month" class="set-select" required></select></div>
+          <div class="set-row"><label for="hijri-year">{{hijri_year_label}}</label><input id="hijri-year" class="set-select" type="number" min="1200" max="1600" step="1" required></div>
+          <button type="submit" class="set-btn">{{hijri_save}}</button>
+          <button type="button" class="set-btn" onclick="resetHijriForm()">{{hijri_add_override}}</button>
+        </form>
+        <div class="set-group">
+          <div class="set-group-title">{{hijri_overrides_title}}</div>
+          <div id="hijri-overrides" aria-live="polite"></div>
+        </div>
+      </div>
       <!-- ===== NOTIFICATIONS ===== -->
       <div class="screen" id="screen-notifications">
       <div class="set-group">
@@ -461,7 +485,7 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
       </div>
       <div class="info-card">
         <h3>{{about_credit_title}}</h3>
-        <p>{{about_credit_1}}</p>
+        <p>{{about_credit_1}}</p> 
         <p>{{about_credit_2}}</p>
       </div>
       <div class="info-card">
@@ -513,14 +537,7 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
 
       <!-- ===== MY ACTIVITY ===== -->
       <div class="screen" id="screen-activity">
-      <div class="activity-section">
-        <div class="set-group-title">{{activity_durood_label}}</div>
-        <div id="activity-durood-list"></div>
-      </div>
-      <div class="activity-section">
-        <div class="set-group-title">{{activity_salam_label}}</div>
-        <div id="activity-salam-list"></div>
-      </div>
+      <div id="activity-list"></div>
       <div class="empty" id="activity-empty">
         <div class="empty-icon">📊</div>
         <p>{{activity_empty}}</p>
@@ -804,6 +821,7 @@ function showScreen(name){
   const el = document.getElementById('screen-'+name);
   if(el) el.classList.add('active');
   const titleMap = {
+    hijri: STR('hijri_settings_title'),
     settings: STR('settings_title','Settings'),
     activity: STR('my_activity_title','My Activity'),
     notifications: STR('notifications_title','Notifications'),
@@ -814,6 +832,7 @@ function showScreen(name){
   if(t) t.textContent = titleMap[name] || '';
   document.getElementById('screen-modal').classList.add('show');
   if(name === 'activity') loadActivityData();
+  if(name === 'hijri') openHijriSettings();
 }
 function backToMenu(){
   document.getElementById('screen-modal').classList.remove('show');
@@ -843,7 +862,7 @@ function initSetup(){
     fs.value = s.arabic_font_size || 24;
     fv.textContent = fs.value;
   }
-  setupLang('en');
+  setupLang(currentLang());
 }
 function setupLang(code){
   SETUP_LANG = code;
@@ -863,6 +882,7 @@ function finishSetup(){
   const size = sizeEl ? parseInt(sizeEl.value,10) : 24;
   const theme = themeEl ? themeEl.value : 'default';
   if(window.Android){
+    if(Android.completeSetup) Android.completeSetup();
     if(Android.setArabicFont) Android.setArabicFont(font);
     if(Android.setArabicFontSize) Android.setArabicFontSize(size);
     if(Android.setTheme) Android.setTheme(theme);
@@ -941,47 +961,62 @@ window.__activityLoaded = function(json){
 };
 function renderActivity(list){
   var data = (list && list.length) ? list : [];
-  var duroodMap = {};
-  var salamMap = {};
-  data.forEach(function(r){
-    var map = (r.type === 'salam') ? salamMap : duroodMap;
-    (map[r.contentId] = map[r.contentId] || []).push({date:r.date, count:r.count});
-  });
-  var dl = document.getElementById('activity-durood-list');
-  var sl = document.getElementById('activity-salam-list');
+  var listEl = document.getElementById('activity-list');
   var emptyEl = document.getElementById('activity-empty');
-  if(dl) dl.innerHTML = renderActivityGroup('durood', duroodMap);
-  if(sl) sl.innerHTML = renderActivityGroup('salam', salamMap);
+  if(listEl) listEl.innerHTML = buildActivityHtml(data);
   if(emptyEl) emptyEl.style.display = data.length ? 'none' : 'block';
 }
-function renderActivityGroup(type, map){
-  var ids = Object.keys(map).map(Number).sort(function(a,b){return a-b;});
-  if(!ids.length) return '';
-  var today = localDateStr(0);
-  var yesterday = localDateStr(-1);
-  var source = (type === 'salam') ? salamData : daroodData;
+function buildActivityHtml(data){
+  var dateMap = {};
+  data.forEach(function(r){
+    if(!dateMap[r.date]) dateMap[r.date] = {durood:[], salam:[]};
+    if(r.type === 'salam') dateMap[r.date].salam.push(r);
+    else dateMap[r.date].durood.push(r);
+  });
+  var dates = Object.keys(dateMap).sort(function(a,b){ return a < b ? 1 : -1; });
   var html = '';
-  ids.forEach(function(id){
-    var entry = null;
-    for(var i=0;i<source.length;i++){ if(source[i].num === id){ entry = source[i]; break; } }
-    var title = entry ? entry.title : ((type === 'salam') ? (STR('activity_salam_label','Salam')+' '+id) : (STR('activity_durood_label','Durood')+' '+id));
-    var records = map[id].slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
-    var total = records.reduce(function(s,r){ return s + r.count; }, 0);
-    var rows = '';
-    records.forEach(function(r){
-      var label;
-      if(r.date === today) label = STR('activity_today','Today');
-      else if(r.date === yesterday) label = STR('activity_yesterday','Yesterday');
-      else label = r.date;
-      rows += '<div class="activity-row"><span class="activity-date">'+escHtml(label)+'</span><span class="activity-count">'+fmt('target_times_format', toLocalDigits(r.count))+'</span></div>';
-    });
-    html += '<div class="activity-card">'
-      + '<div class="activity-title">'+escHtml(title)+'</div>'
-      + rows
-      + '<div class="activity-total">'+STR('activity_total','Total')+': '+fmt('target_times_format', toLocalDigits(total))+'</div>'
-      + '</div>';
+  dates.forEach(function(date){
+    html += '<div class="activity-date-section">';
+    html += '<div class="activity-date-header">' + escHtml(activityDateLabel(date)) + '</div>';
+    var durood = dateMap[date].durood.slice().sort(function(a,b){ return a.contentId - b.contentId; });
+    var salam = dateMap[date].salam.slice().sort(function(a,b){ return a.contentId - b.contentId; });
+    if(durood.length){
+      html += '<div class="activity-type-label">' + STR('activity_durood_label','Durood') + '</div>';
+      durood.forEach(function(r){ html += activityRow('durood', r); });
+    }
+    if(salam.length){
+      html += '<div class="activity-type-label">' + STR('activity_salam_label','Salam') + '</div>';
+      salam.forEach(function(r){ html += activityRow('salam', r); });
+    }
+    html += '</div>';
   });
   return html;
+}
+function activityRow(type, r){
+  return '<div class="activity-row"><span class="activity-name">' + escHtml(activityTitle(type, r.contentId)) + '</span><span class="activity-count">' + fmt('target_times_format', toLocalDigits(r.count)) + '</span></div>';
+}
+function activityTitle(type, contentId){
+  var source = (type === 'salam') ? salamData : daroodData;
+  for(var i=0;i<source.length;i++){
+    if(source[i].num === contentId) return source[i].title;
+  }
+  return (type === 'salam') ? (STR('activity_salam_label','Salam')+' '+contentId) : (STR('activity_durood_label','Durood')+' '+contentId);
+}
+function activityDateLabel(dateStr){
+  var today = localDateStr(0);
+  var yesterday = localDateStr(-1);
+  if(dateStr === today) return STR('activity_today','Today');
+  if(dateStr === yesterday) return STR('activity_yesterday','Yesterday');
+  var parts = dateStr.split('-');
+  if(parts.length !== 3) return dateStr;
+  var y = parseInt(parts[0],10), m = parseInt(parts[1],10)-1, d = parseInt(parts[2],10);
+  try {
+    var lang = currentLang();
+    var locale = (lang === 'ur') ? 'ur-PK' : (lang === 'bn') ? 'bn-BD' : 'en-US';
+    return new Date(y, m, d).toLocaleDateString(locale, {year:'numeric', month:'long', day:'numeric'});
+  } catch(e) {
+    return dateStr;
+  }
 }
 
 // ====== SETTINGS CONTROLS ======
@@ -1239,6 +1274,97 @@ function showToast(msg){
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
 }
+
+function fillHijriForm(data){
+  if(!data) return;
+  document.getElementById('hijri-gregorian').value = data.gregorianDate || data.gregorian || '';
+  document.getElementById('hijri-day').value = data.hijriDay;
+  document.getElementById('hijri-month').value = data.hijriMonth;
+  document.getElementById('hijri-year').value = data.hijriYear;
+}
+function resetHijriForm(){ fillHijriForm(window.HIJRI_SNAPSHOT); }
+function openHijriSettings(){
+  updateHijriHeader();
+  const day = document.getElementById('hijri-day');
+  const month = document.getElementById('hijri-month');
+  day.innerHTML = ''; month.innerHTML = '';
+  for(let i=1;i<=30;i++) day.add(new Option(toLocalDigits(i), i));
+  for(let i=1;i<=12;i++) month.add(new Option(STR('hijri_month_'+i), i));
+  resetHijriForm();
+  if(window.Android && Android.loadHijriOverrides) Android.loadHijriOverrides();
+}
+function saveHijriForm(event){
+  event.preventDefault();
+  const value = id=>document.getElementById(id).value;
+  const data = {gregorianDate:value('hijri-gregorian'),hijriDay:Number(value('hijri-day')),
+    hijriMonth:Number(value('hijri-month')),hijriYear:Number(value('hijri-year'))};
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(data.gregorianDate)){
+    showToast(STR('hijri_invalid_gregorian_toast')); return;
+  }
+  if(!Number.isInteger(data.hijriDay) || data.hijriDay<1 || data.hijriDay>30
+      || !Number.isInteger(data.hijriMonth) || data.hijriMonth<1 || data.hijriMonth>12
+      || !Number.isInteger(data.hijriYear) || data.hijriYear<1200 || data.hijriYear>1600){
+    showToast(STR('hijri_invalid_hijri_toast')); return;
+  }
+  if(window.Android && Android.saveHijriOverride){
+    const result = Android.saveHijriOverride(JSON.stringify(data));
+    showToast(STR(result==='ok'?'hijri_saved_toast':'hijri_invalid_hijri_toast'));
+  }
+}
+window.__hijriOverridesLoaded = function(raw){
+  try{
+    const items = typeof raw==='string' ? JSON.parse(raw) : raw;
+    if(!Array.isArray(items)) return;
+    const list = document.getElementById('hijri-overrides');
+    list.textContent = '';
+    if(!items.length) list.textContent = STR('hijri_overrides_empty');
+    items.forEach(item=>{
+      const row = document.createElement('div'); row.className = 'set-group';
+      const label = document.createElement('p');
+      label.textContent = item.gregorianDate + ' — ' + toLocalDigits(item.hijriDay) + ' '
+        + STR('hijri_month_'+item.hijriMonth) + ' ' + toLocalDigits(item.hijriYear) + ' ' + STR('hijri_ah');
+      const edit = document.createElement('button'); edit.className = 'set-btn';
+      edit.textContent = STR('hijri_edit_override');
+      edit.onclick = function(){ fillHijriForm(item); document.getElementById('hijri-form').scrollIntoView({block:'nearest'}); };
+      const remove = document.createElement('button'); remove.className = 'set-btn';
+      remove.textContent = STR('hijri_delete');
+      remove.onclick = function(){
+        if(confirm(STR('hijri_delete_confirm')) && window.Android && Android.deleteHijriOverride){
+          if(Android.deleteHijriOverride(item.gregorianDate)==='ok') showToast(STR('hijri_deleted_toast'));
+        }
+      };
+      row.appendChild(label); row.appendChild(edit); row.appendChild(remove); list.appendChild(row);
+    });
+  }catch(e){ console.warn('Unable to load Hijri overrides', e); }
+};
+// Read the native offline snapshot at page load; receive later refresh/sunset updates.
+window.__hijriDateUpdated = function(snapshot){
+  try{
+    const data = typeof snapshot === 'string' ? JSON.parse(snapshot) : snapshot;
+    if(!data || !data.ready || data.hijriDay < 1 || data.hijriDay > 30
+        || data.hijriMonth < 1 || data.hijriMonth > 12 || !(data.hijriYear > 0)) return;
+    window.HIJRI_SNAPSHOT = data;
+    const header = document.getElementById('hijri-date');
+    if(header) header.textContent = toLocalDigits(data.hijriDay) + ' '
+        + STR('hijri_month_' + data.hijriMonth) + ' '
+        + toLocalDigits(data.hijriYear) + ' ' + STR('hijri_ah');
+    document.getElementById('hijri-current').textContent = header.textContent;
+    document.getElementById('hijri-source').textContent = STR('hijri_source_' + data.source);
+  }catch(e){ console.warn('Unable to display Hijri date', e); }
+};
+function updateHijriHeader(){
+  if(window.Android && Android.getHijriDateSnapshot){
+    try{ window.__hijriDateUpdated(Android.getHijriDateSnapshot()); }
+    catch(e){ console.warn('Unable to read Hijri date', e); }
+  }
+}
+updateHijriHeader();
+if(window.Android && Android.refreshHijriDate) Android.refreshHijriDate();
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) updateHijriHeader();
+});
+// Recompute locally while Home stays open, including across sunset or midnight.
+setInterval(function(){ if(!document.hidden) updateHijriHeader(); }, 60000);
 
 loadContentData();
 initSettings();
