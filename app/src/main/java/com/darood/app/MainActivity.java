@@ -29,6 +29,8 @@ import androidx.core.content.FileProvider;
 public class MainActivity extends Activity implements HijriCoordinator.HijriRefreshListener {
 
     private WebView webView;
+    private final DuroodAudioPlayer duroodAudioPlayer = new DuroodAudioPlayer(this::onDuroodAudioState);
+    private boolean pronunciationResumed;
 
     /** Request code for LanguagePickerActivity opened from Settings (for a result). */
     private static final int REQUEST_CODE_LANGUAGE = 1001;
@@ -182,6 +184,14 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             R.string.label_meaning,
             R.string.meaning_prefix,
             R.string.reference_prefix,
+            R.string.btn_read,
+            R.string.audio_play,
+            R.string.audio_stop,
+            R.string.read_saved,
+            R.string.read_failed,
+            R.string.activity_loading,
+            R.string.activity_load_failed,
+            R.string.share_failed,
             R.string.btn_copy,
             R.string.btn_copied,
             R.string.btn_share,
@@ -457,8 +467,62 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         }
     }
 
+    private void postToWebView(String script) {
+        runOnUiThread(() -> {
+            if (webView != null && !isFinishing() && !isDestroyed()) {
+                webView.evaluateJavascript(script, null);
+            }
+        });
+    }
+
+    private void onDuroodAudioState(int id, boolean playing, boolean salam) {
+        postToWebView("window.__duroodAudioState && window.__duroodAudioState("
+                + (salam ? 0 : id) + "," + (playing && !salam) + ");"
+                + "window.__salamAudioState && window.__salamAudioState("
+                + (salam ? id : 0) + "," + (playing && salam) + ");");
+    }
+
     // Bridge class for JS -> Android communication
     public class AndroidBridge {
+        @JavascriptInterface
+        public boolean hasSalamAudio(int id) {
+            return DuroodAudioPlayer.hasSalamAudio(id);
+        }
+
+        @JavascriptInterface
+        public void playSalamPronunciation(int id) {
+            runOnUiThread(() -> {
+                AppLogger.i("DuroodAudio", "Pronunciation requested; Salam ID=" + id);
+                if (pronunciationResumed && !isFinishing() && !isDestroyed()) {
+                    duroodAudioPlayer.toggleSalam(getApplicationContext(), id);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public boolean hasDuroodAudio(int id) {
+            return DuroodAudioPlayer.hasAudio(id);
+        }
+
+        @JavascriptInterface
+        public void playDuroodPronunciation(int id) {
+            runOnUiThread(() -> {
+                AppLogger.i("DuroodAudio", "Pronunciation requested; Durood ID=" + id);
+                if (pronunciationResumed && !isFinishing() && !isDestroyed()) {
+                    duroodAudioPlayer.toggle(getApplicationContext(), id);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void requestDuroodAudioState() {
+            runOnUiThread(() -> duroodAudioPlayer.publishState());
+        }
+
+        @JavascriptInterface
+        public void stopDuroodPronunciation() {
+            runOnUiThread(() -> duroodAudioPlayer.stop());
+        }
 
         @JavascriptInterface
         public void vibrate(int ms) {
@@ -490,7 +554,12 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_chooser_title)));
+                try {
+                    startActivity(Intent.createChooser(shareIntent, getString(R.string.share_chooser_title)));
+                } catch (ActivityNotFoundException | SecurityException e) {
+                    AppLogger.e("MainActivity", "Share sheet failed", e);
+                    Toast.makeText(MainActivity.this, R.string.share_failed, Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
@@ -652,20 +721,64 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             }
         }
 
-        /** Loads My Activity data and posts it to window.__activityLoaded(json). */
         @JavascriptInterface
-        public void loadActivity() {
+        public void readDurood(int contentId) {
+            AppLogger.i("MainActivity", "Read button pressed: durood #" + contentId);
             try {
-                ActivityRepository.get(MainActivity.this).load(records -> {
-                    final String json = activityToJson(records);
-                    runOnUiThread(() -> webView.evaluateJavascript(
-                            "window.__activityLoaded && window.__activityLoaded(" + json + ");", null));
+                ActivityRepository.get(getApplicationContext()).record(
+                        ActivityRepository.TYPE_DUROOD, contentId, saved -> runOnUiThread(() -> {
+                            if (!isFinishing() && !isDestroyed()) {
+                                Toast.makeText(MainActivity.this, saved ? R.string.read_saved
+                                        : R.string.read_failed, Toast.LENGTH_SHORT).show();
+                            }
+                        }));
+            } catch (Exception e) {
+                AppLogger.e("MainActivity", "Read DB request failed: durood #" + contentId, e);
+                runOnUiThread(() -> {
+                    if (!isFinishing() && !isDestroyed()) Toast.makeText(MainActivity.this,
+                            R.string.read_failed, Toast.LENGTH_SHORT).show();
                 });
-            } catch (Throwable t) {
-                AppLogger.e("MainActivity", "loadActivity failed", t);
             }
         }
 
+        @JavascriptInterface
+        public void readSalam(int contentId) {
+            AppLogger.i("MainActivity", "Read button pressed: salam #" + contentId);
+            try {
+                ActivityRepository.get(getApplicationContext()).record(
+                        ActivityRepository.TYPE_SALAM, contentId, saved -> runOnUiThread(() -> {
+                            if (!isFinishing() && !isDestroyed()) {
+                                Toast.makeText(MainActivity.this, saved ? R.string.read_saved
+                                        : R.string.read_failed, Toast.LENGTH_SHORT).show();
+                            }
+                        }));
+            } catch (Exception e) {
+                AppLogger.e("MainActivity", "Read DB request failed: salam #" + contentId, e);
+                runOnUiThread(() -> {
+                    if (!isFinishing() && !isDestroyed()) Toast.makeText(MainActivity.this,
+                            R.string.read_failed, Toast.LENGTH_SHORT).show();
+                });
+            }
+        }
+
+        /** Every opening queries Room after all previously queued increments. */
+        @JavascriptInterface
+        public void loadActivity() {
+            AppLogger.i("MainActivity", "My Activity opened; requesting fresh DB data");
+            try {
+                ActivityRepository.get(getApplicationContext()).load(records -> {
+                    if (records == null) {
+                        postToWebView("window.__activityLoadFailed && window.__activityLoadFailed();");
+                    } else {
+                        postToWebView("window.__activityLoaded && window.__activityLoaded("
+                                + activityToJson(records) + ");");
+                    }
+                });
+            } catch (Exception e) {
+                AppLogger.e("MainActivity", "loadActivity failed", e);
+                postToWebView("window.__activityLoadFailed && window.__activityLoadFailed();");
+            }
+        }
         private String activityToJson(java.util.List<ActivityRecord> records) {
             StringBuilder sb = new StringBuilder("[");
             for (int i = 0; i < records.size(); i++) {
@@ -846,6 +959,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
     @Override
     protected void onResume() {
         super.onResume();
+        pronunciationResumed = true;
         webView.onResume();
         // Hijri date: foreground verification + push updates from background work.
         HijriCoordinator.setForegroundListener(this);
@@ -854,6 +968,8 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
 
     @Override
     protected void onPause() {
+        pronunciationResumed = false;
+        duroodAudioPlayer.stop();
         super.onPause();
         HijriCoordinator.setForegroundListener(null);
         webView.onPause();
@@ -907,6 +1023,8 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
 
     @Override
     protected void onDestroy() {
+        pronunciationResumed = false;
+        duroodAudioPlayer.stop();
         AppLogger.i("MainActivity", "MainActivity destroyed");
         if (webView != null) {
             webView.destroy();

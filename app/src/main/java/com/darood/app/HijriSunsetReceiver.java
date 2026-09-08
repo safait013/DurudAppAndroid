@@ -4,13 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-/**
- * Fires once at/after the local sunset, asks {@link HijriCoordinator} to
- * recompute the now-applicable date, reschedule the next sunset alarm, and push
- * the updated Hijri date to the Home screen if it is visible. Deliberately
- * lightweight (cache/DB + alarm only — no API work inside the receiver); the
- * full location/API refresh runs on the next app foreground.
- */
+/** Dispatches a dated month-end event; keeps the process alive for background resolution. */
 public class HijriSunsetReceiver extends BroadcastReceiver {
 
     @Override
@@ -23,9 +17,13 @@ public class HijriSunsetReceiver extends BroadcastReceiver {
             return;
         }
         AppLogger.i("HijriSunsetReceiver", "Sunset refresh fired");
+        final PendingResult pending = goAsync();
         try {
-            HijriCoordinator.get().onSunsetFired(context.getApplicationContext());
+            HijriCoordinator.get().onSunsetFired(context.getApplicationContext(),
+                    intent.getStringExtra(HijriSunsetScheduler.EXTRA_DATE),
+                    intent.getIntExtra(HijriSunsetScheduler.EXTRA_DAY, 0), pending::finish);
         } catch (Throwable t) {
+            pending.finish();
             AppLogger.e("HijriSunsetReceiver", "Sunset refresh crashed", t);
         }
     }

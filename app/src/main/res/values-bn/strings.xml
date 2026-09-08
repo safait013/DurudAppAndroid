@@ -227,4 +227,12 @@
     <string name="hijri_29_notification_message">সূর্যাস্তের পর হিজরি তারিখ পরিবর্তন হতে পারে। তারিখ সঠিক না থাকলে দয়া করে ম্যানুয়ালি পরিবর্তন করুন।</string>
     <string name="hijri_new_month_notification_title">নতুন হিজরি মাস</string>
     <string name="hijri_new_month_notification_message">নতুন হিজরি মাস শুরু হয়েছে: %1$s %2$d হিজরি।</string>
+    <string name="btn_read">পড়েছি</string>
+    <string name="audio_play">চালু করুন</string>
+    <string name="audio_stop">বন্ধ করুন</string>
+    <string name="read_saved">পাঠ সংরক্ষিত হয়েছে</string>
+    <string name="read_failed">পাঠ সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="activity_loading">কার্যক্রম লোড হচ্ছে…</string>
+    <string name="activity_load_failed">কার্যক্রম লোড করা যায়নি। আবার খুলে চেষ্টা করুন।</string>
+    <string name="share_failed">শেয়ার মেনু খোলা যায়নি।</string>
 </resources>

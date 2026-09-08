@@ -227,4 +227,12 @@
     <string name="hijri_29_notification_message">After sunset, the Hijri date may change. If the date is not correct, please change it manually.</string>
     <string name="hijri_new_month_notification_title">New Hijri Month</string>
     <string name="hijri_new_month_notification_message">A new Hijri month has started: %1$s %2$d AH.</string>
+    <string name="btn_read">Read</string>
+    <string name="audio_play">Play</string>
+    <string name="audio_stop">Stop</string>
+    <string name="read_saved">Reading saved</string>
+    <string name="read_failed">Could not save reading. Please try again.</string>
+    <string name="activity_loading">Loading activity…</string>
+    <string name="activity_load_failed">Could not load activity. Please reopen to try again.</string>
+    <string name="share_failed">Could not open the share sheet.</string>
 </resources>

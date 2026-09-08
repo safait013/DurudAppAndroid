@@ -66,7 +66,12 @@ public final class HijriDay29Notification {
         AppLogger.i("HijriDay29Notification", "Day-29 notification cancelled: " + reason);
     }
 
-    /** Fallback from the existing sunset transition receiver, before it re-arms the next day. */
+    /** Force restoration of the OS alarm while preserving its stable identity and handled key. */
+    public static void resetScheduleAfterBoot(Context context) {
+        prefs(context).edit().remove(KEY_SCHEDULED_AT).apply();
+    }
+
+    /** Fallback from the validated month-end transition/recovery path. */
     public static void fireIfDue(Context context, String gregorianDate) {
         String key = eventKey(gregorianDate);
         if (!key.equals(prefs(context).getString(KEY_SCHEDULED, null))) return;

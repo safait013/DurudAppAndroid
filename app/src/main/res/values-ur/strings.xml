@@ -227,4 +227,12 @@
     <string name="hijri_29_notification_message">غروبِ آفتاب کے بعد ہجری تاریخ تبدیل ہو سکتی ہے۔ اگر تاریخ درست نہ ہو تو براہِ کرم اسے دستی طور پر تبدیل کریں۔</string>
     <string name="hijri_new_month_notification_title">نیا ہجری مہینہ</string>
     <string name="hijri_new_month_notification_message">نیا ہجری مہینہ شروع ہو گیا ہے: %1$s %2$d ہجری۔</string>
+    <string name="btn_read">پڑھ لیا</string>
+    <string name="audio_play">چلائیں</string>
+    <string name="audio_stop">روکیں</string>
+    <string name="read_saved">پڑھنے کا ریکارڈ محفوظ ہوگیا</string>
+    <string name="read_failed">ریکارڈ محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔</string>
+    <string name="activity_loading">سرگرمی لوڈ ہو رہی ہے…</string>
+    <string name="activity_load_failed">سرگرمی لوڈ نہیں ہو سکی۔ دوبارہ کھول کر کوشش کریں۔</string>
+    <string name="share_failed">شیئر مینو نہیں کھل سکا۔</string>
 </resources>

@@ -26,7 +26,13 @@ public class NotificationReceiver extends BroadcastReceiver {
             // The saved in-app language is intentionally read when the alarm fires.
             Context localized = LanguageManager.applyLanguage(context);
             AppLogger.i("NotificationReceiver", "Hijri day-29 sunset alarm received");
-            HijriDay29Notification.handleFire(localized, intent);
+            final PendingResult pending = goAsync();
+            try {
+                HijriCoordinator.get().onDay29NotificationFired(localized, intent, pending::finish);
+            } catch (Throwable t) {
+                pending.finish();
+                AppLogger.e("NotificationReceiver", "Hijri day-29 delivery failed", t);
+            }
         } else if (NotificationScheduler.ACTION_UPDATE_REMINDER.equals(intent.getAction())) {
             AppLogger.i("NotificationReceiver", "Update reminder alarm received");
             NotificationScheduler.handleUpdateReminder(context, intent);

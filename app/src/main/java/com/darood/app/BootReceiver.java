@@ -24,10 +24,14 @@ public class BootReceiver extends BroadcastReceiver {
             Context localized = LanguageManager.applyLanguage(context);
             NotificationScheduler.rescheduleAll(localized);
             NotificationScheduler.restoreUpdateReminder(context);
-            // The sunset alarm is cancelled by the system on reboot, and
-            // PendingIntents are invalidated by an app update: re-arm it so the
-            // location-aware Hijri date keeps rolling without user action.
-            HijriCoordinator.get().onBootCompleted(localized);
+            // Revalidate month-end events off the receiver thread; Room overrides win.
+            final PendingResult pending = goAsync();
+            try {
+                HijriCoordinator.get().onBootCompleted(localized, pending::finish);
+            } catch (Throwable t) {
+                pending.finish();
+                AppLogger.e("BootReceiver", "Hijri recovery failed", t);
+            }
         }
     }
 }

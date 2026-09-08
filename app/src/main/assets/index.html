@@ -79,6 +79,45 @@ body{font-family:'Noto Serif Bengali',serif;background:var(--c-bg);color:var(--c
 .btn-share{background:var(--c-primary);color:var(--c-accent-light)}
 .btn-share:active{background:var(--c-primary-2)}
 
+
+/* Compact actions scoped to Durood cards; panels retain their existing behavior. */
+.durood-controls{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,.9fr) minmax(0,1.12fr);gap:5px}
+.durood-controls .collapsible-header{position:relative;min-width:0;min-height:48px;padding:6px 4px;gap:3px;justify-content:center;border:1px solid rgba(13,43,69,.08);border-radius:13px;background:#EEF3F8;color:#0D2B45;font-family:Arial,sans-serif;text-align:center;box-shadow:none}
+.durood-controls .collapsible-header:first-child{background:#FBF5E6;border-color:rgba(201,168,76,.25);color:#775B16}
+.durood-controls .collapsible-title{min-width:0;font-size:13px;font-weight:500;line-height:1.4;letter-spacing:0;text-transform:none;white-space:nowrap;color:inherit}
+.durood-controls .collapsible-chevron{font-size:10px;color:inherit}
+.durood-controls .collapsible-header:first-child .collapsible-chevron{display:none}
+.durood-controls .collapsible-header[aria-expanded="true"] .collapsible-chevron{transform:rotate(180deg)}
+.durood-controls .collapsible-header[aria-pressed="true"]{background:#F0E3BF;border-color:var(--c-accent)}
+.durood-panel{margin-top:8px;overflow-wrap:anywhere}
+.durood-panel[hidden]{display:none}
+.durood-panel .ref-tag{max-width:100%;box-sizing:border-box;white-space:normal}
+.durood-actions{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:6px;margin-top:11px;padding-top:10px;border-top:1px solid rgba(13,43,69,.1)}
+.durood-actions .btn{min-width:0;min-height:48px;padding:6px 3px;gap:5px;border:0;border-radius:13px;background:transparent;color:#0D2B45;font-family:Arial,sans-serif;font-size:13px;font-weight:500;line-height:1.4}
+.durood-actions .btn-read{background:#0D2B45;color:#fff;border-radius:24px}
+.durood-actions .btn:active{background:#E7EEF6}
+.durood-actions .btn-read:active{background:#1B4A6B}
+.durood-controls button:focus-visible,.durood-actions button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px}
+.durood-controls .collapsible-header::before,.durood-actions .btn::before{content:'';display:block;width:14px;height:14px;flex-shrink:0;background:currentColor;-webkit-mask:var(--action-icon) center/contain no-repeat;mask:var(--action-icon) center/contain no-repeat}
+@media(max-width:399px){
+  .durood-controls .collapsible-header{flex-direction:column;gap:2px;padding:4px 2px}
+  .durood-controls .collapsible-chevron{position:absolute;inset-inline-end:5px;top:8px}
+}
+[data-theme="dark"] .durood-controls .collapsible-header{background:var(--c-surface);color:var(--c-text);border-color:rgba(255,255,255,.12)}
+[data-theme="dark"] .durood-controls .collapsible-header:first-child{background:var(--c-surface-3);color:var(--c-accent-light)}
+[data-theme="dark"] .durood-actions{border-color:rgba(255,255,255,.12)}
+[data-theme="dark"] .durood-actions .btn:not(.btn-read){color:var(--c-text)}
+.durood-controls .collapsible-header:first-child{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%209v6h4l5%204V5L7%209H3m12-1a5%205%200%200%201%200%208m3-11a9%209%200%200%201%200%2014%22%2F%3E%3C%2Fsvg%3E")}
+.durood-controls .collapsible-header:nth-child(2){--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%205v15M3%204c3-1%206-1%209%201%203-2%206-2%209-1v15c-3-1-6-1-9%201-3-2-6-2-9-1V4Z%22%2F%3E%3C%2Fsvg%3E")}
+.durood-controls .collapsible-header:nth-child(3){--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%203H5v18h14V8l-5-5Zm0%200v5h5M8%2012h8m-8%204h8%22%2F%3E%3C%2Fsvg%3E")}
+.durood-actions .btn-copy{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%208h12v13H8V8ZM16%205V2H3v14h2%22%2F%3E%3C%2Fsvg%3E")}
+.durood-actions .btn-share{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%2011l8-5M8%2013l8%205M8%2012a3%203%200%201%201-6%200%203%203%200%200%201%206%200ZM22%204a3%203%200%201%201-6%200%203%203%200%200%201%206%200Zm0%2016a3%203%200%201%201-6%200%203%203%200%200%201%206%200Z%22%2F%3E%3C%2Fsvg%3E")}
+.durood-actions .btn-read{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m8%204%2012%208-12%208V4Z%22%2F%3E%3C%2Fsvg%3E")}
+
+/* Salam reuses Durood styling; its audio icon visibly reflects native Play/Stop state. */
+.durood-controls .collapsible-header[data-salam-audio]{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M8%204v16l12-8Z%22%2F%3E%3C%2Fsvg%3E")}
+.durood-controls .collapsible-header[data-salam-audio][aria-pressed="true"]{--action-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M5%205h14v14H5Z%22%2F%3E%3C%2Fsvg%3E")}
+
 /* Tab Panels */
 .tab-panel{display:none}
 .tab-panel.active{display:block}
@@ -537,6 +576,7 @@ html[dir="rtl"] .settings-icon{right:auto;left:16px}
 
       <!-- ===== MY ACTIVITY ===== -->
       <div class="screen" id="screen-activity">
+      <p id="activity-status" role="status" hidden></p>
       <div id="activity-list"></div>
       <div class="empty" id="activity-empty">
         <div class="empty-icon">📊</div>
@@ -662,11 +702,65 @@ function toggleSection(h){const s=h.closest('.collapsible-section');if(s){s.clas
 function fmt(key){let s=STR(key);for(let i=1;i<arguments.length;i++){s=s.split('%'+i+'$s').join(arguments[i])}return s}
 function toLocalDigits(v){const d=STR('local_digits','0123456789');return String(v).replace(/[0-9]/g,c=>d[+c])}
 
+// Audio availability comes from the native mapping so later recordings need one mapping change.
+function hasDuroodAudio(id){
+  return !!(window.Android && Android.hasDuroodAudio && Android.hasDuroodAudio(id));
+}
+function playDuroodPronunciation(id){
+  if(window.Android && Android.playDuroodPronunciation) Android.playDuroodPronunciation(id);
+}
+function stopDuroodPronunciation(){
+  if(window.Android && Android.stopDuroodPronunciation) Android.stopDuroodPronunciation();
+}
+
+window.__duroodAudioState = function(id, playing){
+  document.querySelectorAll('[data-durood-audio]').forEach(function(button){
+    const active = playing && Number(button.dataset.duroodAudio) === id;
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', STR('label_transliteration') + ': ' + STR(active ? 'audio_stop' : 'audio_play'));
+    button.querySelector('.collapsible-chevron').textContent = active ? '■' : '▶';
+  });
+};
+function toggleDuroodPanel(button){
+  const panel = document.getElementById(button.getAttribute('aria-controls'));
+  if(!panel) return;
+  panel.hidden = !panel.hidden;
+  button.setAttribute('aria-expanded', String(!panel.hidden));
+}
+function readDurood(id){
+  try {
+    if(window.Android && Android.readDurood) Android.readDurood(id);
+    else showToast(STR('read_failed'));
+  } catch(e){ showToast(STR('read_failed')); }
+}
+
+// Salam shares the native player, state publication, and navigation cleanup.
+function hasSalamAudio(id){
+  return !!(window.Android && Android.hasSalamAudio && Android.hasSalamAudio(id));
+}
+function playSalamPronunciation(id){
+  if(window.Android && Android.playSalamPronunciation) Android.playSalamPronunciation(id);
+}
+window.__salamAudioState = function(id, playing){
+  document.querySelectorAll('[data-salam-audio]').forEach(function(button){
+    const active = playing && Number(button.dataset.salamAudio) === id;
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', STR('label_transliteration') + ': ' + STR(active ? 'audio_stop' : 'audio_play'));
+    button.querySelector('.collapsible-chevron').textContent = active ? '■' : '▶';
+  });
+};
+function readSalam(id){
+  try {
+    if(window.Android && Android.readSalam) Android.readSalam(id);
+    else showToast(STR('read_failed'));
+  } catch(e){ showToast(STR('read_failed')); }
+}
+
 // ====== RENDER FUNCTIONS ======
 function renderCards(data){
   const c=document.getElementById('cards-container');
   if(!data.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>${STR('empty_duroods','কোনো দরুদ পাওয়া যায়নি')}</p></div>`;return}
-  c.innerHTML=data.map(d=>`
+  c.innerHTML=data.map(item=>{const d=Object.assign({uchchar:'',ortho:''},item);const audio=hasDuroodAudio(d.num);return `
     <div class="darood-card">
       <div class="card-header">
         <div class="card-num">${d.num}</div>
@@ -674,41 +768,39 @@ function renderCards(data){
       </div>
       <div class="card-body">
         <div class="arabic">${d.arabic}</div>
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('label_transliteration','উচ্চারণ')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><div class="uchchar">${d.uchchar}</div></div>
-        </div>
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('label_meaning','অর্থ')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><div class="ortho">${d.ortho}</div></div>
-        </div>
 
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('reference_prefix','রেফারেন্স:').replace(/:$/,'')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        <div class="durood-controls">
+          <button type="button" class="collapsible-header" ${audio ? `data-durood-audio="${d.num}" aria-pressed="false" aria-label="${STR('label_transliteration')}: ${STR('audio_play')}"` : `aria-controls="durood-pronunciation-${d.num}" aria-expanded="false"`} onclick="${audio ? `playDuroodPronunciation(${d.num})` : 'toggleDuroodPanel(this)'}">
+            <span class="collapsible-title">${STR('label_transliteration')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">${audio ? '▶' : '▾'}</span>
+          </button>
+          <button type="button" class="collapsible-header" aria-controls="durood-meaning-${d.num}" aria-expanded="false" onclick="toggleDuroodPanel(this)">
+            <span class="collapsible-title">${STR('label_meaning')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">▾</span>
+          </button>
+          <button type="button" class="collapsible-header" aria-controls="durood-reference-${d.num}" aria-expanded="false" onclick="toggleDuroodPanel(this)">
+            <span class="collapsible-title">${STR('reference_prefix').replace(/:$/,'')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">▾</span>
+          </button>
         </div>
-        <div class="action-row">
-          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">{{btn_copy}}</button>
-          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">{{btn_share}}</button>
+        ${audio ? '' : `<div id="durood-pronunciation-${d.num}" class="durood-panel" hidden><div class="uchchar">${d.uchchar}</div></div>`}
+        <div id="durood-meaning-${d.num}" class="durood-panel" hidden><div class="ortho">${d.ortho}</div></div>
+        <div id="durood-reference-${d.num}" class="durood-panel" hidden><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        <div class="action-row durood-actions">
+          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">${STR('btn_copy').replace(/^[\s\uD83D\uDCCB]+/,'')}</button>
+          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">${STR('btn_share').replace(/^[\s\uD83D\uDD17]+/,'')}</button>
+          <button type="button" class="btn btn-read" onclick="readDurood(${d.num})">{{btn_read}}</button>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
+  if(window.Android && Android.requestDuroodAudioState) Android.requestDuroodAudioState();
 }
 
 function renderSalamCards(data){
   const c=document.getElementById('salam-cards-container');
   if(!data.length){c.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>${STR('empty_salams','কোনো সালাম পাওয়া যায়নি')}</p></div>`;return}
-  c.innerHTML=data.map(d=>`
+  c.innerHTML=data.map(item=>{const d=Object.assign({uchchar:'',ortho:''},item);const audio=hasSalamAudio(d.num);return `
     <div class="darood-card">
       <div class="card-header">
         <div class="card-num">${d.num}</div>
@@ -716,35 +808,33 @@ function renderSalamCards(data){
       </div>
       <div class="card-body">
         <div class="arabic">${d.arabic}</div>
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('label_transliteration','উচ্চারণ')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><div class="uchchar">${d.uchchar}</div></div>
-        </div>
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('label_meaning','অর্থ')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><div class="ortho">${d.ortho}</div></div>
-        </div>
 
-        <div class="collapsible-section">
-          <div class="collapsible-header" onclick="toggleSection(this)">
-            <span class="collapsible-title">${STR('reference_prefix','রেফারেন্স:').replace(/:$/,'')}</span>
-            <span class="collapsible-chevron">▾</span>
-          </div>
-          <div class="collapsible-content"><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        <div class="durood-controls">
+          <button type="button" class="collapsible-header" ${audio ? `data-salam-audio="${d.num}" aria-pressed="false" aria-label="${STR('label_transliteration')}: ${STR('audio_play')}"` : `aria-controls="salam-pronunciation-${d.num}" aria-expanded="false"`} onclick="${audio ? `playSalamPronunciation(${d.num})` : 'toggleDuroodPanel(this)'}">
+            <span class="collapsible-title">${STR('label_transliteration')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">${audio ? '▶' : '▾'}</span>
+          </button>
+          <button type="button" class="collapsible-header" aria-controls="salam-meaning-${d.num}" aria-expanded="false" onclick="toggleDuroodPanel(this)">
+            <span class="collapsible-title">${STR('label_meaning')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">▾</span>
+          </button>
+          <button type="button" class="collapsible-header" aria-controls="salam-reference-${d.num}" aria-expanded="false" onclick="toggleDuroodPanel(this)">
+            <span class="collapsible-title">${STR('reference_prefix').replace(/:$/,'')}</span>
+            <span class="collapsible-chevron" aria-hidden="true">▾</span>
+          </button>
         </div>
-        <div class="action-row">
-          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">{{btn_copy}}</button>
-          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">{{btn_share}}</button>
+        ${audio ? '' : `<div id="salam-pronunciation-${d.num}" class="durood-panel" hidden><div class="uchchar">${d.uchchar}</div></div>`}
+        <div id="salam-meaning-${d.num}" class="durood-panel" hidden><div class="ortho">${d.ortho}</div></div>
+        <div id="salam-reference-${d.num}" class="durood-panel" hidden><span class="ref-tag">📚 ${d.ref}</span>${d.extra?`<div class="fazilat-box">${d.extra}</div>`:''}</div>
+        <div class="action-row durood-actions">
+          <button class="btn btn-copy" onclick="copyText(this,'${d.arabic.replace(/'/g,"\\'")}','${d.uchchar.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}')">${STR('btn_copy').replace(/^[\s\uD83D\uDCCB]+/,'')}</button>
+          <button class="btn btn-share" onclick="shareText('${d.arabic.replace(/'/g,"\\'")}','${d.ortho.replace(/'/g,"\\'")}','${d.title.replace(/'/g,"\\'")}')">${STR('btn_share').replace(/^[\s\uD83D\uDD17]+/,'')}</button>
+          <button type="button" class="btn btn-read" onclick="readSalam(${d.num})">{{btn_read}}</button>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
+  if(window.Android && Android.requestDuroodAudioState) Android.requestDuroodAudioState();
 }
 
 function renderIntro(){
@@ -802,6 +892,7 @@ function shareText(arabic,ortho,title){
 }
 
 function switchTab(id,el){
+  stopDuroodPronunciation();
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
@@ -816,6 +907,7 @@ function closeMenu(){
   document.getElementById('menu-modal').classList.remove('show');
 }
 function showScreen(name){
+  stopDuroodPronunciation();
   closeMenu();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = document.getElementById('screen-'+name);
@@ -943,10 +1035,19 @@ function recordActivity(type, contentId){
     if(window.Android && Android.recordActivity) Android.recordActivity(type, contentId);
   } catch(e){}
 }
+function activityStatus(key){
+  const status = document.getElementById('activity-status');
+  status.textContent = key ? STR(key) : '';
+  status.hidden = !key;
+}
 function loadActivityData(){
+  activityStatus('activity_loading');
+  document.getElementById('activity-list').innerHTML = '';
+  document.getElementById('activity-empty').style.display = 'none';
   try {
     if(window.Android && Android.loadActivity) Android.loadActivity();
-  } catch(e){}
+    else window.__activityLoadFailed();
+  } catch(e){ window.__activityLoadFailed(); }
 }
 function localDateStr(offsetDays){
   var d = new Date();
@@ -956,8 +1057,18 @@ function localDateStr(offsetDays){
 function escHtml(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-window.__activityLoaded = function(json){
-  try { renderActivity(JSON.parse(json)); } catch(e){}
+window.__activityLoadFailed = function(){
+  activityStatus('activity_load_failed');
+  document.getElementById('activity-empty').style.display = 'none';
+};
+window.__activityLoaded = function(payload){
+  try {
+    // evaluateJavascript passes an array; also accept JSON text for older callers.
+    const records = typeof payload === 'string' ? JSON.parse(payload) : payload;
+    if(!Array.isArray(records)) throw new Error('Invalid activity payload');
+    renderActivity(records);
+    activityStatus('');
+  } catch(e){ window.__activityLoadFailed(); }
 };
 function renderActivity(list){
   var data = (list && list.length) ? list : [];

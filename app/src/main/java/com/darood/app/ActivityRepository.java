@@ -3,7 +3,6 @@ package com.darood.app;
 import android.content.Context;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -43,35 +42,54 @@ public final class ActivityRepository {
 
     /** Records one read for the given content on today's local date (async). */
     public void record(String type, int contentId) {
+        record(type, contentId, null);
+    }
+
+    public interface WriteCallback {
+        void onComplete(boolean saved);
+    }
+
+    public void record(String type, int contentId, WriteCallback callback) {
         if (!TYPE_DUROOD.equals(type) && !TYPE_SALAM.equals(type)) {
             AppLogger.w("ActivityRepository", "Ignoring invalid activity type: " + type);
+            if (callback != null) callback.onComplete(false);
             return;
         }
         if (contentId <= 0) {
             AppLogger.w("ActivityRepository", "Ignoring invalid contentId: " + contentId);
+            if (callback != null) callback.onComplete(false);
             return;
         }
         final String date = today();
+        AppLogger.i("ActivityRepository", "DB increment requested: " + type + " #" + contentId);
         EXECUTOR.execute(() -> {
+            boolean saved = false;
             try {
                 dao.increment(type, contentId, date);
-                AppLogger.d("ActivityRepository",
-                        "Activity recorded: " + type + " #" + contentId + " on " + date);
+                saved = true;
+                AppLogger.i("ActivityRepository",
+                        "DB increment succeeded: " + type + " #" + contentId + " on " + date);
             } catch (Throwable t) {
                 AppLogger.e("ActivityRepository",
-                        "Failed to record activity (" + type + " #" + contentId + ")", t);
+                        "DB increment failed (" + type + " #" + contentId + ")", t);
             }
+            if (callback != null) callback.onComplete(saved);
         });
     }
 
     /** Loads all activity records on a background thread and invokes the callback. */
     public void load(Callback callback) {
         EXECUTOR.execute(() -> {
+
             try {
-                callback.onResult(dao.getAll());
+                AppLogger.i("ActivityRepository", "My Activity DB query started");
+                List<ActivityRecord> records = dao.getAll();
+                AppLogger.i("ActivityRepository", records.isEmpty()
+                        ? "My Activity DB result empty" : "Activity data loaded; rows=" + records.size());
+                callback.onResult(records);
             } catch (Throwable t) {
                 AppLogger.e("ActivityRepository", "Failed to load activity", t);
-                callback.onResult(new ArrayList<>());
+                callback.onResult(null); // Query failure is different from an empty database.
             }
         });
     }
@@ -81,10 +99,7 @@ public final class ActivityRepository {
     }
 
     private static String today() {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-        } catch (Throwable t) {
-            return "1970-01-01";
-        }
+        // Capture the device local date at the tap, before queuing the write.
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
     }
 }

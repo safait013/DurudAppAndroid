@@ -1,12 +1,16 @@
 package com.darood.app;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,13 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>Owns the full pipeline:
  * <ol>
  *   <li>Current local Gregorian date/time determines "today".</li>
- *   <li>Today's local sunset decides which Gregorian day's Hijri date applies:
- *       before sunset → today, at/after sunset → tomorrow. The Hijri value is
- *       always <em>looked up</em> for the selected Gregorian date (never
- *       incremented manually), so 29→1 and year transitions come from real data.</li>
- *   <li>Resolution priority: manual override → AlAdhan API → cached AlAdhan data
- *       → arithmetic fallback.</li>
- *   <li>The next-sunset AlarmManager alarm is re-scheduled after every sunset.</li>
+ *   <li>Manual corrections remain authoritative for their Gregorian date,
+ *       including its sunset. Day 29 may resolve the next month-end date.</li>
+ *   <li>Resolution priority: manual override → AlAdhan API → cache → fallback.</li>
+ *   <li>Only an effective day-29 boundary permits an automatic API request.
+ *       Day 30 has an offline-only check for the existing new-month notification.</li>
  * </ol>
  *
  * <p>All heavy work runs on one background executor; the Home screen snapshot is
@@ -35,6 +37,7 @@ public final class HijriCoordinator {
     private static final long LOCATION_TIMEOUT_MS = 8_000L;
     private static final int MIN_HIJRI_YEAR = 1200;
     private static final int MAX_HIJRI_YEAR = 1600;
+    private static final String KEY_TRANSITIONS = "hijri_29_refresh_handled_dates";
 
     /** Receives asynchronous updates; implemented by {@link MainActivity}. */
     public interface HijriRefreshListener {
@@ -91,6 +94,15 @@ public final class HijriCoordinator {
             resolvedData = resolved.data;
             resolvedSource = resolved.source;
             applicableDate = resolved.applicable;
+            // The existing foreground snapshot timer also discovers month-end boundaries offline.
+            final Context app = context.getApplicationContext();
+            EXECUTOR.execute(() -> {
+                try {
+                    reconcile(app, HijriCache.getLastLocation(app), System.currentTimeMillis());
+                } catch (Throwable t) {
+                    AppLogger.e(TAG, "Snapshot reconciliation failed", t);
+                }
+            });
             return resolved.toSnapshotJson(context).toString();
         } catch (Throwable t) {
             AppLogger.e(TAG, "snapshotJson failed", t);
@@ -120,142 +132,210 @@ public final class HijriCoordinator {
 
     private void doRefresh(Context context) {
         double[] location = HijriLocationHelper.getLocation(context, LOCATION_TIMEOUT_MS);
-        if (location != null) {
-            HijriCache.setLastLocation(context, location[0], location[1]);
-        }
-        if (location == null) {
-            location = HijriCache.getLastLocation(context);
-        }
+        if (location != null) HijriCache.setLastLocation(context, location[0], location[1]);
+        else location = HijriCache.getLastLocation(context);
+        reconcile(context, location, System.currentTimeMillis());
+    }
 
-        long now = System.currentTimeMillis();
+    /** Shared foreground, alarm, boot and manual-edit path; all calls are serialized. */
+    private void reconcile(Context context, double[] location, long now) {
         String today = HijriMath.dateIso(now);
-        long todaySunset = sunsetForDate(context, today, location);
-        String applicable = (now < todaySunset) ? today : HijriMath.addDays(today, 1);
-        AppLogger.i(TAG, "Today=" + today + " applicable=" + applicable
-                + " sunsetToday=" + HijriMath.hhmm(todaySunset));
-
-        Resolved resolved = resolveApplicable(context, applicable, location, true);
+        String endingDate = now >= sunsetForDate(context, today, location)
+                ? today : HijriMath.addDays(today, -1);
+        resolveEndedMonthEnd(context, endingDate, location, now);
+        Resolved resolved = computeCore(context, location, now);
         resolvedData = resolved.data;
         resolvedSource = resolved.source;
-        applicableDate = applicable;
+        applicableDate = resolved.applicable;
+        AppLogger.i(TAG, "Effective Hijri date=" + resolved.data.hijriDay + "-"
+                + resolved.data.hijriMonth + "-" + resolved.data.hijriYear
+                + "; Gregorian=" + resolved.applicable + "; source=" + resolved.source);
         syncHijriDay29Notification(context, resolved, now);
         HijriNewMonthNotification.notifyIfNewMonth(context, resolved.data, resolved.source);
-
-        // Prefetch the following day so the after-sunset transition works offline.
-        if (!"manual".equals(resolved.source) && location != null) {
-            prefetchNextDay(context, applicable, location);
-        }
-
-        scheduleNextSunset(context, applicable, location, now);
-        pushForeground(snapshotJson(context));
+        scheduleNextSunset(context, resolved, now);
+        pushForeground(resolved.toSnapshotJson(context).toString());
     }
 
-    /** Lightweight recompute used when the sunset alarm fires (receiver context). */
-    public void onSunsetFired(Context context) {
-        try {
-            // Deliver the outgoing day before this receiver advances the effective date.
-            HijriDay29Notification.fireIfDue(context, HijriMath.dateIso(System.currentTimeMillis()));
-            double[] location = HijriCache.getLastLocation(context);
-            Resolved resolved = computeCore(context, location);
-            resolvedData = resolved.data;
-            resolvedSource = resolved.source;
-            applicableDate = resolved.applicable;
-            syncHijriDay29Notification(context, resolved, System.currentTimeMillis());
-            HijriNewMonthNotification.notifyIfNewMonth(context, resolved.data, resolved.source);
-            scheduleNextSunset(context, resolved.applicable, location,
-                    System.currentTimeMillis());
-            pushForeground(snapshotJson(context));
-            AppLogger.i(TAG, "Sunset transition applied; applicable=" + resolved.applicable);
-        } catch (Throwable t) {
-            AppLogger.e(TAG, "onSunsetFired failed", t);
+    /** One best-effort online re-resolution for the sunset ending an effective day 29. */
+    private void resolveEndedMonthEnd(Context context, String endingDate, double[] location, long now) {
+        Resolved outgoing = resolveApplicable(context, endingDate, location, false);
+        if ((outgoing.data.hijriDay != 29 && outgoing.data.hijriDay != 30) || outgoing.sunset > now) {
+            AppLogger.d(TAG, "Day-29 refresh not eligible for " + endingDate
+                    + "; effective day=" + outgoing.data.hijriDay + "; source=" + outgoing.source);
+            return;
         }
-        // Also try to update the new day's data from the API (best effort).
-        refresh(context);
+        String next = HijriMath.addDays(endingDate, 1);
+        if (outgoing.data.hijriDay == 30) {
+            resolveApplicable(context, next, location, false, outgoing.data);
+            AppLogger.i(TAG, "Day-30 sunset resolved offline; no API refresh");
+            return;
+        }
+        AppLogger.i(TAG, "Day-29 sunset transition reached: " + endingDate);
+        HijriDay29Notification.fireIfDue(context, endingDate);
+        SharedPreferences prefs = context.getSharedPreferences(AppSettings.PREFS_FILE, Context.MODE_PRIVATE);
+        Set<String> handled = new HashSet<>(prefs.getStringSet(KEY_TRANSITIONS, new HashSet<String>()));
+        boolean firstAttempt = !handled.contains(endingDate);
+        if (firstAttempt) {
+            // Persist before networking: foreground/reboot/duplicate alarms cannot repeat the request.
+            handled.add(endingDate);
+            if (!prefs.edit().putStringSet(KEY_TRANSITIONS, handled).commit()) {
+                AppLogger.w(TAG, "Could not persist transition claim; skipping API");
+                firstAttempt = false;
+            }
+        } else AppLogger.i(TAG, "Duplicate day-29 API event prevented: " + endingDate);
+        Resolved incoming = resolveApplicable(context, next, location, firstAttempt, outgoing.data);
+        AppLogger.i(TAG, "Effective date after transition=" + incoming.data.hijriDay + "-"
+                + incoming.data.hijriMonth + "-" + incoming.data.hijriYear
+                + "; source=" + incoming.source);
     }
 
-    /** Re-arms the sunset alarm after reboot/app-update (no UI involved). */
-    public void onBootCompleted(Context context) {
-        try {
-            double[] location = HijriCache.getLastLocation(context);
-            Resolved resolved = computeCore(context, location);
-            syncHijriDay29Notification(context, resolved, System.currentTimeMillis());
-            HijriNewMonthNotification.notifyIfNewMonth(context, resolved.data, resolved.source);
-            scheduleNextSunset(context, resolved.applicable, location,
-                    System.currentTimeMillis());
-            AppLogger.i(TAG, "Sunset alarm re-armed on boot; applicable="
-                    + resolved.applicable);
-        } catch (Throwable t) {
-            AppLogger.e(TAG, "onBootCompleted failed", t);
-        }
+    /** Receiver work stays alive through goAsync and uses the same executor as manual edits. */
+    public void onSunsetFired(Context context, String date, int expectedDay, Runnable completion) {
+        final Context app = context.getApplicationContext();
+        EXECUTOR.execute(() -> {
+            try {
+                double[] location = HijriCache.getLastLocation(app);
+                long now = System.currentTimeMillis();
+                if (HijriMath.calendarFromIso(date) == null) {
+                    // Old generic alarms carry no date. Cancel them without an API request.
+                    HijriSunsetScheduler.cancel(app);
+                    scheduleNextSunset(app, computeCore(app, location), now);
+                    AppLogger.i(TAG, "Ignored legacy daily sunset alarm");
+                    return;
+                }
+                Resolved outgoing = resolveApplicable(app, date, location, false);
+                if (outgoing.data.hijriDay != expectedDay || outgoing.sunset > now
+                        || (expectedDay != 29 && expectedDay != 30)) {
+                    AppLogger.i(TAG, "Stale sunset event cancelled after effective date changed");
+                    HijriSunsetScheduler.cancel(app);
+                    Resolved current = computeCore(app, location);
+                    syncHijriDay29Notification(app, current, now);
+                    scheduleNextSunset(app, current, now);
+                    return;
+                }
+                reconcile(app, location, now);
+            } catch (Throwable t) {
+                AppLogger.e(TAG, "onSunsetFired failed", t);
+            } finally {
+                completion.run();
+            }
+        });
+    }
+
+    /** Alarms vanish on reboot; revalidate current dates instead of trusting saved schedule flags. */
+    public void onBootCompleted(Context context, Runnable completion) {
+        final Context app = context.getApplicationContext();
+        EXECUTOR.execute(() -> {
+            try {
+                HijriSunsetScheduler.cancel(app);
+                HijriDay29Notification.resetScheduleAfterBoot(app);
+                reconcile(app, HijriCache.getLastLocation(app), System.currentTimeMillis());
+            } catch (Throwable t) {
+                AppLogger.e(TAG, "onBootCompleted failed", t);
+            } finally {
+                completion.run();
+            }
+        });
+    }
+
+    /** Part 2 also needs off-main-thread manual lookup and serialization with edits. */
+    public void onDay29NotificationFired(Context context, Intent intent, Runnable completion) {
+        final Context app = context.getApplicationContext();
+        EXECUTOR.execute(() -> {
+            try {
+                HijriDay29Notification.handleFire(LanguageManager.applyLanguage(app), intent);
+            } catch (Throwable t) {
+                AppLogger.e(TAG, "Day-29 notification failed", t);
+            } finally {
+                completion.run();
+            }
+        });
     }
 
     // ===== Resolution core (shared by sync and async paths) =====
 
     /** Sync-safe resolution: manual → cached API data → arithmetic fallback. */
     private Resolved computeCore(Context context, double[] location) {
-        long now = System.currentTimeMillis();
+        return computeCore(context, location, System.currentTimeMillis());
+    }
+
+    private Resolved computeCore(Context context, double[] location, long now) {
         String today = HijriMath.dateIso(now);
         long todaySunset = sunsetForDate(context, today, location);
         String applicable = (now < todaySunset) ? today : HijriMath.addDays(today, 1);
+        if (!applicable.equals(today)
+                && HijriOverrideRepository.get(context).find(applicable) == null) {
+            HijriOverride manual = HijriOverrideRepository.get(context).find(today);
+            // An ordinary sunset must not replace today's correction with tomorrow's API/cache.
+            if (manual != null && manual.hijriDay != 29) applicable = today;
+        }
         return resolveApplicable(context, applicable, location, false);
     }
 
     /**
      * Applies the manual-override-then-data priority for one Gregorian date.
-     * When {@code allowNetwork} is set, a stale/absent cache entry is replaced by
-     * a fresh AlAdhan fetch (and the result is cached).
+     * Only a validated day-29 transition sets {@code allowNetwork}; an ordinary
+     * foreground, snapshot or reboot uses local sources.
      */
     private Resolved resolveApplicable(Context context, String applicable,
                                        double[] location, boolean allowNetwork) {
-        long now = System.currentTimeMillis();
+        return resolveApplicable(context, applicable, location, allowNetwork, null);
+    }
 
-        // 1. Manual override wins.
+    private Resolved resolveApplicable(Context context, String applicable,
+                                       double[] location, boolean allowNetwork, HijriDayData outgoing) {
         HijriOverride manual = HijriOverrideRepository.get(context).find(applicable);
         if (manual != null) {
             long sunset = sunsetForDate(context, applicable, location);
-            HijriDayData data = manualToDayData(context, manual, applicable, location, sunset);
-            AppLogger.i(TAG, "Manual override active for " + applicable);
-            return new Resolved(applicable, data, "manual", sunset);
+            AppLogger.i(TAG, "Manual override active for " + applicable
+                    + "; API refresh skipped because manual override is authoritative");
+            return new Resolved(applicable,
+                    manualToDayData(context, manual, applicable, location, sunset), "manual", sunset);
         }
-
-        // 2. Cached AlAdhan data for the same location bucket is authoritative.
         HijriDayData cached = HijriCache.getDay(context, applicable);
-        boolean cachedUsable = cached != null
-                && !cached.approxSunset
-                && HijriCache.locationMatches(context, location);
-        if (cachedUsable) {
-            long sunset = sunsetForDate(context, applicable, location);
-            AppLogger.d(TAG, "Using cached API data for " + applicable);
-            return new Resolved(applicable, cached, "api", sunset);
-        }
-
-        // 3. Fresh AlAdhan API (only when allowed and a location exists).
+        // Only the validated day-29 boundary caller allows network. Recheck even prefetched cache.
         if (allowNetwork && location != null) {
-            AppLogger.i(TAG, "Fetching AlAdhan data for " + applicable);
+            AppLogger.i(TAG, "Day-29 API refresh started for " + applicable);
             HijriDayData api = HijriApiClient.fetch(applicable, location[0], location[1]);
-            if (api != null) {
+            if (api != null && applicable.equals(api.gregorianDate)
+                    && (outgoing == null || validMonthEnd(outgoing, api))) {
                 HijriCache.putDay(context, api);
-                long sunset = sunsetForDate(context, applicable, location);
-                AppLogger.i(TAG, "AlAdhan API success for " + applicable);
-                return new Resolved(applicable, api, "api", sunset);
+                // Never let a response supersede a manual value added while the request was in flight.
+                if (HijriOverrideRepository.get(context).find(applicable) != null)
+                    return resolveApplicable(context, applicable, location, false);
+                AppLogger.i(TAG, "Day-29 API refresh succeeded for " + applicable);
+                return new Resolved(applicable, api, "api", sunsetForDate(context, applicable, location));
             }
-            AppLogger.w(TAG, "AlAdhan API failed for " + applicable);
+            AppLogger.w(TAG, "Day-29 API refresh failed/invalid for " + applicable);
         }
-
-        // 4. Stale cached data still beats the approximation.
-        if (cached != null) {
-            long sunset = sunsetForDate(context, applicable, location);
-            AppLogger.i(TAG, "Cache fallback for " + applicable);
-            return new Resolved(applicable, cached, "cache", sunset);
+        if (cached != null && (outgoing == null || validMonthEnd(outgoing, cached))) {
+            AppLogger.d(TAG, "Effective source=CACHE for " + applicable);
+            return new Resolved(applicable, cached, "cache", sunsetForDate(context, applicable, location));
         }
-
-        // 5. Graceful arithmetic fallback (offline, no location).
-        AppLogger.w(TAG, "No data available; using arithmetic fallback for " + applicable);
         HijriDayData fallback = HijriDayData.fallback(applicable,
-                location == null ? null : location[0],
-                location == null ? null : location[1], now);
-        long sunset = sunsetForDate(context, applicable, location);
-        return new Resolved(applicable, fallback, "fallback", sunset);
+                location == null ? null : location[0], location == null ? null : location[1],
+                System.currentTimeMillis());
+        if (outgoing != null && !validMonthEnd(outgoing, fallback)) {
+            // If offline data conflicts with a corrected day 29, conservatively complete 30 days.
+            int month = outgoing.hijriMonth == 12 ? 1 : outgoing.hijriMonth + 1;
+            int year = outgoing.hijriYear + (outgoing.hijriMonth == 12 ? 1 : 0);
+            fallback = new HijriDayData(applicable, outgoing.hijriDay == 29 ? 30 : 1,
+                    outgoing.hijriDay == 29 ? outgoing.hijriMonth : month,
+                    outgoing.hijriDay == 29 ? outgoing.hijriYear : year,
+                    fallback.sunsetLocal, fallback.timezone, fallback.latitude, fallback.longitude,
+                    fallback.fetchedAt, true);
+        }
+        if (outgoing != null) HijriCache.putDay(context, fallback);
+        return new Resolved(applicable, fallback, "fallback", sunsetForDate(context, applicable, location));
+    }
+
+    private boolean validMonthEnd(HijriDayData outgoing, HijriDayData incoming) {
+        if (outgoing.hijriDay == 29 && incoming.hijriDay == 30 && incoming.hijriMonth == outgoing.hijriMonth
+                && incoming.hijriYear == outgoing.hijriYear) return true;
+        int nextMonth = outgoing.hijriMonth == 12 ? 1 : outgoing.hijriMonth + 1;
+        int nextYear = outgoing.hijriYear + (outgoing.hijriMonth == 12 ? 1 : 0);
+        return incoming.hijriDay == 1 && incoming.hijriMonth == nextMonth
+                && incoming.hijriYear == nextYear;
     }
 
     private HijriDayData manualToDayData(Context context, HijriOverride manual,
@@ -302,32 +382,19 @@ public final class HijriCoordinator {
                 calendar.get(java.util.Calendar.DAY_OF_MONTH));
     }
 
-    /** Fetches and caches the following day quietly (offline-safe transition). */
-    private void prefetchNextDay(Context context, String applicable, double[] location) {
+    /** Only month-end events exist: online day 29, or offline day 30 for Part 3. */
+    private void scheduleNextSunset(Context context, Resolved resolved, long now) {
         try {
-            String next = HijriMath.addDays(applicable, 1);
-            if (next == null || HijriCache.getDay(context, next) != null) {
-                return;
-            }
-            AppLogger.d(TAG, "Prefetching next day " + next);
-            HijriDayData data = HijriApiClient.fetch(next, location[0], location[1]);
-            if (data != null) {
-                HijriCache.putDay(context, data);
+            int day = resolved.data.hijriDay;
+            if ((day == 29 || day == 30) && resolved.sunset > now) {
+                HijriSunsetScheduler.scheduleNext(context, resolved.applicable, day, resolved.sunset);
+                AppLogger.i(TAG, "Sunset event scheduled; day=" + day + "; API eligible=" + (day == 29));
+            } else {
+                HijriSunsetScheduler.cancel(context);
+                AppLogger.d(TAG, "No month-end sunset event; effective day=" + day);
             }
         } catch (Throwable t) {
-            AppLogger.w(TAG, "Next-day prefetch failed", t);
-        }
-    }
-
-    /** Re-schedules the one sunset alarm for the next future sunset. */
-    private void scheduleNextSunset(Context context, String applicable,
-                                    double[] location, long now) {
-        try {
-            long todaySunset = sunsetForDate(context, applicable, location);
-            long trigger = todaySunset > now ? todaySunset : todaySunset + 23L * 60L * 60L * 1000L;
-            HijriSunsetScheduler.scheduleNext(context, trigger);
-        } catch (Throwable t) {
-            AppLogger.e(TAG, "Failed to schedule next sunset", t);
+            AppLogger.e(TAG, "Failed to schedule month-end sunset", t);
         }
     }
 
@@ -390,9 +457,8 @@ public final class HijriCoordinator {
             AppLogger.i(TAG, "Saving override for " + gregorianDate);
             EXECUTOR.execute(() -> {
                 HijriOverrideRepository.get(app).upsert(override);
-                pushForeground(snapshotJson(app));
+                reconcile(app, HijriCache.getLastLocation(app), System.currentTimeMillis());
                 loadOverrides(app);
-                refresh(app);
             });
             return "ok";
         } catch (Throwable t) {
@@ -412,9 +478,8 @@ public final class HijriCoordinator {
         AppLogger.i(TAG, "Deleting override for " + date);
         EXECUTOR.execute(() -> {
             HijriOverrideRepository.get(app).delete(date);
-            pushForeground(snapshotJson(app));
+            reconcile(app, HijriCache.getLastLocation(app), System.currentTimeMillis());
             loadOverrides(app);
-            refresh(app);
         });
         return "ok";
     }

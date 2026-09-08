@@ -33,10 +33,7 @@ public final class HijriCache {
     private static JSONObject read(Context context) {
         try {
             String raw = prefs(context).getString(KEY_CACHE, null);
-            if (raw == null) {
-                return new JSONObject();
-            }
-            JSONObject o = new JSONObject(raw);
+            JSONObject o = raw == null ? new JSONObject() : new JSONObject(raw);
             if (!o.has("days")) {
                 o.put("days", new JSONObject());
             }
@@ -155,6 +152,7 @@ public final class HijriCache {
         try {
             JSONObject cache = read(context);
             JSONObject days = cache.optJSONObject("days");
+            if (days == null) days = new JSONObject();
             days.put(data.gregorianDate, data.toJson());
             cache.put("days", days);
             if (data.timezone != null && !data.timezone.isEmpty()) {
