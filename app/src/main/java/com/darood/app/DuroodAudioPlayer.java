@@ -11,14 +11,32 @@ final class DuroodAudioPlayer {
     private static final String TAG = "DuroodAudio";
     // Index is the stable Durood number, independent of filtering and UI language.
     // Append resources here as recordings for later items become available.
-    private static final int[] AUDIO = {0,
+    private static final int[] AUDIO = java.util.Arrays.copyOf(new int[]{0,
             R.raw.durood1, R.raw.durood2, R.raw.durood3, R.raw.durood4,
             R.raw.durood5, R.raw.durood6, R.raw.durood7, R.raw.durood8,
-            R.raw.durood9, R.raw.durood10};
+            R.raw.durood9, R.raw.durood10}, 26);
 
     // Same player and lifecycle; the content type distinguishes equal Durood/Salam IDs.
-    private static final int[] SALAM_AUDIO = {0,
-            R.raw.salam1, R.raw.salam2, R.raw.salam3, R.raw.salam4};
+    private static final int[] SALAM_AUDIO = java.util.Arrays.copyOf(new int[]{0,
+            R.raw.salam1, R.raw.salam2, R.raw.salam3, R.raw.salam4}, 16);
+
+    static {
+        AUDIO[16] = R.raw.durood16;
+        AUDIO[17] = R.raw.durood17;
+        AUDIO[18] = R.raw.durood18;
+        AUDIO[19] = R.raw.durood19;
+        AUDIO[20] = R.raw.durood20;
+        AUDIO[21] = R.raw.durood21;
+        AUDIO[22] = R.raw.durood22;
+        AUDIO[23] = R.raw.durood23;
+        AUDIO[24] = R.raw.durood24;
+        AUDIO[25] = R.raw.durood25;
+        SALAM_AUDIO[11] = R.raw.salam11;
+        SALAM_AUDIO[12] = R.raw.salam12;
+        SALAM_AUDIO[13] = R.raw.salam13;
+        SALAM_AUDIO[14] = R.raw.salam14;
+        SALAM_AUDIO[15] = R.raw.salam15;
+    }
 
     interface StateListener {
         void onStateChanged(int id, boolean playing, boolean salam);
