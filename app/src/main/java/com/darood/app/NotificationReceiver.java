@@ -17,7 +17,11 @@ public class NotificationReceiver extends BroadcastReceiver {
             AppLogger.w("NotificationReceiver", "Received null intent or action");
             return;
         }
-        if (NotificationScheduler.ACTION_NOTIFICATION.equals(intent.getAction())) {
+        if (ReminderAlarm.ACTION_DISMISS.equals(intent.getAction())) {
+            ReminderAlarm.dismiss(context, intent.getStringExtra(ReminderAlarm.EXTRA_OCCURRENCE));
+        } else if (FridayReminderScheduler.ACTION.equals(intent.getAction())) {
+            FridayReminderScheduler.handleFire(LanguageManager.applyLanguage(context), intent);
+        } else if (NotificationScheduler.ACTION_NOTIFICATION.equals(intent.getAction())) {
             AppLogger.i("NotificationReceiver", "Notification alarm received");
             // Use the in-app language (not the system language) for the notification text.
             Context localized = LanguageManager.applyLanguage(context);

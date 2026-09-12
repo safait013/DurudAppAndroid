@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
-/** One dated month-end alarm: day 29 may refresh online; day 30 only resolves offline. */
+/** One dated daily sunset alarm: only effective day 29 may refresh online. */
 public final class HijriSunsetScheduler {
 
     private static final String TAG = "HijriSunsetScheduler";
@@ -17,7 +17,7 @@ public final class HijriSunsetScheduler {
     public static final String EXTRA_DATE = "hijri_ending_date";
     public static final String EXTRA_DAY = "hijri_ending_day";
     /** Small buffer after the actual sunset so the transition is always visible. */
-    private static final long BUFFER_MS = 90_000L;
+    private static final long BUFFER_MS = 0L;
     private static final String KEY_DATE = "hijri_sunset_scheduled_date";
     private static final String KEY_DAY = "hijri_sunset_scheduled_day";
     private static final String KEY_AT = "hijri_sunset_scheduled_at";
@@ -25,9 +25,9 @@ public final class HijriSunsetScheduler {
     private HijriSunsetScheduler() {
     }
 
-    /** No past-time clamping: only a validated future month-end boundary can be armed. */
+    /** No past-time clamping: only a validated future daily boundary can be armed. */
     public static void scheduleNext(Context context, String date, int day, long sunsetEpochMillis) {
-        if (HijriMath.calendarFromIso(date) == null || (day != 29 && day != 30)
+        if (HijriMath.calendarFromIso(date) == null || (day < 1 || day > 30)
                 || sunsetEpochMillis <= System.currentTimeMillis()) {
             cancel(context);
             return;
@@ -47,7 +47,7 @@ public final class HijriSunsetScheduler {
         if (date.equals(prefs.getString(KEY_DATE, null)) && day == prefs.getLong(KEY_DAY, 0)
                 && triggerAt == prefs.getLong(KEY_AT, 0)
                 && PendingIntent.getBroadcast(context, REQUEST_CODE, intent, lookupFlags) != null) {
-            AppLogger.d(TAG, "Duplicate month-end schedule prevented for " + date);
+            AppLogger.d(TAG, "Duplicate daily schedule prevented for " + date);
             return;
         }
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
@@ -68,7 +68,7 @@ public final class HijriSunsetScheduler {
             am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi);
         }
         prefs.edit().putString(KEY_DATE, date).putLong(KEY_DAY, day).putLong(KEY_AT, triggerAt).apply();
-        AppLogger.i(TAG, "Month-end sunset scheduled for " + date + "; day=" + day
+        AppLogger.i(TAG, "Daily sunset scheduled for " + date + "; day=" + day
                 + "; API eligible=" + (day == 29) + "; time=" + HijriMath.hhmm(triggerAt));
     }
 

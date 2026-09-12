@@ -1,0 +1,7 @@
+IndoPak (DigitalKhatt), unmodified OpenType font
+Release: v1.0.0-beta.1
+Publisher: https://github.com/DigitalKhatt/indopakfont
+Font: https://github.com/DigitalKhatt/indopakfont/releases/download/v1.0.0-beta.1/indopak.otf
+License: https://raw.githubusercontent.com/DigitalKhatt/indopakfont/v1.0.0-beta.1/LICENSE
+Local license: OFL-IndoPak.txt (SIL Open Font License 1.1)
+SHA-256: 2d50541b53e98080ba0fd526b90a86838bac9f983da9ad6fea08e68b434b4408

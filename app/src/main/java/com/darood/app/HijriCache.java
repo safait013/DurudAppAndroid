@@ -130,6 +130,53 @@ public final class HijriCache {
 
     // ===== Day data =====
 
+    /** Effective local state is separate from raw API records, within the existing cache. */
+    static JSONObject effectiveState(Context context) {
+        return read(context).optJSONObject("effective");
+    }
+
+    static JSONObject effectiveDay(Context context, String date) {
+        JSONObject days = read(context).optJSONObject("effectiveDays");
+        return days == null ? null : days.optJSONObject(date);
+    }
+
+    static void putEffective(Context context, HijriDayData data, String source, String manualKey) {
+        try {
+            JSONObject cache = read(context);
+            JSONObject state = data.toJson().put("source", source).put("manualKey", manualKey);
+            JSONObject days = cache.optJSONObject("effectiveDays");
+            if (days == null) days = new JSONObject();
+            days.put(data.gregorianDate, state);
+            while (days.length() > MAX_ENTRIES) {
+                String oldest = null;
+                Iterator<String> keys = days.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    if (oldest == null || key.compareTo(oldest) < 0) oldest = key;
+                }
+                days.remove(oldest);
+            }
+            cache.put("effective", state).put("effectiveDays", days);
+            // Date and state are committed together; duplicate receivers cannot increment twice.
+            if (!prefs(context).edit().putString(KEY_CACHE, cache.toString()).commit())
+                AppLogger.w("HijriCache", "Effective sunset state persistence failed");
+        } catch (Exception e) { AppLogger.w("HijriCache", "Effective sunset state failed", e); }
+    }
+
+    static HijriDayData latestDayAtOrBefore(Context context, String date) {
+        JSONObject days = read(context).optJSONObject("days");
+        if (days == null) return null;
+        HijriDayData latest = null;
+        Iterator<String> keys = days.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            HijriDayData day = HijriDayData.fromJson(days.optJSONObject(key));
+            if (day != null && key.compareTo(date) <= 0
+                    && (latest == null || key.compareTo(latest.gregorianDate) > 0)) latest = day;
+        }
+        return latest;
+    }
+
     /** @return the cached data for a Gregorian date, or null when absent/invalid. */
     public static HijriDayData getDay(Context context, String gregorianDate) {
         try {

@@ -40,7 +40,7 @@ package android.content;
 import java.util.*;
 public class Intent {
  public static final int FLAG_ACTIVITY_NEW_TASK=1,FLAG_ACTIVITY_CLEAR_TOP=2,FLAG_ACTIVITY_SINGLE_TOP=4;
- public static final String ACTION_BOOT_COMPLETED="boot",ACTION_MY_PACKAGE_REPLACED="update";
+ public static final String ACTION_BOOT_COMPLETED="boot",ACTION_MY_PACKAGE_REPLACED="update",ACTION_TIME_CHANGED="time",ACTION_TIMEZONE_CHANGED="timezone";
  public String action="",target="";public final Map<String,Object> extras=new HashMap<>();
  public Intent(){}public Intent(Context c,Class<?>cls){target=cls.getName();}
  public Intent setAction(String a){action=a;return this;}public String getAction(){return action;}
@@ -63,6 +63,7 @@ public abstract class BroadcastReceiver {
 package android.app;
 import java.util.*;
 public class AlarmManager {
+ public static final String ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED="exact-access";
  public static final AlarmManager INSTANCE=new AlarmManager();public static final int RTC_WAKEUP=0;
  public static int setCalls;
  public static final Map<Integer,PendingIntent> alarms=new HashMap<>();
@@ -158,6 +159,17 @@ package com.darood.app;public class MainActivity {}
 'com/darood/app/LanguageManager.java' = @'
 package com.darood.app;import android.content.Context;public class LanguageManager {
  public static Context applyLanguage(Context c){return c;}public static String getSavedLanguage(Context c){return "en";}
+}
+'@
+'com/darood/app/ReminderAlarm.java' = @'
+package com.darood.app;import android.content.Context;public class ReminderAlarm {
+ public static final String ACTION_DISMISS="dismiss",EXTRA_OCCURRENCE="occurrence";
+ public static void dismiss(Context c,String occurrence){}
+}
+'@
+'com/darood/app/FridayReminderScheduler.java' = @'
+package com.darood.app;import android.content.*;public class FridayReminderScheduler {
+ public static final String ACTION="friday";public static void handleFire(Context c,Intent i){}public static void restoreAfterBoot(Context c){}
 }
 '@
 'com/darood/app/NotificationScheduler.java' = @'

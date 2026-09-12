@@ -18,7 +18,7 @@ function run(html, locales) {
   const doc = { getElementById:id=>nodes[id], querySelectorAll:selector=>selector==='[data-durood-audio]'?buttons:[] };
   let reads=[], loads=0, toggles=[];
   const Android = {
-    hasDuroodAudio:id=>id>=1&&id<=10, readDurood:id=>reads.push(id),
+    hasDuroodAudio:id=>id>=1&&id<=15, readDurood:id=>reads.push(id),
     loadActivity:()=>loads++, requestDuroodAudioState(){},
     playDuroodPronunciation:id=>toggles.push(id), stopDuroodPronunciation(){}
   };
@@ -35,6 +35,15 @@ function run(html, locales) {
     const records=(lang==='en'?w.religiousContentEn:w.religiousContentUr).darood;
     data[lang]=records.map(d=>({...d,arabic:bn.find(b=>b.num===d.num).arabic}));
   }
+  for(const [lang,records] of Object.entries(data)){
+    assert(records.length===25,lang+' exactly 25 corrected items');
+    const digits={bn:'০১২৩৪৫৬৭৮৯',en:'0123456789',ur:'۰۱۲۳۴۵۶۷۸۹'}[lang];
+    records.forEach((d,i)=>{
+      const title={bn:'হাদীস',en:'Hadith',ur:'حدیث'}[lang]+' '+String(i+1).replace(/[0-9]/g,c=>digits[+c]);
+      assert(d.num===i+1&&d.title===title,lang+' stable ID and localized title');
+      assert(d.arabic===bn[i].arabic&&d.ref===bn[i].ref,lang+' invariant Arabic and reference');
+    });
+  }
   for (const [lang,records] of Object.entries(data)) for (const d of records) {
     ui.renderCards([d]);
     const card=nodes['cards-container'].innerHTML;
@@ -42,9 +51,21 @@ function run(html, locales) {
     assert((controls.match(/<button /g)||[]).length===3,lang+' three controls');
     assert(card.includes('class="action-row durood-actions"'),lang+' actions row');
     assert(card.includes('copyText(this,')&&card.includes('shareText(')&&card.includes('readDurood('+d.num+')'),lang+' action routing');
-    assert(card.includes('class="uchchar"')===(d.num>10),lang+' pronunciation availability');
+    assert(card.includes('class="uchchar"')===(d.num>15),lang+' text pronunciation fallback');
+    assert(card.includes('data-durood-audio=')===(d.num<=15),lang+' bundled audio availability');
     assert(card.includes(d.arabic)&&card.includes(d.ortho||'')&&card.includes(d.ref),lang+' content retained');
-    if(d.num<=10)assert(card.includes('playDuroodPronunciation('+d.num+')'),lang+' stable audio mapping');
+    if(d.num>15&&!d.uchchar)assert(controls.includes('disabled'),lang+' missing pronunciation safely disabled');
+    if(d.num<=15){
+      const handler=[...card.matchAll(/onclick="([^"]+)"/g)].map(m=>m[1]).find(h=>h.startsWith('playDuroodPronunciation('));
+      new Function('playDuroodPronunciation',handler)(ui.playDuroodPronunciation);
+      assert(toggles.at(-1)===d.num,lang+' audio button routes stable ID');
+    }
+    const handlers=[...card.matchAll(/onclick="([^"]+)"/g)].map(m=>m[1]);
+    let copied,shared;
+    new Function('copyText',handlers.find(h=>h.startsWith('copyText(')))((...args)=>copied=args.slice(1));
+    new Function('shareText',handlers.find(h=>h.startsWith('shareText(')))((...args)=>shared=args);
+    assert(JSON.stringify(copied)===JSON.stringify([d.arabic,d.uchchar||'',d.ortho||'']),lang+' Copy current content');
+    assert(JSON.stringify(shared)===JSON.stringify([d.arabic,d.ortho||'',d.title]),lang+' Share current localized content');
   }
   ui.renderCards([bn[9],bn[0]]);
   assert(nodes['cards-container'].innerHTML.includes('readDurood(10)'), 'Filtered Read uses stable ID');
@@ -53,7 +74,10 @@ function run(html, locales) {
   assert(reads.filter(id=>id===1).length===5&&reads.filter(id=>id===2).length===100,'Each tap reaches native bridge once');
   assert(!toasts.length,'No optimistic save acknowledgement');
   ui.playDuroodPronunciation(1);ui.playDuroodPronunciation(1);
-  assert(toggles.join(',')==='1,1','Same button delegates both toggles to native state');
+  assert(toggles.slice(-2).join(',')==='1,1','Play/Stop delegates to native player');
+  const played=toggles.length;
+  ui.playDuroodPronunciation(16);ui.playDuroodPronunciation(25);
+  assert(toggles.length===played,'Missing recordings do not reach native playback');
   window.__duroodAudioState(1,true);
   assert(buttons[0].icon.textContent==='■'&&buttons[1].icon.textContent==='▶','Playing state');
   window.__duroodAudioState(2,true);

@@ -15,6 +15,10 @@ import android.os.StrictMode;
  * in debug builds without affecting release performance.
  */
 public class App extends Application {
+    // Retain the listener: SharedPreferences stores listeners weakly.
+    private android.content.SharedPreferences.OnSharedPreferenceChangeListener sunsetListener;
+    private final android.os.Handler reminderHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable refreshFriday = () -> FridayReminderScheduler.reschedule(this);
 
     @Override
     public void onCreate() {
@@ -25,6 +29,21 @@ public class App extends Application {
             enableStrictMode();
         }
         AppLogger.i("App", "Application started");
+        FridayReminderScheduler.initialize(this);
+        // Observe existing sunset/location cache writes without changing Hijri calculation or networking.
+        sunsetListener = (prefs, key) -> {
+            if ("hijri_cache_v2".equals(key)) {
+                reminderHandler.removeCallbacks(refreshFriday);
+                reminderHandler.postDelayed(refreshFriday, 250);
+            }
+        };
+        getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(sunsetListener);
+        androidx.core.content.ContextCompat.registerReceiver(this, new android.content.BroadcastReceiver() {
+            @Override public void onReceive(android.content.Context c, android.content.Intent intent) {
+                FridayReminderScheduler.reschedule(c);
+            }
+        }, new android.content.IntentFilter(android.content.Intent.ACTION_DATE_CHANGED),
+                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
         // Asynchronous and cached: this cannot delay launch or run on every screen load.
         UpdateChecker.checkIfDue(this);
     }

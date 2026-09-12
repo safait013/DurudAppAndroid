@@ -41,6 +41,17 @@ public final class HijriDayData {
         this.approxSunset = approxSunset;
     }
 
+    /** Advances from an effective date, preserving a valid 30-day/month/year boundary. */
+    public HijriDayData nextLocalDay(HijriDayData nextDayContext) {
+        // Only the day-29 resolver can shorten a month. Offline uncertainty completes 30 days.
+        int day = hijriDay < 30 ? hijriDay + 1 : 1;
+        int month = hijriDay < 30 ? hijriMonth : (hijriMonth == 12 ? 1 : hijriMonth + 1);
+        int year = hijriYear + (hijriDay == 30 && hijriMonth == 12 ? 1 : 0);
+        return new HijriDayData(nextDayContext.gregorianDate, day, month, year,
+                nextDayContext.sunsetLocal, nextDayContext.timezone, nextDayContext.latitude,
+                nextDayContext.longitude, nextDayContext.fetchedAt, nextDayContext.approxSunset);
+    }
+
     /** @return this record as a JSON object for the persistent cache. */
     public JSONObject toJson() {
         JSONObject o = new JSONObject();
@@ -63,6 +74,7 @@ public final class HijriDayData {
 
     /** @return the record stored in {@code o}, or null when the payload is invalid. */
     public static HijriDayData fromJson(JSONObject o) {
+        if (o == null) return null;
         try {
             String g = o.optString("g", "");
             int d = o.optInt("d", 0);

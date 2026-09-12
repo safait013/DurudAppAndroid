@@ -61,23 +61,14 @@ public final class LanguageManager {
 
     /**
      * Wraps the base context so every getString()/resource lookup resolves in the
-     * saved in-app language. Before the first choice the device language is used
-     * when supported; otherwise the default (English) resources apply.
+     * saved in-app language. Before the first choice English is used
+     * without changing an existing saved preference.
      * Call from attachBaseContext() of every activity.
      */
     @SuppressWarnings("deprecation") // Configuration.setLocale is required on API 21–23 (minSdk).
     public static Context applyLanguage(Context base) {
         String saved = getSavedLanguage(base);
-        Locale target;
-        if (saved != null && isSupported(saved)) {
-            target = new Locale(saved);
-        } else {
-            target = supportedDeviceLocale(base);
-            if (target == null) {
-                // Unsupported device language: the resource system falls back to English.
-                return base;
-            }
-        }
+        Locale target = new Locale(saved != null && isSupported(saved) ? saved : "en");
         Configuration config = new Configuration(base.getResources().getConfiguration());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             config.setLocales(new LocaleList(target));
@@ -87,23 +78,6 @@ public final class LanguageManager {
         // Layout direction follows the locale: RTL for Urdu, LTR for English/Bangla.
         config.setLayoutDirection(target);
         return base.createConfigurationContext(config);
-    }
-
-    /** The first device locale we support, or null if none matches. */
-    private static Locale supportedDeviceLocale(Context context) {
-        Configuration config = context.getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            LocaleList locales = config.getLocales();
-            for (int i = 0; i < locales.size(); i++) {
-                Locale locale = locales.get(i);
-                if (isSupported(locale.getLanguage())) {
-                    return locale;
-                }
-            }
-            return null;
-        }
-        Locale locale = config.locale;
-        return isSupported(locale.getLanguage()) ? locale : null;
     }
 
     private static SharedPreferences prefs(Context context) {

@@ -1,0 +1,20 @@
+const fs=require('fs'),path=require('path'),assert=require('assert');
+const html=fs.readFileSync(path.join(__dirname,'../app/src/main/assets/index.html'),'utf8');
+const nodes={};
+const document={getElementById(id){return nodes[id]||(nodes[id]={style:{},value:'',innerHTML:''});}};
+let lang='en',complete=false,saved={};
+const Android={setArabicFont(v){saved.font=v;},setArabicFontSize(v){saved.size=v;},setTheme(v){saved.theme=v;},
+ changeLanguage(v){lang=v;},completeSetup(){complete=true;}};
+const window={Android,APP_SETTINGS:{arabic_font:'lateef',arabic_font_size:28,theme:'purple'}};
+const source=html.slice(html.indexOf('// First-launch setup'),html.indexOf('// Crash-report consent'));
+const ui=new Function('window','Android','document','STR','THEMES','FONTS','currentLang',source+';return {initSetup,setupLang,finishSetup};')(window,Android,document,k=>k,['default','purple'],[{code:'lateef',label:'Lateef'}],()=>lang);
+ui.initSetup();assert.equal(nodes['setup-lang-en'].style.opacity,'1');
+assert.equal(complete,false);
+ui.setupLang('bn');assert.equal(lang,'bn');assert.equal(complete,false);
+assert.deepEqual(saved,{font:'lateef',size:28,theme:'purple'});
+ui.initSetup();assert.equal(nodes['setup-lang-bn'].style.opacity,'1');
+ui.finishSetup();assert.equal(complete,true);assert.equal(lang,'bn');
+assert(html.includes('class="modal-overlay{{setup_visibility}}" id="setup-screen"'));
+assert(html.indexOf('initSetup();',html.indexOf('setInterval(function'))<html.indexOf('loadContentData();',html.indexOf('setInterval(function')));
+assert(!html.includes('!Android.isSetupComplete()'));
+console.log('11 setup UI checks passed (actual JavaScript, DOM/native doubles).');

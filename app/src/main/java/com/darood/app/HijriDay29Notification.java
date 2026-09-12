@@ -21,6 +21,7 @@ public final class HijriDay29Notification {
     private static final String KEY_SCHEDULED = "hijri_29_scheduled_event";
     private static final String KEY_SCHEDULED_AT = "hijri_29_scheduled_at";
     private static final String KEY_HANDLED = "hijri_29_handled_event";
+    private static final String KEY_HANDLED_DATES = "hijri_29_handled_dates";
     private static final long SUNSET_BUFFER_MS = 90_000L;
     private HijriDay29Notification() { }
 
@@ -78,6 +79,15 @@ public final class HijriDay29Notification {
         Intent fired = new Intent().putExtra(EXTRA_KEY, key).putExtra(EXTRA_DATE, gregorianDate);
         handleFire(LanguageManager.applyLanguage(context), fired);
     }
+
+    /** Validated daily transition also recovers a missed day-29 notification after process death. */
+    public static void fireEffectiveBoundary(Context context, String date) {
+        String key = eventKey(date);
+        if (key.equals(prefs(context).getString(KEY_HANDLED, null))
+                || prefs(context).getStringSet(KEY_HANDLED_DATES, new java.util.HashSet<String>()).contains(key)) return;
+        prefs(context).edit().putString(KEY_SCHEDULED, key).apply();
+        fireIfDue(context, date);
+    }
     /** Called with a context localized at receiver delivery time. */
     @SuppressLint("MissingPermission")
     public static void handleFire(Context context, Intent intent) {
@@ -86,7 +96,8 @@ public final class HijriDay29Notification {
         if (key == null || date == null || !key.equals(prefs(context).getString(KEY_SCHEDULED, null))) {
             AppLogger.i("HijriDay29Notification", "Stale day-29 event ignored"); return;
         }
-        if (key.equals(prefs(context).getString(KEY_HANDLED, null))) {
+        if (key.equals(prefs(context).getString(KEY_HANDLED, null))
+                || prefs(context).getStringSet(KEY_HANDLED_DATES, new java.util.HashSet<String>()).contains(key)) {
             AppLogger.i("HijriDay29Notification", "Duplicate delivery prevented: " + key); return;
         }
         if (!HijriCoordinator.get().isEffectiveHijriDay29ForGregorianDate(context, date)) {
@@ -112,7 +123,10 @@ public final class HijriDay29Notification {
     }
 
     private static void finish(Context context, String key) {
-        prefs(context).edit().putString(KEY_HANDLED, key).remove(KEY_SCHEDULED).remove(KEY_SCHEDULED_AT).apply();
+        java.util.Set<String> handled = new java.util.HashSet<>(prefs(context).getStringSet(KEY_HANDLED_DATES, new java.util.HashSet<String>()));
+        handled.add(key);
+        prefs(context).edit().putStringSet(KEY_HANDLED_DATES, handled).putString(KEY_HANDLED, key)
+                .remove(KEY_SCHEDULED).remove(KEY_SCHEDULED_AT).apply();
     }
     private static String eventKey(String date) { return "hijri_29_sunset_" + date; }
     private static int notificationId(String date) { return 0x30000000 | (date.hashCode() & 0x0fffffff); }

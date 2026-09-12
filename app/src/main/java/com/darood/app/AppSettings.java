@@ -17,6 +17,7 @@ public final class AppSettings {
     public static final String FONT_SCHEHERAZADE = "scheherazade";
     public static final String FONT_LATEEF = "lateef";
     public static final String FONT_NOTO_NASKH = "notonaskh";
+    public static final String FONT_INDOPAK = "indopak";
     public static final String DEFAULT_ARABIC_FONT = FONT_AMIRI;
 
     public static final String KEY_ARABIC_FONT_SIZE = "arabic_font_size";
@@ -40,6 +41,23 @@ public final class AppSettings {
 
     /** Separate one-time flag marking that first-launch setup was completed. */
     public static final String KEY_SETUP_COMPLETED = "setup_completed";
+
+    /** Initialize once before resolving UI resources; never infer completion from a new default. */
+    public static void initializeLaunchPreferences(Context context) {
+        android.content.SharedPreferences p = prefs(context);
+        android.content.SharedPreferences.Editor edit = p.edit();
+        String language = p.getString(LanguageManager.KEY_LANGUAGE, null);
+        if (!p.contains(KEY_SETUP_COMPLETED)) {
+            boolean legacyUser = language != null;
+            edit.putBoolean(KEY_SETUP_COMPLETED, legacyUser);
+            AppLogger.i("FirstLaunch", legacyUser ? "Existing-user setup bypassed" : "First launch detected");
+        }
+        if (language == null) {
+            edit.putString(LanguageManager.KEY_LANGUAGE, "en");
+            AppLogger.i("FirstLaunch", "Default language initialized to English");
+        }
+        edit.apply();
+    }
 
     /** One-time flag: the optional location permission dialog was already shown. */
     public static final String KEY_HIJRI_LOCATION_ASKED = "hijri_location_permission_asked";
@@ -90,12 +108,14 @@ public final class AppSettings {
     public static void saveArabicFont(Context context, String code) {
         if (isValidArabicFont(code)) {
             prefs(context).edit().putString(KEY_ARABIC_FONT, code).apply();
+            AppLogger.i("ArabicFont", "Font preference saved: " + code);
         }
     }
 
     public static boolean isValidArabicFont(String code) {
         return FONT_AMIRI.equals(code) || FONT_SCHEHERAZADE.equals(code)
-                || FONT_LATEEF.equals(code) || FONT_NOTO_NASKH.equals(code);
+                || FONT_LATEEF.equals(code) || FONT_NOTO_NASKH.equals(code)
+                || FONT_INDOPAK.equals(code);
     }
 
     /** @return the saved Arabic font size in sp, clamped to [16, 32] (default 24). */
@@ -141,6 +161,7 @@ public final class AppSettings {
         if (FONT_SCHEHERAZADE.equals(code)) return "ScheherazadeNewLocal";
         if (FONT_LATEEF.equals(code)) return "LateefLocal";
         if (FONT_NOTO_NASKH.equals(code)) return "NotoNaskhLocal";
+        if (FONT_INDOPAK.equals(code)) return "IndoPakLocal";
         return "AmiriLocal";
     }
 
@@ -149,6 +170,7 @@ public final class AppSettings {
         if (FONT_SCHEHERAZADE.equals(code)) return "Scheherazade New";
         if (FONT_LATEEF.equals(code)) return "Lateef";
         if (FONT_NOTO_NASKH.equals(code)) return "Noto Naskh Arabic";
+        if (FONT_INDOPAK.equals(code)) return "IndoPak";
         return "Amiri";
     }
 

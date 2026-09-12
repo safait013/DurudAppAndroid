@@ -57,7 +57,7 @@ public final class HijriRefreshTest {
     static int posted(int category){
         return NotificationManagerCompat.counts.entrySet().stream().filter(e->(e.getKey()&0xf0000000)==category).mapToInt(Map.Entry::getValue).sum();
     }
-    static void noRefreshAlarm(String message){check(!AlarmManager.alarms.containsKey(7101),message);}
+    static void noRefreshAlarm(String message){check(AlarmManager.alarms.containsKey(7101) && AlarmManager.alarms.get(7101).intent.getIntExtra(HijriSunsetScheduler.EXTRA_DAY,0) != 29,message);}
     static void day29Alarm(){
         PendingIntent p=AlarmManager.alarms.get(7101);
         check(p!=null&&p.intent.getIntExtra(HijriSunsetScheduler.EXTRA_DAY,0)==29,"dated day-29 event scheduled");
@@ -66,15 +66,32 @@ public final class HijriRefreshTest {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         try {
             String next=HijriMath.addDays(DATE,1);
+            // Ordinary increments use the effective base, never a prefetched/raw API date.
+            reset(DATE);reconcile(DATE,12);reconcile(DATE,20);
+            check(effective(DATE,20)==11&&HijriApiClient.calls==0,"10 -> 11 offline at sunset");
+            reconcile(next,20);
+            check(effective(next,20)==12&&HijriApiClient.calls==0,"11 -> 12 offline next sunset");
+            restart();reconcile(next,20);
+            check(effective(next,20)==12,"restart never double increments");
+            reconcile(HijriMath.addDays(DATE,4),20);
+            check(effective(HijriMath.addDays(DATE,4),20)==15&&HijriApiClient.calls==0,"multiple missed sunsets recovered locally");
+            reset(DATE);manual(DATE,15);reconcile(DATE,12);reconcile(DATE,20);
+            check(effective(DATE,20)==16&&HijriApiClient.calls==0,"manual 15 advances to 16 offline");
+            reconcile(next,20);
+            check(effective(next,20)==17&&HijriApiClient.calls==0,"manual correction remains base next day");
             // Tests 1 and 2: both raw API 28 and raw API 29 must lose to manual 28.
             for(int raw:new int[]{28,29}){
                 reset(DATE);cache(DATE,raw);manual(DATE,28);
                 reconcile(DATE,12);noRefreshAlarm("manual 28 has no sunset refresh");
                 reconcile(DATE,20);
                 check(HijriApiClient.calls==0,"normal sunset made no API call");
-                check(effective(DATE,20)==28,"manual 28 stays displayed through sunset");
+                check(effective(DATE,20)==29,"manual 28 advances to 29 at sunset");
                 check(HijriOverrideRepository.rows.get(DATE).hijriDay==28,"manual record unchanged");
                 check(posted(0x30000000)==0,"manual 28 suppressed Part 2");
+                HijriApiClient.response=data(HijriMath.addDays(DATE,2),30,8,1451);
+                reconcile(next,20);
+                check(HijriApiClient.calls==1&&effective(next,20)==30,"API waits until effective 29 ends at next sunset");
+                check(posted(0x30000000)==1,"propagated manual day 29 posts Check once");
             }
             // Test 3: final manual 29, not raw API 28, controls eligibility.
             reset(DATE);cache(DATE,28);manual(DATE,29);reconcile(DATE,12);day29Alarm();
@@ -150,6 +167,11 @@ public final class HijriRefreshTest {
             reset(DATE);cache(DATE,30);reconcile(DATE,20);
             check(HijriApiClient.calls==0&&effective(DATE,20)==1,"day 30 -> 1 resolves without API");
             check(posted(0x20000000)==1,"offline day-30 transition retains Part 3");
+            reset(DATE);HijriCache.putDay(context,data(DATE,30,12,1451));reconcile(DATE,20);
+            Object yearResult=call("computeCore",new Class[]{Context.class,double[].class,long.class},context,LOCATION,at(DATE,20));
+            Field yearData=yearResult.getClass().getDeclaredField("data");yearData.setAccessible(true);
+            HijriDayData rollover=(HijriDayData)yearData.get(yearResult);
+            check(rollover.hijriDay==1&&rollover.hijriMonth==1&&rollover.hijriYear==1452,"confirmed Dhul Hijjah 30 rolls into next year offline");
             reset(DATE);manual(DATE,29);
             call("reconcile",new Class[]{Context.class,double[].class,long.class},context,null,at(DATE,20));
             check(HijriApiClient.calls==0,"no location uses offline transition");
@@ -169,7 +191,7 @@ public final class HijriRefreshTest {
             // Local timezone/DST source is retained; no city/timezone is hardcoded in production.
             for(String zone:new String[]{"Asia/Dhaka","America/New_York","Europe/London","Australia/Sydney"}){
                 TimeZone.setDefault(TimeZone.getTimeZone(zone));reset(DATE);manual(DATE,29);reconcile(DATE,12);day29Alarm();
-                check(AlarmManager.times.get(7101)==at(DATE,18)+90000,"sunset scheduled in local timezone "+zone);
+                check(AlarmManager.times.get(7101)==at(DATE,18),"sunset scheduled in local timezone "+zone);
             }
             System.out.println(checks+" Hijri refresh checks passed (API/Room/Android test doubles).");
         } finally {executor().shutdownNow();}

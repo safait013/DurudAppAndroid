@@ -23,18 +23,17 @@ import java.util.Iterator;
 /**
  * Real notification scheduler for Durud &amp; Salam reminders.
  *
- * One {@link AlarmManager} alarm per enabled weekday. Each alarm is a one-shot
+ * One {@link AlarmManager} alarm per configured weekday/time. Each alarm is a one-shot
  * alarm for the next occurrence of that weekday/time; when it fires,
- * {@link NotificationReceiver} posts the notification and re-schedules the same
+ * {@link NotificationReceiver} requests a user reminder alarm and re-schedules the same
  * weekday one week later (handles DST and avoids periodic-alarm drift).
  *
  * Persistence: SharedPreferences "app_settings" key "notif_config" (JSON):
- * { "enabled": bool, "days": { "1"(Sunday).."7"(Saturday): {"h":..,"m":..} } }
+ * { "enabled": bool, "days": { "1".."7": [{"h":..,"m":..,"alertMode":"RING"}] } }
  *
- * Alarm ID strategy: stable alarm requestCode = 4000 + weekday (1..7) and a
- * stable notification id = 2100 + weekday. Every time the settings change we
- * cancel all existing alarms first, then re-create only the enabled ones, so
- * duplicates are impossible and changed times replace the old alarm.
+ * Stable alarm requestCode = 4000 + weekday * 100 + index. Settings edits cancel
+ * and replace pending alarms. Revision + scheduled timestamp rejects stale and
+ * duplicate deliveries. ReminderAlarm owns a separate single active notification.
  */
 public final class NotificationScheduler {
 
@@ -49,16 +48,14 @@ public final class NotificationScheduler {
     public static final String EXTRA_HOUR = "hour";
     public static final String EXTRA_MINUTE = "minute";
     public static final String EXTRA_INDEX = "index";
+    private static final String EXTRA_TRIGGER = "reminder_trigger";
+    private static final String EXTRA_REVISION = "reminder_revision";
     private static final String EXTRA_UPDATE_VERSION_CODE = "update_version_code";
 
     /** Stable unique alarm PendingIntent request codes per weekday (1..7). */
     private static final int ALARM_ID_BASE = 4000;
-    /** Stable notification id per weekday. */
-    private static final int NOTIFICATION_ID_BASE = 2100;
     /** Maximum number of reminders allowed per weekday. */
     private static final int MAX_TIMES_PER_DAY = 20;
-    /** Request code for the notification's content (open-app) PendingIntent. */
-    private static final int CONTENT_REQUEST_CODE = 300;
     private static final int DEFAULT_HOUR = 20; // 8:00 PM default
     private static final int DEFAULT_MINUTE = 0;
 
@@ -84,6 +81,7 @@ public final class NotificationScheduler {
         AppLogger.i("NotificationScheduler", "Rescheduling notifications");
         cancelAll(context);
         createChannel(context);
+        FridayReminderScheduler.reschedule(context);
         if (!isEnabled(context)) {
             AppLogger.i("NotificationScheduler", "Notifications disabled; alarms cleared");
             return;
@@ -120,9 +118,9 @@ public final class NotificationScheduler {
     }
 
     /** Schedules a one-shot alarm for the next occurrence of the given weekday/time. */
-    @SuppressWarnings("deprecation") // AlarmManager.set is only used on API 21–22 (minSdk).
     public static void scheduleDay(Context context, int dayOfWeek, int index, int hour, int minute) {
-        if (dayOfWeek < Calendar.SUNDAY || dayOfWeek > Calendar.SATURDAY) {
+        if (dayOfWeek < Calendar.SUNDAY || dayOfWeek > Calendar.SATURDAY
+                || index < 0 || index >= MAX_TIMES_PER_DAY) {
             return;
         }
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -137,24 +135,38 @@ public final class NotificationScheduler {
                 .putExtra(EXTRA_DAY, dayOfWeek)
                 .putExtra(EXTRA_INDEX, index)
                 .putExtra(EXTRA_HOUR, h)
-                .putExtra(EXTRA_MINUTE, m);
+                .putExtra(EXTRA_MINUTE, m)
+                .putExtra(EXTRA_TRIGGER, triggerAt)
+                .putExtra(EXTRA_REVISION, prefs(context).getLong("reminder_revision", 0));
         PendingIntent pi = pendingForDay(context, dayOfWeek, index, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (Build.VERSION.SDK_INT >= 31) {
-            if (am.canScheduleExactAlarms()) {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+        try {
+            if (Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms()) {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+                } else {
+                    am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+                }
             } else {
-                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+                scheduleInexact(am, triggerAt, pi);
             }
-        } else if (Build.VERSION.SDK_INT >= 23) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
-        } else {
-            am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+        } catch (SecurityException e) {
+            AppLogger.w("NotificationScheduler", "Exact alarm access changed; using inexact fallback", e);
+            scheduleInexact(am, triggerAt, pi);
         }
-        AppLogger.d("NotificationScheduler", "Scheduled day " + dayOfWeek + " at " + h + ":" + m);
+        prefs(context).edit().putLong("reminder_due_" + dayOfWeek + "_" + index, triggerAt).apply();
+        JSONObject time = reminderTime(context, dayOfWeek, index);
+        AppLogger.i("NotificationScheduler", "Scheduled reminder " + dayOfWeek + ":" + index
+                + " mode=" + ReminderAlertMode.parse(time == null ? null : time.optString("alertMode"))
+                + " trigger=" + triggerAt);
     }
 
+    private static void scheduleInexact(AlarmManager am, long triggerAt, PendingIntent pi) {
+        AppLogger.w("NotificationScheduler", "Exact alarm unavailable; delivery may be delayed");
+        if (Build.VERSION.SDK_INT >= 23) am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+        else am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+    }
     /** Cancels the alarm for one weekday (used when a day is removed). */
     public static void cancelDay(Context context, int dayOfWeek) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -162,6 +174,7 @@ public final class NotificationScheduler {
             return;
         }
         for (int i = 0; i < MAX_TIMES_PER_DAY; i++) {
+            prefs(context).edit().remove("reminder_due_" + dayOfWeek + "_" + i).apply();
             Intent intent = new Intent(context, NotificationReceiver.class)
                     .setAction(ACTION_NOTIFICATION);
             PendingIntent pi = pendingForDay(context, dayOfWeek, i, intent, PendingIntent.FLAG_NO_CREATE);
@@ -199,51 +212,40 @@ public final class NotificationScheduler {
             return;
         }
         int day = fired.getIntExtra(EXTRA_DAY, 0);
-        int index = fired.getIntExtra(EXTRA_INDEX, 0);
-        AppLogger.i("NotificationScheduler", "Notification alarm fired (day=" + day + ", index=" + index + ")");
-        JSONObject days = getConfig(context).optJSONObject("days");
-        org.json.JSONArray times = days != null ? days.optJSONArray(String.valueOf(day)) : null;
-        boolean stillEnabled = times != null && index < times.length();
-        if (!stillEnabled) {
-            cancelDay(context, day);
+        int index = fired.getIntExtra(EXTRA_INDEX, -1);
+        long trigger = fired.getLongExtra(EXTRA_TRIGGER, -1);
+        long revision = fired.getLongExtra(EXTRA_REVISION, -1);
+        JSONObject time = reminderTime(context, day, index);
+        AppLogger.i("NotificationScheduler", "Reminder receiver fired " + day + ":" + index);
+        if (time == null || revision != prefs(context).getLong("reminder_revision", 0)
+                || trigger <= 0 || trigger != prefs(context).getLong("reminder_due_" + day + "_" + index, -1)
+                || time.optInt("h", DEFAULT_HOUR) != fired.getIntExtra(EXTRA_HOUR, -1)
+                || time.optInt("m", DEFAULT_MINUTE) != fired.getIntExtra(EXTRA_MINUTE, -1)) {
+            AppLogger.i("NotificationScheduler", "Stale or duplicate reminder occurrence prevented");
             return;
         }
-        int hour = fired.getIntExtra(EXTRA_HOUR, DEFAULT_HOUR);
-        int minute = fired.getIntExtra(EXTRA_MINUTE, DEFAULT_MINUTE);
-        scheduleDay(context, day, index, hour, minute); // roll forward one week
-
-        createChannel(context);
-        Intent contentIntent = new Intent(context, MainActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        int contentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= 23) {
-            contentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        PendingIntent contentPi = PendingIntent.getActivity(context, CONTENT_REQUEST_CODE,
-                contentIntent, contentFlags);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(context.getString(R.string.notification_title))
-                .setContentText(context.getString(R.string.notification_text))
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(contentPi)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(context.getString(R.string.notification_text)));
-        if (Build.VERSION.SDK_INT >= 21) {
-            builder.setVibrate(new long[]{0L});
-        }
-
-        if (!hasNotificationPermission(context)) {
-            AppLogger.w("NotificationScheduler", "Notification permission not granted at delivery");
+        String occurrence = day + ":" + index + ":" + revision + ":" + trigger;
+        // Commit before any delivery so process death/repeated broadcasts cannot replay an occurrence.
+        String handledKey = "reminder_handled_" + day + "_" + index;
+        if (occurrence.equals(prefs(context).getString(handledKey, null))) {
+            AppLogger.i("NotificationScheduler", "Duplicate occurrence prevented: " + occurrence);
+            scheduleDay(context, day, index, time.optInt("h", DEFAULT_HOUR), time.optInt("m", DEFAULT_MINUTE));
             return;
         }
-        NotificationManagerCompat.from(context).notify(notificationId(day, index), builder.build());
+        if (!prefs(context).edit().putString(handledKey, occurrence).commit()) {
+            AppLogger.w("NotificationScheduler", "Unable to persist reminder occurrence; delivery skipped");
+            return;
+        }
+        scheduleDay(context, day, index, time.optInt("h", DEFAULT_HOUR), time.optInt("m", DEFAULT_MINUTE));
+        ReminderAlarm.fire(context, occurrence, ReminderAlertMode.parse(time.optString("alertMode")));
     }
 
+    private static JSONObject reminderTime(Context context, int day, int index) {
+        if (day < 1 || day > 7 || index < 0 || index >= MAX_TIMES_PER_DAY) return null;
+        JSONObject days = getConfig(context).optJSONObject("days");
+        org.json.JSONArray times = days == null ? null : days.optJSONArray(String.valueOf(day));
+        return times == null ? null : times.optJSONObject(index);
+    }
     /** Creates the notification channel (API 26+); localized name &amp; description. */
     public static void createChannel(Context context) {
         if (Build.VERSION.SDK_INT < 26) {
@@ -468,11 +470,6 @@ public final class NotificationScheduler {
         return ALARM_ID_BASE + dayOfWeek * 100 + index;
     }
 
-    /** Stable notification id per weekday + index. */
-    private static int notificationId(int dayOfWeek, int index) {
-        return NOTIFICATION_ID_BASE + dayOfWeek * 100 + index;
-    }
-
     private static PendingIntent pendingForDay(Context context, int dayOfWeek, int index, Intent intent, int flags) {
         int f = flags;
         if (Build.VERSION.SDK_INT >= 23) {
@@ -508,7 +505,17 @@ public final class NotificationScheduler {
             return defaultConfig();
         }
         try {
-            return new JSONObject(raw);
+            JSONObject config = new JSONObject(raw);
+            JSONObject days = config.optJSONObject("days");
+            if (days != null) {
+                Iterator<String> keys = days.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    JSONObject legacy = days.optJSONObject(key);
+                    if (legacy != null) days.put(key, new org.json.JSONArray().put(legacy));
+                }
+            }
+            return config;
         } catch (Exception e) {
             AppLogger.e("NotificationScheduler", "Failed to parse notification config; using default", e);
             return defaultConfig();
@@ -557,9 +564,10 @@ public final class NotificationScheduler {
                         continue;
                     }
                     org.json.JSONArray times = days.optJSONArray(key);
-                    if (times == null) {
-                        continue;
+                    if (times == null && days.optJSONObject(key) != null) {
+                        times = new org.json.JSONArray().put(days.optJSONObject(key));
                     }
+                    if (times == null) continue;
                     org.json.JSONArray cleanTimes = new org.json.JSONArray();
                     for (int i = 0; i < times.length(); i++) {
                         JSONObject t = times.optJSONObject(i);
@@ -568,7 +576,8 @@ public final class NotificationScheduler {
                         }
                         int hour = clamp(t.optInt("h", DEFAULT_HOUR), 0, 23);
                         int minute = clamp(t.optInt("m", DEFAULT_MINUTE), 0, 59);
-                        cleanTimes.put(new JSONObject().put("h", hour).put("m", minute));
+                        cleanTimes.put(new JSONObject().put("h", hour).put("m", minute)
+                                .put("alertMode", ReminderAlertMode.parse(t.optString("alertMode")).name()));
                     }
                     if (cleanTimes.length() > 0) {
                         cleanDays.put(String.valueOf(day), cleanTimes);
@@ -577,7 +586,9 @@ public final class NotificationScheduler {
             }
             clean.put("enabled", enabled);
             clean.put("days", cleanDays);
-            prefs(context).edit().putString(KEY_CONFIG, clean.toString()).apply();
+            boolean saved = prefs(context).edit().putString(KEY_CONFIG, clean.toString())
+                    .putLong("reminder_revision", prefs(context).getLong("reminder_revision", 0) + 1).commit();
+            if (!saved) return false;
             return true;
         } catch (Exception e) {
             AppLogger.e("NotificationScheduler", "Failed to save notification config", e);

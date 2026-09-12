@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
     private WebView webView;
     private final DuroodAudioPlayer duroodAudioPlayer = new DuroodAudioPlayer(this::onDuroodAudioState);
     private boolean pronunciationResumed;
+    private boolean locationPermissionInFlight, notificationPermissionInFlight, reminderPermissionPending;
 
     /** Request code for LanguagePickerActivity opened from Settings (for a result). */
     private static final int REQUEST_CODE_LANGUAGE = 1001;
@@ -41,6 +42,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
 
     @Override
     protected void attachBaseContext(Context base) {
+        AppSettings.initializeLaunchPreferences(base);
         // Apply the user's saved in-app language to every resource lookup of this
         // Activity (persisted in SharedPreferences; survives restarts & process death).
         super.attachBaseContext(LanguageManager.applyLanguage(base));
@@ -96,6 +98,15 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
 
         // WebViewClient - handle links
         webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                refreshReminderCapabilities();
+                android.content.SharedPreferences p = getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE);
+                if (AppSettings.isSetupComplete(MainActivity.this) && p.getBoolean("reminder_prepare_after_setup", false)) {
+                    p.edit().putBoolean("reminder_prepare_after_setup", false).apply();
+                    requestReminderNotificationsOnce();
+                }
+                explainReminderAccessOnce();
+            }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
@@ -233,6 +244,19 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             R.string.theme_purple,
             R.string.theme_dark,
             R.string.notification_settings_title,
+            R.string.reminder_alert_mode,
+            R.string.reminder_ring,
+            R.string.reminder_vibrate,
+            R.string.reminder_silent,
+            R.string.reminder_access_description,
+            R.string.reminder_full_screen_access,
+            R.string.reminder_exact_access,
+            R.string.reminder_access_title,
+            R.string.reminder_access_ok,
+            R.string.reminder_access_needed,
+            R.string.friday_reminder_title,
+            R.string.friday_reminder_schedule,
+            R.string.friday_reminder_waiting,
             R.string.notifications_enable_label,
             R.string.notifications_schedule_label,
             R.string.day_sunday,
@@ -357,6 +381,10 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         String html = readAsset("index.html");
         if (html == null) return null;
 
+        boolean setupComplete = AppSettings.isSetupComplete(this);
+        html = html.replace("{{setup_visibility}}", setupComplete ? "" : " show");
+        AppLogger.i("FirstLaunch", setupComplete ? "Existing-user setup bypassed" : "Setup opened");
+
         java.util.Map<String, String> values = new java.util.LinkedHashMap<>();
         for (int id : LOCALIZED_STRING_IDS) {
             values.put(getResources().getResourceEntryName(id), getString(id));
@@ -402,13 +430,14 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         //    plus a JS settings object for the font picker UI. Fonts are bundled
         //    under assets/fonts/ and loaded via local @font-face rules.
         String fontCode = AppSettings.getArabicFont(this);
+        AppLogger.i("ArabicFont", "Available fonts: Amiri, Scheherazade New, Lateef, Noto Naskh Arabic, IndoPak");
         int fontSizeSp = AppSettings.getArabicFontSize(this);
         // Respect the system font scale (accessibility): sp -> px for the WebView.
         float fontScale = getResources().getConfiguration().fontScale;
         int fontSizePx = Math.round(fontSizeSp * fontScale);
         String themeCode = AppSettings.getTheme(this);
         html = html.replace("<!--ARABIC_FONT-->", "<style>:root{--arabic-font:'"
-                + AppSettings.arabicFontFamily(fontCode) + "';--arabic-font-size:"
+                + AppSettings.arabicFontFamily(fontCode) + "','AmiriLocal';--arabic-font-size:"
                 + fontSizePx + "px}</style>");
         try {
             org.json.JSONObject appSettings = new org.json.JSONObject();
@@ -418,6 +447,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             appSettings.put("arabic_font_size", fontSizeSp);
             appSettings.put("font_scale", fontScale);
             appSettings.put("theme", themeCode);
+            appSettings.put("setup_complete", setupComplete);
             appSettings.put("theme_label", themeLabel(themeCode));
             html = html.replace("<!--APP_SETTINGS-->",
                     "<script>window.APP_SETTINGS=" + appSettings + ";</script>");
@@ -620,6 +650,14 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             AppSettings.saveArabicFont(MainActivity.this, code);
         }
 
+        /** Reports WebView font loading without changing the saved selection. */
+        @JavascriptInterface
+        public void reportArabicFontLoad(String code, boolean loaded) {
+            if (!AppSettings.isValidArabicFont(code)) return;
+            if (loaded) AppLogger.i("ArabicFont", "Font applied: " + code);
+            else AppLogger.w("ArabicFont", "Font loading failed: " + code + "; using Amiri fallback");
+        }
+
         /**
          * Settings → Arabic Font Size: persists the selected size (16–32sp).
          * The WebView applies it instantly via the --arabic-font-size CSS variable;
@@ -655,6 +693,12 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         public void completeSetup() {
             AppSettings.saveSetupCompleted(MainActivity.this, true);
             AppLogger.i("MainActivity", "First-launch setup completed");
+            getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE).edit()
+                    .putBoolean("reminder_access_explained_v2", true)
+                    .putBoolean("reminder_prepare_after_setup", true).apply();
+            runOnUiThread(() -> {
+                NotificationScheduler.rescheduleAll(MainActivity.this);
+            });
         }
 
         /** Generates a diagnostic log file; returns its file name, or "" on failure. */
@@ -802,6 +846,69 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             return NotificationScheduler.getConfig(MainActivity.this).toString();
         }
 
+        @JavascriptInterface public String getReminderCapabilities() {
+            return ReminderCapabilities.snapshot(MainActivity.this).toString();
+        }
+
+        @JavascriptInterface public String getFridayReminderConfig() {
+            org.json.JSONObject result = new org.json.JSONObject();
+            try {
+                result.put("enabled", FridayReminderScheduler.isEnabled(MainActivity.this));
+                result.put("scheduled", getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE)
+                        .getLong("friday_reminder_due", 0) > System.currentTimeMillis());
+            } catch (Exception e) { AppLogger.w("FridayReminder", "Settings snapshot failed", e); }
+            return result.toString();
+        }
+
+        @JavascriptInterface public void setFridayReminderEnabled(final boolean enabled) {
+            runOnUiThread(() -> {
+                FridayReminderScheduler.setEnabled(MainActivity.this, enabled);
+                if (enabled) requestReminderNotificationsOnce();
+                refreshReminderCapabilities();
+            });
+        }
+
+        /** Explicit settings buttons; no automatic special-access prompts. */
+        @JavascriptInterface
+        public void openReminderAccess(final String access) {
+            runOnUiThread(() -> {
+                try {
+                    Intent settings;
+                    if ("fullScreen".equals(access) && android.os.Build.VERSION.SDK_INT >= 34
+                            && !ReminderAlarm.canFullScreen(MainActivity.this)) {
+                        settings = new Intent(android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                    } else if ("exact".equals(access) && android.os.Build.VERSION.SDK_INT >= 31
+                            && !((android.app.AlarmManager) getSystemService(ALARM_SERVICE)).canScheduleExactAlarms()) {
+                        settings = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                    } else if ("notifications".equals(access)) {
+                        if (android.os.Build.VERSION.SDK_INT >= 33
+                                && !NotificationScheduler.hasNotificationPermission(MainActivity.this)
+                                && !getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE)
+                                        .getBoolean("reminder_notification_permission_asked", false)) {
+                            requestReminderNotificationsOnce();
+                            return;
+                        }
+                        if (android.os.Build.VERSION.SDK_INT >= 26
+                                && NotificationScheduler.hasNotificationPermission(MainActivity.this)) {
+                            settings = new Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                                    .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName())
+                                    .putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, ReminderAlarm.CHANNEL);
+                            startActivity(settings);
+                            return;
+                        }
+                        settings = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.reminder_access_ready, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    settings.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(settings);
+                } catch (RuntimeException e) {
+                    AppLogger.w("MainActivity", "Reminder permission settings unavailable", e);
+                    Toast.makeText(MainActivity.this, R.string.reminder_access_unavailable, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
         /**
          * Settings → Notifications: persists the schedule, cancels old alarms and
          * schedules fresh ones. On Android 13+ the POST_NOTIFICATIONS runtime
@@ -816,8 +923,12 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
                     return;
                 }
                 AppLogger.i("MainActivity", "Notification config saved");
+                String activeReminder = ReminderAlarm.active(MainActivity.this);
+                if (activeReminder != null && !activeReminder.startsWith("friday:"))
+                    ReminderAlarm.dismiss(MainActivity.this, activeReminder);
+                // Always clear stale alarms, including when permission has been revoked.
+                NotificationScheduler.rescheduleAll(MainActivity.this);
                 if (NotificationScheduler.hasNotificationPermission(MainActivity.this)) {
-                    NotificationScheduler.rescheduleAll(MainActivity.this);
                     boolean enabled = NotificationScheduler.isEnabled(MainActivity.this);
                     Toast.makeText(MainActivity.this,
                             getString(enabled
@@ -828,11 +939,8 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
                     Toast.makeText(MainActivity.this,
                             getString(R.string.notifications_permission_required),
                             Toast.LENGTH_SHORT).show();
-                    requestPermissions(
-                            new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
-                            REQUEST_CODE_NOTIFICATIONS_PERMISSION);
+                    if (NotificationScheduler.isEnabled(MainActivity.this)) requestReminderNotificationsOnce();
                 } else {
-                    NotificationScheduler.rescheduleAll(MainActivity.this);
                     Toast.makeText(MainActivity.this,
                             getString(R.string.notifications_saved),
                             Toast.LENGTH_SHORT).show();
@@ -920,16 +1028,50 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
     }
 
     /** Continues saving after the POST_NOTIFICATIONS runtime permission result. */
+    private void refreshReminderCapabilities() {
+        if (webView != null) webView.evaluateJavascript(
+                "if(window.refreshReminderAccess) refreshReminderAccess();", null);
+    }
+
+    private void requestReminderNotificationsOnce() {
+        ReminderCapabilities.snapshot(this); // All three are checked even on older Android.
+        if (android.os.Build.VERSION.SDK_INT < 33 || NotificationScheduler.hasNotificationPermission(this)) return;
+        if (locationPermissionInFlight) { reminderPermissionPending = true; return; }
+        android.content.SharedPreferences p = getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE);
+        if (notificationPermissionInFlight || p.getBoolean("reminder_notification_permission_asked", false)) return;
+        p.edit().putBoolean("reminder_notification_permission_asked", true).apply();
+        notificationPermissionInFlight = true;
+        requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIFICATIONS_PERMISSION);
+    }
+
+    private void explainReminderAccessOnce() {
+        if (!AppSettings.isSetupComplete(this) || isFinishing() || locationPermissionInFlight) return;
+        android.content.SharedPreferences p = getSharedPreferences(AppSettings.PREFS_FILE, MODE_PRIVATE);
+        if (p.getBoolean("reminder_access_explained_v2", false)) return;
+        p.edit().putBoolean("reminder_access_explained_v2", true).apply();
+        if (ReminderCapabilities.ready(this)) return;
+        new android.app.AlertDialog.Builder(this).setTitle(R.string.reminder_access_title)
+                .setMessage(R.string.reminder_access_description)
+                .setPositiveButton(R.string.notification_settings_title, (dialog, which) -> {
+                    webView.evaluateJavascript("showScreen('notifications'); refreshReminderAccess();", null);
+                    requestReminderNotificationsOnce();
+                })
+                .setNegativeButton(android.R.string.cancel, null).show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_LOCATION) {
+            locationPermissionInFlight = false;
             boolean granted = grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED;
             AppLogger.i("MainActivity", "Location permission result: granted=" + granted);
             // Whether granted or denied the app remains fully usable: location
             // simply upgrades the automatic date, cache/fallback handle the rest.
             HijriCoordinator.get().refresh(this);
+            if (reminderPermissionPending) { reminderPermissionPending = false; requestReminderNotificationsOnce(); }
+            explainReminderAccessOnce();
             return;
         }
         if (requestCode != REQUEST_CODE_NOTIFICATIONS_PERMISSION) {
@@ -937,6 +1079,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         }
         boolean granted = grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        notificationPermissionInFlight = false;
         if (granted) {
             NotificationScheduler.rescheduleAll(this);
             Toast.makeText(this, getString(R.string.notifications_saved), Toast.LENGTH_SHORT).show();
@@ -944,6 +1087,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
             Toast.makeText(this, getString(R.string.notifications_permission_denied),
                     Toast.LENGTH_SHORT).show();
         }
+        refreshReminderCapabilities();
     }
 
     // Back button handling
@@ -959,6 +1103,8 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
     @Override
     protected void onResume() {
         super.onResume();
+        NotificationScheduler.rescheduleAll(this);
+        refreshReminderCapabilities();
         pronunciationResumed = true;
         webView.onResume();
         // Hijri date: foreground verification + push updates from background work.
@@ -985,6 +1131,7 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
                 && !AppSettings.isHijriLocationPermissionAsked(this)) {
             AppSettings.setHijriLocationPermissionAsked(this, true);
             if (android.os.Build.VERSION.SDK_INT >= 23) {
+                locationPermissionInFlight = true;
                 requestPermissions(new String[]{
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                         android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -1033,4 +1180,3 @@ public class MainActivity extends Activity implements HijriCoordinator.HijriRefr
         super.onDestroy();
     }
 }
-

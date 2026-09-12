@@ -21,6 +21,10 @@
     <!-- Reschedule alarms after reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".App"
@@ -57,6 +61,19 @@
             android:exported="false"
             android:theme="@android:style/Theme.NoDisplay" />
 
+        <activity android:name=".ReminderAlarmActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.reminder"
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:enableOnBackInvokedCallback="true"
+            android:theme="@style/ReminderAlarmTheme" />
+        <service android:name=".ReminderAlarmService"
+            android:exported="false"
+            android:foregroundServiceType="systemExempted|shortService" />
+
         <!-- Posted by AlarmManager when a reminder fires -->
         <receiver
             android:name=".NotificationReceiver"
@@ -69,6 +86,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
 

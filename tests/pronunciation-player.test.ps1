@@ -76,7 +76,7 @@ public class AppLogger {
 '@
 'com/darood/app/R.java' = @'
 package com.darood.app;
-public class R {public static class raw {public static final int durood1=1;public static final int durood2=2;public static final int durood3=3;public static final int durood4=4;public static final int durood5=5;public static final int durood6=6;public static final int durood7=7;public static final int durood8=8;public static final int durood9=9;public static final int durood10=10;public static final int salam1=101;public static final int salam2=102;public static final int salam3=103;public static final int salam4=104;}}
+public class R {public static class raw {public static final int durood1=1;public static final int durood2=2;public static final int durood3=3;public static final int durood4=4;public static final int durood5=5;public static final int durood6=6;public static final int durood7=7;public static final int durood8=8;public static final int durood9=9;public static final int durood10=10;public static final int durood11=11,durood12=12,durood13=13,durood14=14,durood15=15;public static final int salam1=101;public static final int salam2=102;public static final int salam3=103;public static final int salam4=104;public static final int salam5=105,salam6=106,salam7=107,salam8=108,salam9=109,salam10=110;}}
 '@
 'com/darood/app/PronunciationPlayerTest.java' = @'
 package com.darood.app;
@@ -91,7 +91,7 @@ public class PronunciationPlayerTest {
   Context context=new Context();
   DuroodAudioPlayer player=new DuroodAudioPlayer((i,p,s)->{id=i;playing=p;salam=s;});
   player.publishState();idle();
-  for(int i=1;i<=4;i++){
+  for(int i=1;i<=10;i++){
    check(DuroodAudioPlayer.hasSalamAudio(i),"Salam availability");
    player.toggleSalam(context,i);
    check(Resources.selected==100+i,"correct Salam raw resource");
@@ -99,7 +99,7 @@ public class PronunciationPlayerTest {
    check(id==i&&playing&&salam,"Salam started");
    player.toggleSalam(context,i);idle();
   }
-  for(int i=1;i<=10;i++){
+  for(int i=1;i<=15;i++){
    check(DuroodAudioPlayer.hasAudio(i),"Durood availability");
    player.toggle(context,i);
    check(Resources.selected==i,"unchanged Durood raw resource");
@@ -107,10 +107,15 @@ public class PronunciationPlayerTest {
    check(id==i&&playing&&!salam,"Durood started");
    player.stop();idle();
   }
-  for(int i=5;i<=15;i++){
+  for(int i=11;i<=15;i++){
    check(!DuroodAudioPlayer.hasSalamAudio(i),"missing Salam availability");
    int previous=Resources.selected;player.toggleSalam(context,i);
    check(Resources.selected==previous,"missing resource never opened");idle();
+  }
+  for(int i=16;i<=25;i++){
+   check(!DuroodAudioPlayer.hasAudio(i),"text-only Durood availability");
+   int previous=Resources.selected;player.toggle(context,i);
+   check(Resources.selected==previous,"text-only Durood never opens resource");
   }
   for(int i:new int[]{0,-1,Integer.MAX_VALUE}){
    check(!DuroodAudioPlayer.hasSalamAudio(i),"invalid ID unavailable");
